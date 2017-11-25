@@ -8,15 +8,21 @@
 
 import UIKit
 import CoreData
+import os.log
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    var userSettings: Settings = Settings()
+    static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+    var fullVersionPurchased = true
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        if let loadedSettings = loadUserSettings() {
+            userSettings = loadedSettings
+        }
         return true
     }
 
@@ -41,6 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
+        saveUserSettings()
         self.saveContext()
     }
 
@@ -88,6 +95,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
+    func saveUserSettings() {
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(userSettings, toFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.userSettings).path)
+        if isSuccessfulSave {
+            os_log("Saving userSettings was successful", log: OSLog.default, type: .debug)
+        }
+        else {
+            os_log("Failed to save userSettings...", log: OSLog.default, type: .debug)
+        }
+    }
+    
+    func loadUserSettings() -> Settings? {
+         return NSKeyedUnarchiver.unarchiveObject(withFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.userSettings).path) as? Settings
+    }
 }
 
