@@ -15,12 +15,14 @@ class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        AppDelegate.changeStatusBarColor(color: .white)
         navigationController!.setNavigationBarHidden(false, animated: false)
         timeModeSwitch.addTarget(self, action: #selector(timeModeChanged(switchState:)), for: .valueChanged)
         timeModeSwitch.isOn = appDelegate.userSettings.is24Mode
         // Do any additional setup after loading the view.
     }
     override func viewWillDisappear(_ animated: Bool) {
+        AppDelegate.changeStatusBarColor(color: .blue)
         self.navigationController!.setNavigationBarHidden(true, animated: true)
     }
     @objc func timeModeChanged(switchState: UISwitch) {

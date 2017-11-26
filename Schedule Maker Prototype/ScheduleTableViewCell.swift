@@ -27,7 +27,10 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
                 let endTime = startTime + scheduleItem.duration
                 endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
             }
-           
+            else {
+                startTimeTF.text = "XX:XX"
+                endTimeTF.text = "XX:XX"
+            }
         }
     }
     
@@ -171,7 +174,7 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
         let date = startOfToday.addingTimeInterval(Double(durationSinceMidnight))
         var text = formatter.string(from: date)
         if durationSinceMidnight >= 13 * 3600 {
-            text = "0" + text
+            text = text + " "
         }
         if(is24Mode) {
             let hour = String(durationSinceMidnight / 3600)
@@ -182,13 +185,15 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
             text = hour + ":" + minute
         }
         if durationSinceMidnight < 10 * 3600 {
-            text = "0" + text
+            text = text + " "
         }
-        
-        let attributedString = NSMutableAttributedString(string: text, attributes: [NSAttributedStringKey.font : startTimeTF.font!])
+        /*
+        let attributedString = NSMutableAttributedString(string: text, attributes: [NSAttributedStringKey.font : UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)])
         if durationSinceMidnight < 10 * 3600 || (!is24Mode && durationSinceMidnight >= 13 * 3600) {
-            attributedString.setAttributes([NSAttributedStringKey.foregroundColor : UIColor(white: 0.0, alpha: 0.0)], range: NSRange(0..<1))
+            attributedString.setAttributes([NSAttributedStringKey.foregroundColor : UIColor(white: 0.0, alpha: 0.0)], range: NSRange(text.count - 1..<text.count))
         }
+        return attributedString
+        */
         return text
         //return "ERROR: durationSinceMidnight greater than a day"
     }
@@ -209,10 +214,11 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     func setStyle(textField: UITextField) {
         textField.layer.cornerRadius = 0
+        /*
         if(textField == startTimeTF || textField == durationTF) {
             textField.font = UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)
         }
-        
+        */
         
     }
     

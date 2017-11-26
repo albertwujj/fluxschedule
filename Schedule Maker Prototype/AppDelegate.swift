@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import os.log
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -23,9 +24,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let loadedSettings = loadUserSettings() {
             userSettings = loadedSettings
         }
+        func application(
+            _ application: UIApplication,
+            didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+            // ... existing code ...
+            registerForPushNotifications()
+            return true
+        }
         return true
     }
-
+    func registerForPushNotifications() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+            (granted, error) in
+            print("Permission granted: \(granted)")
+        }
+    }
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -107,6 +120,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func loadUserSettings() -> Settings? {
          return NSKeyedUnarchiver.unarchiveObject(withFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.userSettings).path) as? Settings
+    }
+    //MARK: global functions
+    static func changeStatusBarColor(color: UIColor) {
+        //Status bar style and visibility
+        UIApplication.shared.setStatusBarHidden(false, with: .none)
+        UIApplication.shared.statusBarStyle = .lightContent
+        
+        //Change status bar color
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        if statusBar.responds(to: #selector(setter: UIView.backgroundColor)) {
+            statusBar.backgroundColor = color
+        }
     }
 }
 

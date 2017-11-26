@@ -24,7 +24,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-     
+        AppDelegate.changeStatusBarColor(color: .blue)
         Timer.scheduledTimer(timeInterval: 30.0, target: self, selector: #selector(checkChangeCurrDate), userInfo: nil, repeats: true)
         
         
@@ -57,7 +57,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate {
     func weekday(date: Date) -> String  {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE"
-        return dateFormatter.string(from: date).capitalized
+        return dateFormatter.string(from: date).uppercased()
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

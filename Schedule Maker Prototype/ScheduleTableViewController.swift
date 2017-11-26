@@ -65,7 +65,7 @@ class ScheduleTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        return 60
+        return 50
     }
     /*
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -214,7 +214,8 @@ class ScheduleTableViewController: UITableViewController {
                 
                 if startTime <= currentTime && startTime + scheduleItem.duration > currentTime  {
                     let bgColorView = UIView()
-                    bgColorView.backgroundColor = UIColor(red: 76.0/255.0, green: 161.0/255.0, blue: 255.0/255.0, alpha: 1.0)
+                    //bgColorView.backgroundColor = UIColor(red: 76.0/255.0, green: 161.0/255.0, blue: 255.0/255.0, alpha: 1.0)
+                    bgColorView.backgroundColor = .blue
                     bgColorView.layer.masksToBounds = true
                     (cell as! ScheduleTableViewCell).backgroundView = bgColorView
                 }
