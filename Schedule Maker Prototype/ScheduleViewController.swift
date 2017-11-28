@@ -9,9 +9,11 @@
 import UIKit
 import os.log
 import Foundation
+import UserNotifications
 
-class ScheduleViewController: UIViewController, UITextFieldDelegate {
+class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotificationCenterDelegate {
     
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var weekdayLabel: UILabel!
     @IBOutlet weak var dateTextField: UITextField!
@@ -24,23 +26,22 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        AppDelegate.changeStatusBarColor(color: .blue)
-        Timer.scheduledTimer(timeInterval: 30.0, target: self, selector: #selector(checkChangeCurrDate), userInfo: nil, repeats: true)
+        AppDelegate.changeStatusBarColor(color: appDelegate.userSettings.themeColor)
         
+        Timer.scheduledTimer(timeInterval: 30.0, target: self, selector: #selector(checkChangeCurrDate), userInfo: nil, repeats: true)
+ 
         
         if let savedScheduleDates = loadScheduleDates() {
             for i in savedScheduleDates {
                 schedules[i] = loadSchedule(date: i)
             }
-            
         }
         /*
         if let savedSchedules = loadSchedulesData() {
             schedules = savedSchedules
         }
         */
-        currDateInt = dateToHashableInt(date: Date())
-        update()
+        changeCurrDate()
         dateTextField.delegate = self
         // Do any additional setup after loading the view.
     }
@@ -270,5 +271,105 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate {
         else {
             os_log("Failed to save schedules...", log: OSLog.default, type: .debug)
         }
+    }
+    func registerCategories() {
+        let view = UNNotificationAction(identifier: "view",
+                                        title: "View",
+                                        options: .foreground)
+        let delay = UNNotificationAction(identifier: "delay",
+                                         title: "Delay by \(appDelegate.userSettings.notifDelayTime) minutes",
+            options: UNNotificationActionOptions(rawValue: 0))
+        
+        let taskNoAction = UNNotificationCategory(identifier: "taskNoAction",
+                                                      actions: [],
+                                                      intentIdentifiers: [],
+                                                      options: UNNotificationCategoryOptions(rawValue: 0))
+        let taskWithAction = UNNotificationCategory(identifier: "taskWithAction",
+                                                      actions: [delay],
+                                                      intentIdentifiers: [],
+                                                      options: UNNotificationCategoryOptions(rawValue: 0))
+        let center = UNUserNotificationCenter.current()
+
+        center.setNotificationCategories([taskNoAction, taskWithAction])
+    }
+    @objc func scheduleTaskNotifs(withAction: Bool) {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        registerCategories()
+        let center = UNUserNotificationCenter.current()
+        for i in schedules[currDateInt] ?? [] {
+            if let startDate = i.startTime {
+                if startDate > tableViewController.getCurrentDurationFromMidnight() {
+                    let content = UNMutableNotificationContent()
+                    content.title = "Time for: \(i.taskName)"
+                    content.body = "Leggo!"
+                    content.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
+                    content.userInfo = ["notifDate": startDate]
+                    content.sound = UNNotificationSound.default()
+                    
+                    var dateComponents = DateComponents()
+                    dateComponents.hour = startDate / 3600
+                    dateComponents.minute = (startDate % 3600) / 60
+                    let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+                    
+                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                    center.add(request)
+                }
+            }
+        }
+        
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // pull out the buried userInfo dictionary
+        self.currDateInt = dateToHashableInt(date: Date())
+        let userInfo = response.notification.request.content.userInfo
+        
+        if let notifDate = userInfo["notifDate"] as? Int {
+            print("notifDate received: \(notifDate)")
+            
+            switch response.actionIdentifier {
+            case UNNotificationDefaultActionIdentifier:
+                
+                print("Default identifier")
+            
+            case "delay":
+                print("pls")
+                // the user tapped our "show more info…" button
+                print("delay task")
+                if let savedScheduleDates = loadScheduleDates() {
+                    for i in savedScheduleDates {
+                        schedules[i] = loadSchedule(date: i)
+                    }
+                }
+                
+                for i in 0..<(schedules[currDateInt] ?? []).count {
+                    print("Hey: \(i)")
+                    if schedules[currDateInt]![i].startTime != nil && schedules[currDateInt]![i].startTime! == notifDate {
+                        
+                        if(i > 0) {
+                            schedules[currDateInt]![i - 1].duration += appDelegate.userSettings.notifDelayTime * 60
+                        
+                            if(selectedDateInt ?? currDateInt == currDateInt) {
+                                update()
+                                print("YAS")
+                            }
+                            break
+                        }
+                        if(i == 0) {
+                            schedules[currDateInt]![0].startTime! += appDelegate.userSettings.notifDelayTime * 60
+                            if(selectedDateInt ?? currDateInt == currDateInt) {
+                                update()
+                                print("YAS2")
+                            }
+                        }
+                    }
+                }
+            default:
+                break
+            }
+        }
+        
+        // you must call the completion handler when you're done
+        completionHandler()
     }
 }

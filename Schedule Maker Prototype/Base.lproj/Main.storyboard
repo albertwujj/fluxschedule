@@ -9,63 +9,55 @@
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="MarkerFeltThin.ttf">
-            <string>MarkerFelt-Thin</string>
-        </array>
-        <array key="Menlo.ttc">
-            <string>Menlo-Regular</string>
-        </array>
-    </customFonts>
     <scenes>
         <!--Schedule Table View Controller-->
         <scene sceneID="USl-fU-MSJ">
             <objects>
                 <tableViewController id="Di3-sW-qHo" customClass="ScheduleTableViewController" customModule="Schedule_Maker_Prototype" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="jG1-6o-cg5">
-                        <rect key="frame" x="0.0" y="0.0" width="327" height="467"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="464.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="taskCell" rowHeight="50" id="evD-WS-gY8" customClass="ScheduleTableViewCell" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="327" height="50"/>
+                                <rect key="frame" x="0.0" y="28" width="375" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="evD-WS-gY8" id="O4r-qH-0yz">
-                                    <rect key="frame" x="0.0" y="0.0" width="327" height="49.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" contentHorizontalAlignment="fill" contentVerticalAlignment="center" text="XX:XX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Fug-9y-DCG">
-                                            <rect key="frame" x="10" y="10" width="64" height="30"/>
+                                            <rect key="frame" x="10" y="10" width="66" height="30"/>
                                             <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
                                             <nil key="textColor"/>
-                                            <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="14"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <textInputTraits key="textInputTraits"/>
                                             <connections>
                                                 <action selector="startTimeEditing:" destination="evD-WS-gY8" eventType="editingDidBegin" id="eQZ-q5-8gl"/>
                                             </connections>
                                         </textField>
                                         <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="L0Z-Zn-mhf">
-                                            <rect key="frame" x="74" y="10.5" width="64" height="30"/>
+                                            <rect key="frame" x="76" y="10.5" width="66" height="30"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                             <textInputTraits key="textInputTraits"/>
                                         </textField>
                                         <textField opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX:XX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Iz8-IK-xC5">
-                                            <rect key="frame" x="258" y="10" width="59" height="30"/>
+                                            <rect key="frame" x="306" y="10" width="59" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="59" id="fR8-ij-A2w"/>
                                             </constraints>
                                             <nil key="textColor"/>
-                                            <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="14"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <textInputTraits key="textInputTraits"/>
                                             <connections>
                                                 <action selector="durationEditing:" destination="evD-WS-gY8" eventType="editingDidBegin" id="pLw-l9-5iy"/>
                                             </connections>
                                         </textField>
                                         <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Task Name" borderStyle="roundedRect" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="3RJ-X4-MO2">
-                                            <rect key="frame" x="94" y="10" width="151" height="30"/>
+                                            <rect key="frame" x="96" y="10" width="197" height="30"/>
                                             <nil key="textColor"/>
-                                            <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="14"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <textInputTraits key="textInputTraits"/>
                                         </textField>
                                     </subviews>
@@ -120,29 +112,29 @@
                                 </constraints>
                             </view>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zRD-x9-WHF">
-                                <rect key="frame" x="24" y="116" width="327" height="467"/>
+                                <rect key="frame" x="0.0" y="118.5" width="375" height="464.5"/>
                                 <connections>
                                     <segue destination="Di3-sW-qHo" kind="embed" identifier="EmbeddedTable" id="1Wq-dJ-ZZG"/>
                                 </connections>
                             </containerView>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX/XX/XXXX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Y8o-P1-EhR">
-                                <rect key="frame" x="133" y="76" width="109" height="30"/>
+                                <rect key="frame" x="135" y="78.5" width="105" height="30"/>
                                 <nil key="textColor"/>
-                                <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
                                     <action selector="startTimeEditing:" destination="MWw-Go-rfF" eventType="editingDidBegin" id="L1G-3D-iFl"/>
                                 </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WEEKDAY" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ljn-hE-dG9">
-                                <rect key="frame" x="147" y="26" width="82" height="23"/>
-                                <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="21"/>
+                                <rect key="frame" x="140" y="26" width="96.5" height="25.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="seG-dg-VIZ">
-                                <rect key="frame" x="24" y="18" width="30" height="42"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <rect key="frame" x="24" y="24" width="30" height="33"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="⚙">
                                     <color key="titleColor" red="0.14117647058823529" green="0.15294117647058825" blue="0.16078431372549021" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
@@ -151,7 +143,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7V9-x7-620">
-                                <rect key="frame" x="281" y="10" width="54" height="54"/>
+                                <rect key="frame" x="281" y="11.5" width="54" height="54"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="54" id="Z2a-kU-zdo"/>
                                 </constraints>
@@ -175,7 +167,7 @@
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="top" secondItem="SKS-Gt-Yfv" secondAttribute="top" constant="6" id="NPl-IQ-evS"/>
                             <constraint firstItem="seG-dg-VIZ" firstAttribute="centerY" secondItem="7V9-x7-620" secondAttribute="centerY" constant="2" id="Nmz-Em-Ocu"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="top" id="V9q-3A-cQa"/>
-                            <constraint firstItem="SKS-Gt-Yfv" firstAttribute="trailing" secondItem="zRD-x9-WHF" secondAttribute="trailing" constant="24" id="dhC-zh-TcO"/>
+                            <constraint firstItem="zRD-x9-WHF" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" id="cd2-7F-5b1"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="top" secondItem="Y8o-P1-EhR" secondAttribute="bottom" constant="10" id="kC2-q8-Hgr"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="bottom" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="40" id="muh-IT-yDc"/>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="centerX" secondItem="Y8o-P1-EhR" secondAttribute="centerX" id="s3e-dq-bkd"/>

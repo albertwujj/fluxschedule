@@ -107,20 +107,30 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
         
         var scheduleItems = tableViewController.scheduleItems
         //update the previous cell's duration to match current cell's new start time
-        var i = row!
-        swapLoop: while(i >= 0) {
-            i -= 1
-            if i == -1 || scheduleItem.startTime! > scheduleItems[i].startTime! {
-                break swapLoop
+        let insertOption = appDelegate.userSettings.insertOption
+        switch insertOption {
+        case .extend:
+            fallthrough
+        case .shrink:
+            var i = row!
+            
+            swapLoop: while(i >= 0) {
+                i -= 1
+                if i == -1 || (scheduleItem.startTime! > scheduleItems[i].startTime! || (scheduleItem.startTime! == scheduleItems[i].startTime! && insertOption == .extend)) {
+                    break swapLoop
+                }
             }
+            
+            let j = i + 1 - insertOption.rawValue
+            
+            scheduleItems.insert(scheduleItems.remove(at: row), at: j>0 ? j:0)
+            if (j > 0) {
+                let prev = scheduleItems[j - 1]
+                prev.duration = scheduleItem.startTime! - prev.startTime!
+            }
+        default:
+            break
         }
-      
-        scheduleItems.insert(scheduleItems.remove(at: row), at: i + 1)
-        if (i >= 0) {
-            let prev = scheduleItems[i]
-            prev.duration = scheduleItem.startTime! - prev.startTime!
-        }
-        
         
         tableViewController.scheduleItems = scheduleItems
         tableViewController.update()
@@ -221,5 +231,5 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
         */
         
     }
-    
+   
 }

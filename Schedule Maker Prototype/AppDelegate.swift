@@ -5,7 +5,7 @@
 //  Created by Albert Wu on 11/7/17.
 //  Copyright © 2017 Old Friend. All rights reserved.
 //
-
+//Albert's iPhone 6 Plus device token: 704863c85eed5fdf3a0dfad4b7ed92cb2ea8bceca199ff5e92f3047c3871baf1
 import UIKit
 import CoreData
 import os.log
@@ -16,39 +16,72 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var userSettings: Settings = Settings()
-    static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+    static let DocumentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     var fullVersionPurchased = true
+    var scheduleViewController: ScheduleViewController!
+    var notifPermitted = false
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
         // Override point for customization after application launch.
+        /*
+        if (launchOptions != nil)
+        {
+            // opened from a push notification when the app is closed
+            var userInfo = launchOptions[UIApplicationLaunchOptionsKey.localNotification]?
+            if (userInfo != nil)
+            {
+                scheduleViewController.
+            }
+        }
+        */
+        
         if let loadedSettings = loadUserSettings() {
             userSettings = loadedSettings
         }
-        func application(
-            _ application: UIApplication,
-            didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-            // ... existing code ...
-            registerForPushNotifications()
-            return true
-        }
+        
+        registerForPushNotifications()
+        self.scheduleViewController = self.window!.rootViewController?.childViewControllers.first as! ScheduleViewController
+        UNUserNotificationCenter.current().delegate = scheduleViewController
+       
+        
         return true
     }
     func registerForPushNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in
             print("Permission granted: \(granted)")
+            guard granted else { return }
+            self.notifPermitted = granted
+            //self.getNotificationSettings()
+            // Create the custom actions for the TIMER_EXPIRED category.
+            
+    
+        }
+        
+        
+    }
+    func getNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+            print("Notification settings: \(settings)")
+            guard settings.authorizationStatus == .authorized else { return }
         }
     }
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        //scheduleTaskNotif()
+        if notifPermitted {
+            scheduleViewController.scheduleTaskNotifs(withAction: false)
+        }
     }
-
+    
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     }
@@ -60,6 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
+        
         saveUserSettings()
         self.saveContext()
     }
@@ -124,7 +158,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //MARK: global functions
     static func changeStatusBarColor(color: UIColor) {
         //Status bar style and visibility
-        UIApplication.shared.setStatusBarHidden(false, with: .none)
         UIApplication.shared.statusBarStyle = .lightContent
         
         //Change status bar color
@@ -133,5 +166,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             statusBar.backgroundColor = color
         }
     }
+    
 }
 

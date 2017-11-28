@@ -8,9 +8,11 @@
 
 import os.log
 import UIKit
+import UserNotifications
 
 class ScheduleTableViewController: UITableViewController {
-
+    
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     @IBOutlet weak var header: UIView!
     @IBOutlet weak var deleteButton: UIButton!
     
@@ -81,20 +83,8 @@ class ScheduleTableViewController: UITableViewController {
     func update() {
         //when a ScheduleItem's duration is changed, or when the first ScheduleItem's startTime is changed,
         //recalculate all startTimes based on the first startTime and each scheduleItem's duration
-        if scheduleItems.count != 0 {
-            if var currStartTime = scheduleItems[0].startTime {
-                for i in scheduleItems {
-                    i.startTime = currStartTime
-                    currStartTime = currStartTime + i.duration
-                    /*
-                    let startTextField = self.tableView.subviews[0].subviews[0].subviews[0] if
-                    */
-                }
-            }
-            
-            
-            
-        }
+        recalculateTimes()
+        
         tableView.reloadData()
         scheduleViewController.schedules[currDateInt] = scheduleItems
         scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
@@ -102,7 +92,21 @@ class ScheduleTableViewController: UITableViewController {
         highlightCurrCell()
         
     }
-    
+    //just move locked times back to prev, in order :))))
+    func recalculateTimes() {
+        if scheduleItems.count != 0 {
+            if var currStartTime = scheduleItems[0].startTime {
+                for i in scheduleItems {
+                    i.startTime = currStartTime
+                    currStartTime += i.duration
+                }
+                for i in scheduleItems {
+                    
+                }
+            }
+        
+        }
+    }
     /*
     //MARK: Persist Data
     func loadScheduleData() -> [ScheduleItem]?{
@@ -120,13 +124,8 @@ class ScheduleTableViewController: UITableViewController {
     }
     */
     
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
+    
+ 
     
     
     func tableView(tableView: UITableView!, canEditRowAtIndexPath indexPath: NSIndexPath!) -> Bool {
@@ -215,7 +214,11 @@ class ScheduleTableViewController: UITableViewController {
                 if startTime <= currentTime && startTime + scheduleItem.duration > currentTime  {
                     let bgColorView = UIView()
                     //bgColorView.backgroundColor = UIColor(red: 76.0/255.0, green: 161.0/255.0, blue: 255.0/255.0, alpha: 1.0)
-                    bgColorView.backgroundColor = .blue
+                    let orig = appDelegate.userSettings.themeColor
+                    //bgColorView.backgroundColor = tintOf(color: orig, tintFactor: 1/3)
+                    //bgColorView.backgroundColor = orig.lighter(by: 10.0)
+                    bgColorView.backgroundColor = orig.withAlphaComponent(0.8)
+                    print("FUCKER: \(String(describing: bgColorView.backgroundColor?.components.alpha))")
                     bgColorView.layer.masksToBounds = true
                     (cell as! ScheduleTableViewCell).backgroundView = bgColorView
                 }
@@ -232,4 +235,48 @@ class ScheduleTableViewController: UITableViewController {
         
         
     }
+    
+    
+    
+    
+    func tintOf(color: UIColor, tintFactor: Double) -> UIColor {
+        let components = color.components
+        let currG = components.green
+        let currB = components.blue
+        let currR = components.red
+        
+        let newG = currG + (1 - currG) * tintFactor
+        let newB = currB + (1 - currB) * tintFactor
+        let newR = currR + (1 - currR) * tintFactor
+        return UIColor(red: CGFloat(newR), green: CGFloat(newG), blue: CGFloat(newB), alpha: CGFloat(components.alpha))
+    }
 }
+extension UIColor {
+    var coreImageColor: CIColor {
+        return CIColor(color: self)
+    }
+    var components: (red: Double, green: Double, blue: Double, alpha: Double) {
+        let coreImageColor = self.coreImageColor
+        return (Double(coreImageColor.red), Double(coreImageColor.green), Double(coreImageColor.blue), Double(coreImageColor.alpha))
+    }
+}
+extension UIColor {
+    func lighter(by percentage:CGFloat=30.0) -> UIColor? {
+        return self.adjust(by: abs(percentage) )
+    }
+    func darker(by percentage:CGFloat=30.0) -> UIColor? {
+        return self.adjust(by: -1 * abs(percentage) )
+    }
+    func adjust(by percentage:CGFloat=30.0) -> UIColor? {
+        var r:CGFloat=0, g:CGFloat=0, b:CGFloat=0, a:CGFloat=0;
+        if(self.getRed(&r, green: &g, blue: &b, alpha: &a)){
+            return UIColor(red: min(r + percentage/100, 1.0),
+                           green: min(g + percentage/100, 1.0),
+                           blue: min(b + percentage/100, 1.0),
+                           alpha: a)
+        }else{
+            return nil
+        }
+    }
+}
+

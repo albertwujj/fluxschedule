@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7544C5231FCA735F001CC0A6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7544C5221FCA735E001CC0A6 /* Extensions.swift */; };
 		7591A31B1FB26518002DA737 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A31A1FB26518002DA737 /* AppDelegate.swift */; };
 		7591A3201FB26518002DA737 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7591A31E1FB26518002DA737 /* Main.storyboard */; };
 		7591A3231FB26518002DA737 /* Schedule_Maker_Prototype.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7591A3211FB26518002DA737 /* Schedule_Maker_Prototype.xcdatamodeld */; };
@@ -25,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		7544C5211FC8FBD0001CC0A6 /* Schedule Maker Prototype.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Schedule Maker Prototype.entitlements"; sourceTree = "<group>"; };
+		7544C5221FCA735E001CC0A6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		7591A3171FB26518002DA737 /* Schedule Maker Prototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Schedule Maker Prototype.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7591A31A1FB26518002DA737 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7591A31F1FB26518002DA737 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 				7591A33F1FBBDB2B002DA737 /* UITextFieldSI.swift */,
 				75A332EA1FC7E7A1001050B8 /* SettingsViewController.swift */,
 				75A332EC1FC8D2D5001050B8 /* Settings.swift */,
+				7544C5221FCA735E001CC0A6 /* Extensions.swift */,
 			);
 			path = "Schedule Maker Prototype";
 			sourceTree = "<group>";
@@ -177,6 +180,7 @@
 				7591A3231FB26518002DA737 /* Schedule_Maker_Prototype.xcdatamodeld in Sources */,
 				7591A3301FB26769002DA737 /* ScheduleTableViewCell.swift in Sources */,
 				7591A3321FB27656002DA737 /* ScheduleItem.swift in Sources */,
+				7544C5231FCA735F001CC0A6 /* Extensions.swift in Sources */,
 				7591A33C1FB683AF002DA737 /* ScheduleViewController.swift in Sources */,
 				7591A33E1FBA6D23002DA737 /* Schedule.swift in Sources */,
 				75A332ED1FC8D2D6001050B8 /* Settings.swift in Sources */,
