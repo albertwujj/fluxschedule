@@ -58,6 +58,10 @@ class ScheduleTableViewController: UITableViewController {
         cell.row = indexPath.row
         cell.scheduleItem = scheduleItems[indexPath.row]
         cell.selectionStyle = .none
+        
+        cell.layer.borderColor = appDelegate.userSettings.themeColor.cgColor
+        cell.layer.borderWidth = 0.1
+        
         return cell
     }
    
@@ -84,28 +88,98 @@ class ScheduleTableViewController: UITableViewController {
         //when a ScheduleItem's duration is changed, or when the first ScheduleItem's startTime is changed,
         //recalculate all startTimes based on the first startTime and each scheduleItem's duration
         recalculateTimes()
-        
         tableView.reloadData()
         scheduleViewController.schedules[currDateInt] = scheduleItems
-        scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
-        scheduleViewController.saveSchedulesData()
+        //scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
+        
         highlightCurrCell()
         
     }
+   
     //just move locked times back to prev, in order :))))
     func recalculateTimes() {
         if scheduleItems.count != 0 {
             if var currStartTime = scheduleItems[0].startTime {
-                for i in scheduleItems {
-                    i.startTime = currStartTime
-                    currStartTime += i.duration
-                }
-                for i in scheduleItems {
+                var origLockedItems: [ScheduleItem] = []
+                var i = 0
+                while(i < scheduleItems.count){
+                    if scheduleItems[i].locked && scheduleItems[i].startTime != nil {
+                        origLockedItems.append(scheduleItems[i])
+                        scheduleItems.remove(at: i)
+                        i -= 1
+                    }
                     
+                    else {
+                        scheduleItems[i].startTime = currStartTime
+                        currStartTime += scheduleItems[i].duration
+                    }
+                    i += 1
                 }
+                origLockedItems = origLockedItems.sorted(by: { $0.startTime! < $1.startTime! })
+                for j in origLockedItems {
+                    insertItem(item: j, newStartTime: j.startTime!)
+                    recalculateTimesBasic()
+                }
+                
             }
         
         }
+    }
+    func recalculateTimesBasic() {
+        var currStartTime = 0
+        if scheduleItems.count > 0, let st = scheduleItems[0].startTime {
+            currStartTime = st
+        }
+        for i in scheduleItems {
+            i.startTime = currStartTime
+            currStartTime += i.duration
+        }
+    }
+    
+    //inserts an item at the given start time, handling the item in the old spot by the user's insertOption
+    func insertItem(item: ScheduleItem, newStartTime: Int) {
+        
+        let insertOption = appDelegate.userSettings.insertOption
+        item.startTime = newStartTime
+        
+        var prevRow = scheduleItems.count
+        //find correct previous item
+        swapLoop: while(prevRow >= 0) {
+            prevRow -= 1
+            if prevRow == -1 || (item.startTime! > scheduleItems[prevRow].startTime! || (item.startTime! == scheduleItems[prevRow].startTime! && insertOption == .extend)) {
+                break swapLoop
+            }
+        }
+        //if extending duration, must take "prev prev" item
+        if (insertOption == .extend) {
+            prevRow -= 1
+        }
+        scheduleItems.insert(item, at: prevRow + 1)
+        let lastRow = scheduleItems.count - 1
+        let secondLast = lastRow > 0 ? scheduleItems[lastRow - 1] : nil
+        if lastRow > 0 && item.startTime! >= secondLast!.startTime! + secondLast!.duration  {
+            secondLast!.duration = item.startTime! - secondLast!.startTime!
+        }
+        else {
+            var splitItem: ScheduleItem!
+            //let curr = scheduleItems[i+1]
+            var diff = 0
+            var prev: ScheduleItem!
+            if (prevRow >= 0) {
+                prev = scheduleItems[prevRow]
+                diff = prev.startTime! + prev.duration - item.startTime!
+                prev.duration -= diff
+                
+                
+            }
+            
+            if(prevRow >= 0 && insertOption == .split && diff != 0) {
+                splitItem = ScheduleItem(name: prev.taskName, duration: diff, startTime: item.startTime! + item.duration)
+                scheduleItems.insert(splitItem, at: prevRow + 2)
+            }
+            
+        }
+        
     }
     /*
     //MARK: Persist Data
@@ -158,7 +232,7 @@ class ScheduleTableViewController: UITableViewController {
     }
     //MARK: Outer functions
     func addButtonPressed() {
-        scheduleItems.append(ScheduleItem(name: "Task", duration: 30 * 60))
+        scheduleItems.append(ScheduleItem(name: "\(scheduleItems.count + 1)", duration: 20 * 60, locked: false))
         update()
     }
     

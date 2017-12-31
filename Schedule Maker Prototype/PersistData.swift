@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 struct Paths {
     static let currentSchedule = "currentSchedule"
     static let schedule = "schedule"

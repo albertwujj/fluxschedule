@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class Schedule: NSObject, NSCoding {
     var s: [Int: [ScheduleItem]]?
    

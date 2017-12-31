@@ -11,6 +11,7 @@ import os.log
 import Foundation
 import UserNotifications
 
+
 class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotificationCenterDelegate {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -18,24 +19,36 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     @IBOutlet weak var weekdayLabel: UILabel!
     @IBOutlet weak var dateTextField: UITextField!
     
+    @IBOutlet weak var recurringTasksButton: UIButton!
+    @IBOutlet weak var topStripe: UIView!
+    @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak var leftDateButton: UIButton!
+    @IBOutlet weak var rightDateButton: UIButton!
+    
     var schedules : [Int: [ScheduleItem]] = [:]
     var tableViewController: ScheduleTableViewController!
     
     var currDateInt = 0
     var selectedDateInt: Int?
+    var sharedDefaults: UserDefaults!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        topStripe.backgroundColor = appDelegate.userSettings.themeColor
         AppDelegate.changeStatusBarColor(color: appDelegate.userSettings.themeColor)
-        
-        Timer.scheduledTimer(timeInterval: 30.0, target: self, selector: #selector(checkChangeCurrDate), userInfo: nil, repeats: true)
- 
-        
-        if let savedScheduleDates = loadScheduleDates() {
-            for i in savedScheduleDates {
-                schedules[i] = loadSchedule(date: i)
-            }
+        recurringTasksButton.setTitle("\u{2630}", for: .normal)
+        sharedDefaults = UserDefaults.init(suiteName: "group.AlbertWu.ScheduleMakerPrototype")
+        if let savedSchedules = loadSchedules() {
+            schedules = savedSchedules
         }
+        
+        Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(checkChangeCurrDate), userInfo: nil, repeats: true)
+        //loadSavedData()
+        
+        containerView.layer.borderColor = appDelegate.userSettings.themeColor.cgColor
+        containerView.layer.borderWidth = 0.0;
+        
         /*
         if let savedSchedules = loadSchedulesData() {
             schedules = savedSchedules
@@ -43,9 +56,18 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         */
         changeCurrDate()
         dateTextField.delegate = self
+       
         // Do any additional setup after loading the view.
     }
-  
+    /*
+    private func loadSavedData() {
+        if let savedScheduleDates = loadScheduleDates() {
+            for i in savedScheduleDates {
+                schedules[i] = loadSchedule(date: i)
+            }
+        }
+    }
+ */
     @objc func checkChangeCurrDate() {
         if dateToHashableInt(date: Date()) != currDateInt {
             changeCurrDate()
@@ -55,11 +77,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         currDateInt = dateToHashableInt(date: Date())
         update()
     }
-    func weekday(date: Date) -> String  {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE"
-        return dateFormatter.string(from: date).uppercased()
-    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -131,13 +149,20 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         tableViewController.scheduleItems = schedules[selectedDateInt ?? currDateInt]!
         tableViewController.currDateInt = selectedDateInt ?? currDateInt
         tableViewController.update()
+        let date = intToDate(int: selectedDateInt ?? currDateInt)
         dateTextField.text = dateDescription(date: intToDate(int: selectedDateInt ?? currDateInt))
-        weekdayLabel.text = weekday(date: intToDate(int: selectedDateInt ?? currDateInt))
+        weekdayLabel.text = "\(date.format(format: "EEEE")), \(date.format(format: "MMM")) \(date.format(format: "d"))"
         //dateTextField.text = intDateDescription(int: selectedDateInt ?? currDateInt)
-        saveScheduleDates()
+        //saveScheduleDates()
         saveSchedules()
-        saveSchedulesData()
+        //saveSchedulesData()
     }
+    func weekday(date: Date) -> String  {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE"
+        return dateFormatter.string(from: date).uppercased()
+    }
+    
     func dateDescription(date: Date) -> String {
         let formatter = DateFormatter()
 
@@ -206,7 +231,22 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         }
     }
     */
+    func saveScheduleDates() {
+        var arr: [Int] = []
+        for i in schedules.keys {
+            arr.append(i)
+        }
+        
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(arr, toFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.scheduleDates).path)
+        if isSuccessfulSave {
+            os_log("Saving scheduleDates was successful", log: OSLog.default, type: .debug)
+        }
+        else {
+            os_log("Failed to save scheduleDates...", log: OSLog.default, type: .debug)
+        }
+    }
     
+    /*
     func saveSchedules() {
         for i in schedules.keys {
             let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(schedules[i]!, toFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.schedule + String(i)).path)
@@ -232,23 +272,23 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         return NSKeyedUnarchiver.unarchiveObject(withFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.schedule + String(date)).path) as? [ScheduleItem]
     }
     
-    func saveScheduleDates() {
-        var arr: [Int] = []
-        for i in schedules.keys {
-            arr.append(i)
-        }
-        
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(arr, toFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.scheduleDates).path)
-        if isSuccessfulSave {
-            os_log("Saving scheduleDates was successful", log: OSLog.default, type: .debug)
-        }
-        else {
-            os_log("Failed to save scheduleDates...", log: OSLog.default, type: .debug)
-        }
-    }
-    func loadScheduleDates() -> [Int]?{
+   func loadScheduleDates() -> [Int]?{
         
         return NSKeyedUnarchiver.unarchiveObject(withFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.scheduleDates).path) as? [Int]
+    }
+ */
+    func saveSchedules() {
+        NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
+        sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedules), forKey: Paths.schedules)
+    }
+    func loadSchedules() -> [Int:[ScheduleItem]]? {
+        if let data = sharedDefaults.object(forKey: Paths.schedules) as? Data {
+            NSKeyedUnarchiver.setClass(ScheduleItem.self, forClassName: "ScheduleItem")
+            let unarcher = NSKeyedUnarchiver(forReadingWith: data)
+            
+            return unarcher.decodeObject(forKey: "root") as? [Int:[ScheduleItem]]
+        }
+        return nil
     }
    
  
@@ -258,7 +298,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         
     }
     
-   
+   /*
     func loadSchedulesData() -> [Int: [ScheduleItem]]?{
         return (NSKeyedUnarchiver.unarchiveObject(withFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.schedules).path) as! Schedule).s
     }
@@ -272,6 +312,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
             os_log("Failed to save schedules...", log: OSLog.default, type: .debug)
         }
     }
+ */
     func registerCategories() {
         let view = UNNotificationAction(identifier: "view",
                                         title: "View",
@@ -336,11 +377,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
                 print("pls")
                 // the user tapped our "show more info…" button
                 print("delay task")
-                if let savedScheduleDates = loadScheduleDates() {
-                    for i in savedScheduleDates {
-                        schedules[i] = loadSchedule(date: i)
-                    }
-                }
+                
+                saveSchedules()
                 
                 for i in 0..<(schedules[currDateInt] ?? []).count {
                     print("Hey: \(i)")
@@ -371,5 +409,21 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         
         // you must call the completion handler when you're done
         completionHandler()
+    }
+    @IBAction func leftDateButtonPressed(_ sender: UIButton) {
+        changeDate(change: -1)
+    }
+    
+    @IBAction func rightDateButtonPressed(_ sender: UIButton) {
+        changeDate(change: 1)
+    }
+    func changeDate(change: Int) {
+        if selectedDateInt != nil {
+            selectedDateInt! += change
+        } else {
+            selectedDateInt = currDateInt + change
+        }
+        update()
+        
     }
 }

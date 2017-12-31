@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var fullVersionPurchased = true
     var scheduleViewController: ScheduleViewController!
     var notifPermitted = false
-    
+    let sharedDefaults = UserDefaults(suiteName: "group.AlbertWu.ScheduleMakerPrototype")!
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Override point for customization after application launch.
@@ -70,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
-        
+        scheduleViewController.saveSchedules()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -80,6 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if notifPermitted {
             scheduleViewController.scheduleTaskNotifs(withAction: false)
         }
+        
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -88,6 +89,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        if let newSchedule = scheduleViewController.loadSchedules() {
+            scheduleViewController.schedules = newSchedule
+            scheduleViewController.update()
+        }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -142,7 +147,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
+    /*
     func saveUserSettings() {
+        NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
         let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(userSettings, toFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.userSettings).path)
         if isSuccessfulSave {
             os_log("Saving userSettings was successful", log: OSLog.default, type: .debug)
@@ -151,9 +158,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             os_log("Failed to save userSettings...", log: OSLog.default, type: .debug)
         }
     }
+ */
+    func saveUserSettings() {
+        NSKeyedArchiver.setClassName("Settings", for: Settings.self)
+        sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: userSettings), forKey: Paths.userSettings)
+    }
     
     func loadUserSettings() -> Settings? {
-         return NSKeyedUnarchiver.unarchiveObject(withFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.userSettings).path) as? Settings
+        if let data = sharedDefaults.object(forKey: Paths.userSettings) as? Data {
+            NSKeyedUnarchiver.setClass(Settings.self, forClassName: "Settings")
+            let unarcher = NSKeyedUnarchiver(forReadingWith: data)
+            
+            return unarcher.decodeObject(forKey: "root") as? Settings
+        }
+        return nil
     }
     //MARK: global functions
     static func changeStatusBarColor(color: UIColor) {

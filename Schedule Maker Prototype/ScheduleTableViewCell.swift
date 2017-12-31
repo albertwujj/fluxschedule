@@ -31,6 +31,7 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
                 startTimeTF.text = "XX:XX"
                 endTimeTF.text = "XX:XX"
             }
+            lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀", for: .normal)
         }
     }
     
@@ -40,6 +41,7 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var taskNameTF: UITextField!
     @IBOutlet weak var durationTF: UITextField!
     
+    @IBOutlet weak var lockButton: UIButton!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -108,35 +110,164 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
         var scheduleItems = tableViewController.scheduleItems
         //update the previous cell's duration to match current cell's new start time
         let insertOption = appDelegate.userSettings.insertOption
+        /*
         switch insertOption {
         case .extend:
             fallthrough
         case .shrink:
+            
+            
+        case .split:
+            
             var i = row!
             
             swapLoop: while(i >= 0) {
                 i -= 1
-                if i == -1 || (scheduleItem.startTime! > scheduleItems[i].startTime! || (scheduleItem.startTime! == scheduleItems[i].startTime! && insertOption == .extend)) {
+                if i == -1 || scheduleItem.startTime! > scheduleItems[i].startTime! {
                     break swapLoop
                 }
             }
-            
-            let j = i + 1 - insertOption.rawValue
-            
-            scheduleItems.insert(scheduleItems.remove(at: row), at: j>0 ? j:0)
-            if (j > 0) {
-                let prev = scheduleItems[j - 1]
-                prev.duration = scheduleItem.startTime! - prev.startTime!
-            }
+            let prev = scheduleItems[i]
+            let diff = prev.startTime! + prev.duration - scheduleItem.startTime!
+            prev.duration -= diff
+            let splitItem = ScheduleItem(name: prev.taskName, duration: diff, startTime: scheduleItem.startTime + scheduleItem.duration)
+            scheduleItems.insert(scheduleItems.remove(at: row), at: i+1)
+            scheduleItems.insert(<#T##newElement: ScheduleItem##ScheduleItem#>, at: <#T##Int#>)
         default:
             break
         }
+ */
+        /*
+        var i = row!
         
+        swapLoop: while(i >= 0) {
+            i -= 1
+            if i == -1 || (scheduleItem.startTime! > scheduleItems[i].startTime! || (scheduleItem.startTime! == scheduleItems[i].startTime! && insertOption == .extend)) {
+                break swapLoop
+            }
+        }
+        let prev = row > 0 ? scheduleItems[row - 1] : nil
+        if i + 1 == row && row > 0 && scheduleItem.startTime! >= prev!.startTime! + prev!.duration  {
+            prev!.duration = scheduleItem.startTime! - prev!.startTime!
+            
+        }
+        else {
+            var splitItem: ScheduleItem!
+            //let curr = scheduleItems[i+1]
+            if (i >= 0) {
+                let newPrev = scheduleItems[i]
+                let diff = newPrev.startTime! + newPrev.duration - scheduleItem.startTime!
+                newPrev.duration -= diff
+                
+                if(insertOption == .split && diff != 0) {
+                    splitItem = ScheduleItem(name: newPrev.taskName, duration: diff, startTime: scheduleItem.startTime! + scheduleItem.duration)
+                    scheduleItems.insert(splitItem, at: i + 1)
+                }
+            }
+            
+            scheduleItems.insert(scheduleItems.remove(at: row + 1), at: i + 1)
+            
+            
+        }
         tableViewController.scheduleItems = scheduleItems
         tableViewController.update()
+ */
+        ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
         
     }
+
+    static func moveItem(tvc: ScheduleTableViewController, origRow: Int, newStartTime: Int, insertOption: InsertOption) {
     
+        var scheduleItems = tvc.scheduleItems
+        let scheduleItem = scheduleItems[origRow]
+        scheduleItem.startTime = newStartTime
+        var i = origRow
+        //find correct previous item
+        swapLoop: while(i >= 0) {
+            i -= 1
+            if i == -1 || (scheduleItem.startTime! > scheduleItems[i].startTime! || (scheduleItem.startTime! == scheduleItems[i].startTime! && insertOption == .extend)) {
+                break swapLoop
+            }
+        }
+        //if extending duration, must take "prev prev" item
+        if (insertOption == .extend) {
+            i -= 1
+        }
+        let prev = origRow > 0 ? scheduleItems[origRow - 1] : nil
+        if origRow > 0 && scheduleItem.startTime! >= prev!.startTime! + prev!.duration  {
+            prev!.duration = scheduleItem.startTime! - prev!.startTime!
+        }
+        else {
+            var splitItem: ScheduleItem!
+            //let curr = scheduleItems[i+1]
+            var diff = 0
+            var newPrev: ScheduleItem!
+            if (i >= 0) {
+                newPrev = scheduleItems[i]
+                diff = newPrev.startTime! + newPrev.duration - scheduleItem.startTime!
+                newPrev.duration -= diff
+                
+                
+            }
+            
+            scheduleItems.insert(scheduleItems.remove(at: origRow), at: i + 1)
+            
+            if(i >= 0 && insertOption == .split && diff != 0) {
+                splitItem = ScheduleItem(name: newPrev.taskName, duration: diff, startTime: scheduleItem.startTime! + scheduleItem.duration)
+                scheduleItems.insert(splitItem, at: i + 2)
+            }
+            
+            
+        }
+        tvc.scheduleItems = scheduleItems
+        tvc.update()
+        
+    }
+    static func insertItem(tvc: ScheduleTableViewController, item: ScheduleItem, newStartTime: Int, insertOption: InsertOption) {
+        var scheduleItems = tvc.scheduleItems
+        item.startTime = newStartTime
+        let origRow = scheduleItems.count - 1
+        var i = origRow
+        //find correct previous item
+        swapLoop: while(i >= 0) {
+            i -= 1
+            if i == -1 || (item.startTime! > scheduleItems[i].startTime! || (item.startTime! == scheduleItems[i].startTime! && insertOption == .extend)) {
+                break swapLoop
+            }
+        }
+        //if extending duration, must take "prev prev" item
+        if (insertOption == .extend) {
+            i -= 1
+        }
+        let prev = origRow > 0 ? scheduleItems[origRow - 1] : nil
+        if origRow > 0 && item.startTime! >= prev!.startTime! + prev!.duration  {
+            prev!.duration = item.startTime! - prev!.startTime!
+        }
+        else {
+            var splitItem: ScheduleItem!
+            //let curr = scheduleItems[i+1]
+            var diff = 0
+            var newPrev: ScheduleItem!
+            if (i >= 0) {
+                newPrev = scheduleItems[i]
+                diff = newPrev.startTime! + newPrev.duration - item.startTime!
+                newPrev.duration -= diff
+                
+                
+            }
+            
+            scheduleItems.insert(item, at: i + 1)
+            
+            if(i >= 0 && insertOption == .split && diff != 0) {
+                splitItem = ScheduleItem(name: newPrev.taskName, duration: diff, startTime: item.startTime! + item.duration)
+                scheduleItems.insert(splitItem, at: i + 2)
+            }
+            
+            
+        }
+        tvc.scheduleItems = scheduleItems
+        tvc.update()
+    }
     @IBAction func durationEditing(_ sender: UITextField) {
         let datePickerView:UIDatePicker = UIDatePicker()
         
@@ -231,5 +362,11 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
         */
         
     }
-   
+    //MARK: Actions
+    
+    @IBAction func lockButtonPressed(_ sender: UIButton) {
+        scheduleItem.locked = !scheduleItem.locked
+        sender.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+        tableViewController.update()
+    }
 }

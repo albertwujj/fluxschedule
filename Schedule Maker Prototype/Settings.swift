@@ -6,6 +6,7 @@
 //  Copyright © 2017 Old Friend. All rights reserved.
 //
 
+
 import UIKit
 enum InsertOption: Int {
     case shrink = 0
@@ -17,7 +18,7 @@ class Settings: NSObject, NSCoding {
     var is24Mode: Bool = false
     var notifDelayTime = 10
     var themeColor:UIColor = .blue
-    var insertOption: InsertOption = .shrink
+    var insertOption: InsertOption = .split
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(is24Mode, forKey: PropertyKey.is24Mode)
@@ -31,8 +32,9 @@ class Settings: NSObject, NSCoding {
         self.is24Mode = aDecoder.decodeBool(forKey: PropertyKey.is24Mode)
         self.notifDelayTime = aDecoder.decodeInteger(forKey: PropertyKey.notifDelayTime)
         self.themeColor = aDecoder.decodeObject(forKey: PropertyKey.themeColor) as! UIColor
+      
         //self.insertOption = InsertOption(rawValue: aDecoder.decodeInteger(forKey: PropertyKey.insertOption))!
-        self.insertOption = .extend
+        self.insertOption = .split
     }
     
     struct PropertyKey {

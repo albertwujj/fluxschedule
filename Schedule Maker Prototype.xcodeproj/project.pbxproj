@@ -14,15 +14,60 @@
 		7591A3251FB26518002DA737 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7591A3241FB26518002DA737 /* Assets.xcassets */; };
 		7591A3281FB26518002DA737 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7591A3261FB26518002DA737 /* LaunchScreen.storyboard */; };
 		7591A3301FB26769002DA737 /* ScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A32F1FB26769002DA737 /* ScheduleTableViewCell.swift */; };
-		7591A3321FB27656002DA737 /* ScheduleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A3311FB27656002DA737 /* ScheduleItem.swift */; };
 		7591A3341FB27B29002DA737 /* ScheduleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A3331FB27B29002DA737 /* ScheduleTableViewController.swift */; };
 		7591A3361FB63576002DA737 /* PersistData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A3351FB63576002DA737 /* PersistData.swift */; };
 		7591A33C1FB683AF002DA737 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A33B1FB683AE002DA737 /* ScheduleViewController.swift */; };
 		7591A33E1FBA6D23002DA737 /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A33D1FBA6D23002DA737 /* Schedule.swift */; };
 		7591A3401FBBDB2C002DA737 /* UITextFieldSI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A33F1FBBDB2B002DA737 /* UITextFieldSI.swift */; };
+		75A31C721FE5BE34004C6404 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75A31C711FE5BE34004C6404 /* NotificationCenter.framework */; };
+		75A31C751FE5BE34004C6404 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A31C741FE5BE34004C6404 /* TodayViewController.swift */; };
+		75A31C781FE5BE34004C6404 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 75A31C761FE5BE34004C6404 /* MainInterface.storyboard */; };
+		75A31C7C1FE5BE34004C6404 /* ScheduleWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 75A31C6F1FE5BE34004C6404 /* ScheduleWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		75A31CF51FE5E248004C6404 /* PersistData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A3351FB63576002DA737 /* PersistData.swift */; };
+		75A31CF61FE5E36F004C6404 /* ScheduleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A31CA51FE5DA58004C6404 /* ScheduleItem.swift */; };
+		75A31CF71FE5EAB9004C6404 /* ScheduleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A31CA51FE5DA58004C6404 /* ScheduleItem.swift */; };
+		75A31CF91FE6458F004C6404 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A332EC1FC8D2D5001050B8 /* Settings.swift */; };
 		75A332EB1FC7E7A1001050B8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A332EA1FC7E7A1001050B8 /* SettingsViewController.swift */; };
 		75A332ED1FC8D2D6001050B8 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A332EC1FC8D2D5001050B8 /* Settings.swift */; };
+		75F88A961FF5EA4F005316DB /* WeekdaySelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A951FF5EA4F005316DB /* WeekdaySelection.swift */; };
+		75F88A981FF86400005316DB /* RecurringTasksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A971FF86400005316DB /* RecurringTasksViewController.swift */; };
+		75F88A9A1FF8BE7E005316DB /* RecurringTasksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */; };
+		75F88A9E1FF975C6005316DB /* RecurringTaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		75A31C7A1FE5BE34004C6404 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7591A30F1FB26518002DA737 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 75A31C6E1FE5BE34004C6404;
+			remoteInfo = ScheduleWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		75A31C801FE5BE34004C6404 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				75A31C7C1FE5BE34004C6404 /* ScheduleWidget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		75A31C931FE5D8E2004C6404 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		7544C5211FC8FBD0001CC0A6 /* Schedule Maker Prototype.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Schedule Maker Prototype.entitlements"; sourceTree = "<group>"; };
@@ -35,14 +80,24 @@
 		7591A3271FB26518002DA737 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7591A3291FB26518002DA737 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7591A32F1FB26769002DA737 /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
-		7591A3311FB27656002DA737 /* ScheduleItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleItem.swift; sourceTree = "<group>"; };
 		7591A3331FB27B29002DA737 /* ScheduleTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewController.swift; sourceTree = "<group>"; };
 		7591A3351FB63576002DA737 /* PersistData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistData.swift; sourceTree = "<group>"; };
 		7591A33B1FB683AE002DA737 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		7591A33D1FBA6D23002DA737 /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		7591A33F1FBBDB2B002DA737 /* UITextFieldSI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextFieldSI.swift; sourceTree = "<group>"; };
+		75A31C6F1FE5BE34004C6404 /* ScheduleWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ScheduleWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		75A31C711FE5BE34004C6404 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		75A31C741FE5BE34004C6404 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
+		75A31C771FE5BE34004C6404 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		75A31C791FE5BE34004C6404 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		75A31C811FE5C1DA004C6404 /* ScheduleWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScheduleWidget.entitlements; sourceTree = "<group>"; };
+		75A31CA51FE5DA58004C6404 /* ScheduleItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleItem.swift; sourceTree = "<group>"; };
 		75A332EA1FC7E7A1001050B8 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		75A332EC1FC8D2D5001050B8 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		75F88A951FF5EA4F005316DB /* WeekdaySelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySelection.swift; sourceTree = "<group>"; };
+		75F88A971FF86400005316DB /* RecurringTasksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTasksViewController.swift; sourceTree = "<group>"; };
+		75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTasksTableViewController.swift; sourceTree = "<group>"; };
+		75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTaskTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +108,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		75A31C6C1FE5BE34004C6404 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				75A31C721FE5BE34004C6404 /* NotificationCenter.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -60,6 +123,8 @@
 			isa = PBXGroup;
 			children = (
 				7591A3191FB26518002DA737 /* Schedule Maker Prototype */,
+				75A31C731FE5BE34004C6404 /* ScheduleWidget */,
+				75A31C701FE5BE34004C6404 /* Frameworks */,
 				7591A3181FB26518002DA737 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,6 +133,7 @@
 			isa = PBXGroup;
 			children = (
 				7591A3171FB26518002DA737 /* Schedule Maker Prototype.app */,
+				75A31C6F1FE5BE34004C6404 /* ScheduleWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -79,11 +145,12 @@
 				7591A31A1FB26518002DA737 /* AppDelegate.swift */,
 				7591A3331FB27B29002DA737 /* ScheduleTableViewController.swift */,
 				7591A32F1FB26769002DA737 /* ScheduleTableViewCell.swift */,
-				7591A3311FB27656002DA737 /* ScheduleItem.swift */,
 				7591A3351FB63576002DA737 /* PersistData.swift */,
 				7591A33B1FB683AE002DA737 /* ScheduleViewController.swift */,
+				7544C5221FCA735E001CC0A6 /* Extensions.swift */,
 				7591A33D1FBA6D23002DA737 /* Schedule.swift */,
 				7591A31E1FB26518002DA737 /* Main.storyboard */,
+				75F88A951FF5EA4F005316DB /* WeekdaySelection.swift */,
 				7591A3241FB26518002DA737 /* Assets.xcassets */,
 				7591A3261FB26518002DA737 /* LaunchScreen.storyboard */,
 				7591A3291FB26518002DA737 /* Info.plist */,
@@ -91,9 +158,31 @@
 				7591A33F1FBBDB2B002DA737 /* UITextFieldSI.swift */,
 				75A332EA1FC7E7A1001050B8 /* SettingsViewController.swift */,
 				75A332EC1FC8D2D5001050B8 /* Settings.swift */,
-				7544C5221FCA735E001CC0A6 /* Extensions.swift */,
+				75F88A971FF86400005316DB /* RecurringTasksViewController.swift */,
+				75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */,
+				75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */,
 			);
 			path = "Schedule Maker Prototype";
+			sourceTree = "<group>";
+		};
+		75A31C701FE5BE34004C6404 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				75A31C711FE5BE34004C6404 /* NotificationCenter.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		75A31C731FE5BE34004C6404 /* ScheduleWidget */ = {
+			isa = PBXGroup;
+			children = (
+				75A31C811FE5C1DA004C6404 /* ScheduleWidget.entitlements */,
+				75A31C741FE5BE34004C6404 /* TodayViewController.swift */,
+				75A31CA51FE5DA58004C6404 /* ScheduleItem.swift */,
+				75A31C761FE5BE34004C6404 /* MainInterface.storyboard */,
+				75A31C791FE5BE34004C6404 /* Info.plist */,
+			);
+			path = ScheduleWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -106,15 +195,35 @@
 				7591A3131FB26518002DA737 /* Sources */,
 				7591A3141FB26518002DA737 /* Frameworks */,
 				7591A3151FB26518002DA737 /* Resources */,
+				75A31C801FE5BE34004C6404 /* Embed App Extensions */,
+				75A31C931FE5D8E2004C6404 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				75A31C7B1FE5BE34004C6404 /* PBXTargetDependency */,
 			);
 			name = "Schedule Maker Prototype";
 			productName = "Schedule Maker Prototype";
 			productReference = 7591A3171FB26518002DA737 /* Schedule Maker Prototype.app */;
 			productType = "com.apple.product-type.application";
+		};
+		75A31C6E1FE5BE34004C6404 /* ScheduleWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 75A31C7F1FE5BE34004C6404 /* Build configuration list for PBXNativeTarget "ScheduleWidget" */;
+			buildPhases = (
+				75A31C6B1FE5BE34004C6404 /* Sources */,
+				75A31C6C1FE5BE34004C6404 /* Frameworks */,
+				75A31C6D1FE5BE34004C6404 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ScheduleWidget;
+			productName = ScheduleWidget;
+			productReference = 75A31C6F1FE5BE34004C6404 /* ScheduleWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -130,7 +239,19 @@
 						CreatedOnToolsVersion = 9.1;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
 							com.apple.Push = {
+								enabled = 1;
+							};
+						};
+					};
+					75A31C6E1FE5BE34004C6404 = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
 							};
 						};
@@ -151,6 +272,7 @@
 			projectRoot = "";
 			targets = (
 				7591A3161FB26518002DA737 /* Schedule Maker Prototype */,
+				75A31C6E1FE5BE34004C6404 /* ScheduleWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -166,6 +288,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		75A31C6D1FE5BE34004C6404 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				75A31C781FE5BE34004C6404 /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -175,20 +305,43 @@
 			files = (
 				7591A3361FB63576002DA737 /* PersistData.swift in Sources */,
 				7591A3401FBBDB2C002DA737 /* UITextFieldSI.swift in Sources */,
+				75F88A961FF5EA4F005316DB /* WeekdaySelection.swift in Sources */,
+				75F88A981FF86400005316DB /* RecurringTasksViewController.swift in Sources */,
+				75F88A9E1FF975C6005316DB /* RecurringTaskTableViewCell.swift in Sources */,
 				7591A3341FB27B29002DA737 /* ScheduleTableViewController.swift in Sources */,
 				75A332EB1FC7E7A1001050B8 /* SettingsViewController.swift in Sources */,
 				7591A3231FB26518002DA737 /* Schedule_Maker_Prototype.xcdatamodeld in Sources */,
 				7591A3301FB26769002DA737 /* ScheduleTableViewCell.swift in Sources */,
-				7591A3321FB27656002DA737 /* ScheduleItem.swift in Sources */,
 				7544C5231FCA735F001CC0A6 /* Extensions.swift in Sources */,
 				7591A33C1FB683AF002DA737 /* ScheduleViewController.swift in Sources */,
 				7591A33E1FBA6D23002DA737 /* Schedule.swift in Sources */,
+				75F88A9A1FF8BE7E005316DB /* RecurringTasksTableViewController.swift in Sources */,
+				75A31CF71FE5EAB9004C6404 /* ScheduleItem.swift in Sources */,
 				75A332ED1FC8D2D6001050B8 /* Settings.swift in Sources */,
 				7591A31B1FB26518002DA737 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		75A31C6B1FE5BE34004C6404 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				75A31CF61FE5E36F004C6404 /* ScheduleItem.swift in Sources */,
+				75A31CF51FE5E248004C6404 /* PersistData.swift in Sources */,
+				75A31CF91FE6458F004C6404 /* Settings.swift in Sources */,
+				75A31C751FE5BE34004C6404 /* TodayViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		75A31C7B1FE5BE34004C6404 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 75A31C6E1FE5BE34004C6404 /* ScheduleWidget */;
+			targetProxy = 75A31C7A1FE5BE34004C6404 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		7591A31E1FB26518002DA737 /* Main.storyboard */ = {
@@ -205,6 +358,14 @@
 				7591A3271FB26518002DA737 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		75A31C761FE5BE34004C6404 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				75A31C771FE5BE34004C6404 /* Base */,
+			);
+			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -258,7 +419,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -309,7 +470,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -320,6 +481,7 @@
 		7591A32D1FB26518002DA737 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Schedule Maker Prototype/Schedule Maker Prototype.entitlements";
 				CODE_SIGN_STYLE = Automatic;
@@ -337,6 +499,7 @@
 		7591A32E1FB26518002DA737 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Schedule Maker Prototype/Schedule Maker Prototype.entitlements";
 				CODE_SIGN_STYLE = Automatic;
@@ -346,6 +509,40 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "AWJJ.Liquid-Schedule";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		75A31C7D1FE5BE34004C6404 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ScheduleWidget/ScheduleWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9P3FVEPY7V;
+				INFOPLIST_FILE = ScheduleWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "AWJJ.Liquid-Schedule.ScheduleWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		75A31C7E1FE5BE34004C6404 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ScheduleWidget/ScheduleWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9P3FVEPY7V;
+				INFOPLIST_FILE = ScheduleWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "AWJJ.Liquid-Schedule.ScheduleWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -368,6 +565,15 @@
 			buildConfigurations = (
 				7591A32D1FB26518002DA737 /* Debug */,
 				7591A32E1FB26518002DA737 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		75A31C7F1FE5BE34004C6404 /* Build configuration list for PBXNativeTarget "ScheduleWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				75A31C7D1FE5BE34004C6404 /* Debug */,
+				75A31C7E1FE5BE34004C6404 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
