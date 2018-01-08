@@ -204,6 +204,17 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
             var newPrev: ScheduleItem!
             if (i >= 0) {
                 newPrev = scheduleItems[i]
+                if newPrev.locked == true {
+                    let alertController = UIAlertController(title: "Locked event conflict", message: "New start time would cause event \"\(scheduleItem.taskName)\" to conflict with locked event \"\(newPrev.taskName)\".", preferredStyle: UIAlertControllerStyle.alert)
+                    
+                    let okAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+                    {
+                        (result : UIAlertAction) -> Void in
+                    }
+                    alertController.addAction(okAction)
+                    tvc.present(alertController, animated: true, completion: nil)
+                    return
+                }
                 diff = newPrev.startTime! + newPrev.duration - scheduleItem.startTime!
                 newPrev.duration -= diff
                 
@@ -211,12 +222,12 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
             }
             
             scheduleItems.insert(scheduleItems.remove(at: origRow), at: i + 1)
-            
+            /*
             if(i >= 0 && insertOption == .split && diff != 0) {
                 splitItem = ScheduleItem(name: newPrev.taskName, duration: diff, startTime: scheduleItem.startTime! + scheduleItem.duration)
                 scheduleItems.insert(splitItem, at: i + 2)
             }
-            
+            */
             
         }
         tvc.scheduleItems = scheduleItems

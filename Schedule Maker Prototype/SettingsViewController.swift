@@ -34,7 +34,6 @@ class SettingsViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
-        print("back!!")
         self.navigationController!.popViewController(animated: true)
     }
 

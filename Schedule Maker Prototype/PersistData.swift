@@ -14,6 +14,7 @@ struct Paths {
     static let schedule = "schedule"
     static let schedules = "schedules"
     static let scheduleDates = "savedScheduleDates"
-    
+    static let schedulesEdited = "schedulesEdited"
     static let userSettings = "userSettings"
+    static let rTasks = "rTasks"
 }

@@ -29,6 +29,7 @@ public class ScheduleItem: NSObject, NSCoding {
         aCoder.encode(duration, forKey: PropertyKey.duration)
         aCoder.encode(startTime, forKey: PropertyKey.startTime)
         aCoder.encode(locked, forKey: PropertyKey.locked)
+        aCoder.encode(recurDays, forKey: PropertyKey.recurDays)
     }
     
     
@@ -50,6 +51,7 @@ public class ScheduleItem: NSObject, NSCoding {
         static let duration = "duration"
         static let startTime = "startTime"
         static let locked = "locked"
+        static let recurDays = "recurDays"
     }
     public required convenience init?(coder aDecoder: NSCoder) {
         guard let taskName = aDecoder.decodeObject(forKey: PropertyKey.taskName) as? String else {
@@ -61,8 +63,10 @@ public class ScheduleItem: NSObject, NSCoding {
         
         let startTime = aDecoder.decodeObject(forKey: PropertyKey.startTime) as! Int?
         let locked = aDecoder.decodeBool(forKey: PropertyKey.locked)
+        let recurDays = aDecoder.decodeObject(forKey: PropertyKey.recurDays) as! Set<Int>?
         self.init(name: taskName, duration:duration)
         self.startTime = startTime
         self.locked = locked
+        self.recurDays = recurDays
     }
 }

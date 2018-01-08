@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var scheduleViewController: ScheduleViewController!
     var notifPermitted = false
     let sharedDefaults = UserDefaults(suiteName: "group.AlbertWu.ScheduleMakerPrototype")!
+    var recurringTasksTableViewController: RecurringTasksTableViewController?
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Override point for customization after application launch.
@@ -43,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         registerForPushNotifications()
         self.scheduleViewController = self.window!.rootViewController?.childViewControllers.first as! ScheduleViewController
         UNUserNotificationCenter.current().delegate = scheduleViewController
-       
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         
         return true
     }
@@ -71,6 +72,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
         scheduleViewController.saveSchedules()
+        if let rtvc = recurringTasksTableViewController {
+            rtvc.saveRTasks()
+        }
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {

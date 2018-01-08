@@ -33,6 +33,7 @@
 		75F88A981FF86400005316DB /* RecurringTasksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A971FF86400005316DB /* RecurringTasksViewController.swift */; };
 		75F88A9A1FF8BE7E005316DB /* RecurringTasksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */; };
 		75F88A9E1FF975C6005316DB /* RecurringTaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */; };
+		75F88AA01FF98D77005316DB /* WeekdayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A9F1FF98D77005316DB /* WeekdayButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,7 @@
 		75F88A971FF86400005316DB /* RecurringTasksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTasksViewController.swift; sourceTree = "<group>"; };
 		75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTasksTableViewController.swift; sourceTree = "<group>"; };
 		75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTaskTableViewCell.swift; sourceTree = "<group>"; };
+		75F88A9F1FF98D77005316DB /* WeekdayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdayButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,18 +151,19 @@
 				7591A33B1FB683AE002DA737 /* ScheduleViewController.swift */,
 				7544C5221FCA735E001CC0A6 /* Extensions.swift */,
 				7591A33D1FBA6D23002DA737 /* Schedule.swift */,
-				7591A31E1FB26518002DA737 /* Main.storyboard */,
-				75F88A951FF5EA4F005316DB /* WeekdaySelection.swift */,
 				7591A3241FB26518002DA737 /* Assets.xcassets */,
 				7591A3261FB26518002DA737 /* LaunchScreen.storyboard */,
 				7591A3291FB26518002DA737 /* Info.plist */,
 				7591A3211FB26518002DA737 /* Schedule_Maker_Prototype.xcdatamodeld */,
 				7591A33F1FBBDB2B002DA737 /* UITextFieldSI.swift */,
+				7591A31E1FB26518002DA737 /* Main.storyboard */,
 				75A332EA1FC7E7A1001050B8 /* SettingsViewController.swift */,
 				75A332EC1FC8D2D5001050B8 /* Settings.swift */,
 				75F88A971FF86400005316DB /* RecurringTasksViewController.swift */,
 				75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */,
 				75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */,
+				75F88A951FF5EA4F005316DB /* WeekdaySelection.swift */,
+				75F88A9F1FF98D77005316DB /* WeekdayButton.swift */,
 			);
 			path = "Schedule Maker Prototype";
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 				7591A33C1FB683AF002DA737 /* ScheduleViewController.swift in Sources */,
 				7591A33E1FBA6D23002DA737 /* Schedule.swift in Sources */,
 				75F88A9A1FF8BE7E005316DB /* RecurringTasksTableViewController.swift in Sources */,
+				75F88AA01FF98D77005316DB /* WeekdayButton.swift in Sources */,
 				75A31CF71FE5EAB9004C6404 /* ScheduleItem.swift in Sources */,
 				75A332ED1FC8D2D6001050B8 /* Settings.swift in Sources */,
 				7591A31B1FB26518002DA737 /* AppDelegate.swift in Sources */,

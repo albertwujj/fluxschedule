@@ -91,9 +91,14 @@ class ScheduleTableViewController: UITableViewController {
         tableView.reloadData()
         scheduleViewController.schedules[currDateInt] = scheduleItems
         //scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
-        
         highlightCurrCell()
+        scheduleViewController.currentScheduleUpdated()
         
+    }
+    func updateFromSVC() {
+        recalculateTimes()
+        tableView.reloadData()
+        highlightCurrCell()
     }
    
     //just move locked times back to prev, in order :))))

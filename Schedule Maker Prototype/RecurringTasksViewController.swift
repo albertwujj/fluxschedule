@@ -10,6 +10,9 @@ import UIKit
 
 class RecurringTasksViewController: UIViewController {
 
+    
+    @IBOutlet weak var backButton: UIBarButtonItem!
+    
     @IBOutlet weak var addRTaskButton: UIButton!
     var rtvc:RecurringTasksTableViewController!
     
@@ -32,14 +35,20 @@ class RecurringTasksViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        if(segue.identifier == "RTaskEmbedSegue") {
+        if(segue.identifier == "RTasksEmbedSegue") {
             rtvc = segue.destination as! RecurringTasksTableViewController
+            rtvc.vc = self
         }
     }
     
-
+    @IBAction func backButtonPressed(_ sender: UIBarButtonItem) {
+        rtvc.saveRTasks()
+        dismiss(animated: true, completion: nil)
+    }
+    
     //MARK: Actions
     @IBAction func addRTaskButtonPressed(_ sender: UIButton) {
         rtvc.addRTask()
     }
+    
 }

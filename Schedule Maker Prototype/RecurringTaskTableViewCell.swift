@@ -7,9 +7,11 @@
 //
 
 import UIKit
+let appDelegate = UIApplication.shared.delegate as! AppDelegate
+var startOfToday: Date!
 
-class RecurringTaskTableViewCell: UITableViewCell {
-
+class RecurringTaskTableViewCell: UITableViewCell, UITextFieldDelegate {
+    var tvcontroller: RecurringTasksTableViewController!
     var scheduleItem: ScheduleItem! {
         //Have cell display proper TextField content based on ScheduleItem data
         didSet {
@@ -17,14 +19,19 @@ class RecurringTaskTableViewCell: UITableViewCell {
             durationTF.text = durationDescription(duration: scheduleItem.duration)
             if let startTime = scheduleItem.startTime {
                 startTimeTF.text = timeDescription(durationSinceMidnight: startTime)
-                let endTime = startTime + scheduleItem.duration
-                endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
+                //let endTime = startTime + scheduleItem.duration
+                //endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
             }
             else {
                 startTimeTF.text = "XX:XX"
-                endTimeTF.text = "XX:XX"
+                //endTimeTF.text = "XX:XX"
             }
-            //lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀", for: .normal)
+            lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀", for: .normal)
+            weekdaySelection.chosenWeekdays = scheduleItem.recurDays!
+            for i in weekdaySelection.chosenWeekdays {
+                weekdaySelection.weekdayButtons[i].isPressed = true
+            }
+            weekdaySelection.tvcell = self
         }
     }
     @IBOutlet weak var taskNameTF: UITextField!
@@ -32,15 +39,121 @@ class RecurringTaskTableViewCell: UITableViewCell {
     @IBOutlet weak var startTimeTF: UITextField!
     @IBOutlet weak var durationTF: UITextField!
     
+    @IBOutlet weak var lockButton: UIButton!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        startOfToday = Calendar.current.startOfDay(for: Date())
+        taskNameTF.delegate = self
+        startTimeTF.delegate = self
+        durationTF.delegate = self
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    //UITextFieldDelegateFunctions
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        tvcontroller.vc.backButton.isEnabled = false
+        textField.selectAll(nil)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return false
+    }
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField == taskNameTF {
+            scheduleItem.taskName = textField.text ?? ""
+        }
+        else if textField == durationTF {
+            
+        }
+        else if textField == startTimeTF {
+            
+        }
+        tvcontroller.vc.backButton.isEnabled = true
+    }
+    
+    //MARK: Input handling
+    @IBAction func startTimeEditing(_ sender: UITextField) {
+        let datePickerView:UIDatePicker = UIDatePicker()
+        datePickerView.datePickerMode = UIDatePickerMode.time
+        sender.inputView = datePickerView
+        
+        let date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)
+        datePickerView.setDate(date, animated: true)
+        
+        datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChangedStartTime), for: UIControlEvents.valueChanged)
+        
+    }
+    @objc func datePickerValueChangedStartTime(sender:UIDatePicker) {
+        let date = sender.date
+        //update startTime and endTime based on chosen date
+        
+        
+        if isRecurConflict(startTime1: Int(date.timeIntervalSince(startOfToday)), duration: scheduleItem.duration, recurDays: scheduleItem.recurDays!, message: "New start time") {
+            return
+        }
+        scheduleItem.startTime = Int(date.timeIntervalSince(startOfToday))
+        startTimeTF.text = timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+        startTimeTF.resignFirstResponder()
+    }
+    @IBAction func durationEditing(_ sender: UITextField) {
+        let datePickerView:UIDatePicker = UIDatePicker()
+        
+        datePickerView.datePickerMode = UIDatePickerMode.countDownTimer
+        
+        sender.inputView = datePickerView
+        
+        let date = Date(timeInterval: Double(scheduleItem.duration), since: startOfToday)
+        datePickerView.setDate(date, animated: true)
+        
+        datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChanged), for: UIControlEvents.valueChanged)
+        
+    }
+    @objc func datePickerValueChanged(sender:UIDatePicker) {
+        
+        let duration = sender.countDownDuration
+        if let startTime = scheduleItem.startTime {
+            if isRecurConflict(startTime1: startTime, duration: Int(duration), recurDays: scheduleItem.recurDays!, message: "New duration") {
+                return
+            }
+        }
+        scheduleItem.duration = Int(duration)
+        durationTF.text = durationDescription(duration: scheduleItem.duration)
+        durationTF.resignFirstResponder()
+    }
+    func isRecurConflict(startTime1: Int, duration: Int, recurDays: Set<Int>, message: String) -> Bool {
+        let endTime1 = startTime1 + duration
+        for task in tvcontroller.rTasks {
+            if task !== scheduleItem {
+                if let tStartTime = task.startTime {
+                    for movedDay in recurDays {
+                        if task.recurDays!.contains(movedDay) {
+                            let startTime2 = tStartTime
+                            let endTime2 = tStartTime + task.duration
+                            if (startTime1 < startTime2 && endTime1 > startTime2) || (startTime1 < endTime2 && endTime1 > endTime2) {
+                                let alertController = UIAlertController(title: "Recurring event conflict", message: "\(message) would cause event \"\(scheduleItem.taskName)\" to conflict with event \"\(task.taskName)\".", preferredStyle: UIAlertControllerStyle.alert)
+                                
+                                let okAction = UIAlertAction(title: "Cancel change", style: UIAlertActionStyle.default)
+                                {
+                                    (result : UIAlertAction) -> Void in
+                                }
+                                alertController.addAction(okAction)
+                                tvcontroller.present(alertController, animated: true, completion: nil)
+                                return true
+                            }
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        return false
     }
     func durationDescription(duration: Int) -> String {
         let hour:Int = duration / 3600
@@ -57,6 +170,7 @@ class RecurringTaskTableViewCell: UITableViewCell {
         return "\(hourString):\(minuteString)"
         
     }
+        
     func timeDescription(durationSinceMidnight: Int) -> String {
         /*
          if(durationSinceMidnight / 3600 < 13) {
@@ -99,5 +213,10 @@ class RecurringTaskTableViewCell: UITableViewCell {
          */
         return text
         //return "ERROR: durationSinceMidnight greater than a day"
+    }
+    @IBAction func lockButtonPressed(_ sender: UIButton) {
+        scheduleItem.locked = !scheduleItem.locked
+        sender.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+        tvcontroller.saveRTasks()
     }
 }

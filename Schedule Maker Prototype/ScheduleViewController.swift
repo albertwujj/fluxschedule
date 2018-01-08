@@ -25,7 +25,9 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     @IBOutlet weak var leftDateButton: UIButton!
     @IBOutlet weak var rightDateButton: UIButton!
     
+    let dayToInt = ["MONDAY": 0, "TUESDAY": 1, "WEDNESDAY": 2, "THURSDAY": 3, "FRIDAY": 4, "SATURDAY": 5, "SUNDAY": 6]
     var schedules : [Int: [ScheduleItem]] = [:]
+    var schedulesEdited: Set<Int> = Set<Int>()
     var tableViewController: ScheduleTableViewController!
     
     var currDateInt = 0
@@ -41,6 +43,9 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         sharedDefaults = UserDefaults.init(suiteName: "group.AlbertWu.ScheduleMakerPrototype")
         if let savedSchedules = loadSchedules() {
             schedules = savedSchedules
+        }
+        if let savedSchedulesEdited = loadSchedulesEdited() {
+            schedulesEdited = savedSchedulesEdited
         }
         
         Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(checkChangeCurrDate), userInfo: nil, repeats: true)
@@ -97,7 +102,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
             tableViewController = segue.destination as! ScheduleTableViewController
             tableViewController.scheduleViewController = self
             tableViewController.currDateInt = currDateInt
-            tableViewController.update()
+        
             /*
              if let sDate = selectedDate {
              selectedDateInt = dateToHashableInt(date: sDate)
@@ -118,12 +123,10 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        update()
         return false
     }
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        tableViewController.update()
-    }
-    
+   
     //MARK: Input handling
     @IBAction func startTimeEditing(_ sender: UITextField) {
         let datePickerView:UIDatePicker = UIDatePicker()
@@ -135,20 +138,38 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     }
     @objc func datePickerValueChanged(sender: UIDatePicker) {
         selectedDateInt = dateToHashableInt(date: sender.date)
-        update()
         textFieldShouldReturn(dateTextField)
     }
     
     //MARK: Helper functions
     
+    //adds recurring tasks to new schedules
+    //updates tableViewController
+    //updates self
     func update() {
-        
-        if schedules[selectedDateInt ?? currDateInt] == nil {
-            schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Task", duration: 30 * 60)]
+        var oneRTask = false
+        if !schedulesEdited.contains(selectedDateInt ?? currDateInt) {
+            if let rTasks = RecurringTasksTableViewController.loadRTasks() {
+                var scheduleItems:[ScheduleItem] = []
+                for rTask in rTasks {
+                    if rTask.startTime != nil {
+                        let currDayInt = dayToInt[weekday(date: intToDate(int: selectedDateInt ?? currDateInt))]!
+                        if rTask.recurDays!.contains(currDayInt)  {
+                            oneRTask = true
+                            scheduleItems.append(rTask)
+                        }
+                    }
+                }
+                schedules[selectedDateInt ?? currDateInt] = scheduleItems
+            }
+            
+            if(schedules[selectedDateInt ?? currDateInt] == nil || !oneRTask) {
+                schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "", duration: 30 * 60)]
+            }
         }
         tableViewController.scheduleItems = schedules[selectedDateInt ?? currDateInt]!
         tableViewController.currDateInt = selectedDateInt ?? currDateInt
-        tableViewController.update()
+        tableViewController.updateFromSVC()
         let date = intToDate(int: selectedDateInt ?? currDateInt)
         dateTextField.text = dateDescription(date: intToDate(int: selectedDateInt ?? currDateInt))
         weekdayLabel.text = "\(date.format(format: "EEEE")), \(date.format(format: "MMM")) \(date.format(format: "d"))"
@@ -157,6 +178,11 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         saveSchedules()
         //saveSchedulesData()
     }
+    func currentScheduleUpdated() {
+        schedulesEdited.insert(selectedDateInt ?? currDateInt)
+        print(intDateDescription(int: selectedDateInt ?? currDateInt))
+    }
+    
     func weekday(date: Date) -> String  {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE"
@@ -280,7 +306,10 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     func saveSchedules() {
         NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
         sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedules), forKey: Paths.schedules)
+        sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedulesEdited), forKey: Paths.schedulesEdited)
+        print("schedulesSaved")
     }
+    
     func loadSchedules() -> [Int:[ScheduleItem]]? {
         if let data = sharedDefaults.object(forKey: Paths.schedules) as? Data {
             NSKeyedUnarchiver.setClass(ScheduleItem.self, forClassName: "ScheduleItem")
@@ -290,7 +319,13 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         }
         return nil
     }
-   
+    func loadSchedulesEdited() -> Set<Int>? {
+        if let data = sharedDefaults.object(forKey: Paths.schedulesEdited) as? Data {
+            let unarcher = NSKeyedUnarchiver(forReadingWith: data)
+            return unarcher.decodeObject(forKey: "root") as? Set<Int>
+        }
+        return nil
+    }
  
     @IBAction func addButtonPressed(_ sender: UIButton) {
         tableViewController!.addButtonPressed()
@@ -337,6 +372,15 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         registerCategories()
         let center = UNUserNotificationCenter.current()
+        let inactiveTrigger = UNTimeIntervalNotificationTrigger(timeInterval: (48*60*60), repeats: false)
+        let inactiveContent = UNMutableNotificationContent()
+        inactiveContent.title = "You haven't used the app for 48 hours"
+        inactiveContent.body = "You've been gone for 48 hours. Wanna get back on a schedule?"
+        inactiveContent.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
+        inactiveContent.sound = UNNotificationSound.default()
+        
+        let inactiveRequest = UNNotificationRequest(identifier: UUID().uuidString, content: inactiveContent, trigger: inactiveTrigger)
+        center.add(inactiveRequest)
         for i in schedules[currDateInt] ?? [] {
             if let startDate = i.startTime {
                 if startDate > tableViewController.getCurrentDurationFromMidnight() {
@@ -357,6 +401,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
                 }
             }
         }
+        
         
     }
     
@@ -389,7 +434,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
                         
                             if(selectedDateInt ?? currDateInt == currDateInt) {
                                 update()
-                                print("YAS")
+                        
                             }
                             break
                         }
@@ -397,7 +442,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
                             schedules[currDateInt]![0].startTime! += appDelegate.userSettings.notifDelayTime * 60
                             if(selectedDateInt ?? currDateInt == currDateInt) {
                                 update()
-                                print("YAS2")
+                        
                             }
                         }
                     }

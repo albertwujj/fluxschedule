@@ -21,9 +21,12 @@ class WeekdaySelection: UIStackView {
         case monday, tuesday, wednesday, thursday, friday, saturday, sunday
     }
     
+    var tvcell: RecurringTaskTableViewCell!
     var weekdayString: [String] = ["M", "T", "W", "TH", "F", "S", "SU"]
-    var weekdayButtons: [UIButton] = []
+    var weekdayButtons: [WeekdayButton] = []
     var chosenWeekdays: Set = Set<Int>()
+    
+    
     
     //MARK: Initializations
     override init(frame: CGRect) {
@@ -39,14 +42,14 @@ class WeekdaySelection: UIStackView {
         
         for i in 0..<7 {
             // Create the button
-            let button = UIButton()
-            button.backgroundColor = UIColor.red
+            let button = WeekdayButton()
+            
             
             // Add constraints
-            button.translatesAutoresizingMaskIntoConstraints = false
-            button.heightAnchor.constraint(equalToConstant: 50).isActive = true
-            button.widthAnchor.constraint(equalToConstant: 50).isActive = true
-            
+            button.backgroundColor = .blue
+            button.heightAnchor.constraint(equalToConstant: 25).isActive = true
+            button.widthAnchor.constraint(equalToConstant: 25).isActive = true
+            button.adjustsImageWhenHighlighted = false
             // Setup the button action
             button.addTarget(self, action: #selector(WeekdaySelection.weekdayButtonTapped(button:)), for: .touchUpInside)
             button.setTitle(weekdayString[i], for: .normal)
@@ -57,15 +60,24 @@ class WeekdaySelection: UIStackView {
             weekdayButtons.append(button)
         }
     }
-    @objc func weekdayButtonTapped(button: UIButton) {
+    @objc func weekdayButtonTapped(button: WeekdayButton) {
         let index = weekdayButtons.index(of: button)!
-        if(button.isHighlighted) {
-            chosenWeekdays.remove(index)
-        }
-        else {
+        
+        
+        if(!button.isPressed) {
+            var newRecurDays = chosenWeekdays
+            newRecurDays.insert(index)
+            if tvcell.isRecurConflict(startTime1: tvcell.scheduleItem.startTime!, duration: tvcell.scheduleItem.duration, recurDays: newRecurDays, message: "Selected day") {
+                return
+            }
             chosenWeekdays.insert(index)
         }
-        button.isHighlighted = !button.isHighlighted
-        
+        else {
+
+            chosenWeekdays.remove(index)
+        }
+        button.isPressed = !button.isPressed
+        tvcell.scheduleItem.recurDays = chosenWeekdays
+        tvcell.tvcontroller.saveRTasks()
     }
 }
