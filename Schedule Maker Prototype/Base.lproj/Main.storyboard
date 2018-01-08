@@ -175,6 +175,9 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nws-Cy-H1T">
                                 <rect key="frame" x="248" y="79" width="30" height="30"/>
                                 <state key="normal" title="&gt;"/>
+                                <connections>
+                                    <action selector="rightDateButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="TNn-8q-4XN"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WEEKDAY" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ljn-hE-dG9">
                                 <rect key="frame" x="139.5" y="26" width="96.5" height="25.5"/>

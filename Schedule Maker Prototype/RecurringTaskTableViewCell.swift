@@ -89,22 +89,11 @@ class RecurringTaskTableViewCell: UITableViewCell, UITextFieldDelegate {
         let date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)
         datePickerView.setDate(date, animated: true)
         
-        datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChangedStartTime), for: UIControlEvents.valueChanged)
         
     }
-    @IBAction func startTimeEditing(_ sender: UITextField) {
-        let datePickerView:UIDatePicker = UIDatePicker()
-        datePickerView.datePickerMode = UIDatePickerMode.time
-        sender.inputView = datePickerView
-        
-        let date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)
-        datePickerView.setDate(date, animated: true)
-        
-        datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChangedStartTime), for: UIControlEvents.valueChanged)
-        
-    }
-    @objc func datePickerValueChangedStartTime(sender:UIDatePicker) {
-        let date = sender.date
+    
+    @objc func doneStartTimeEditing(sender:UIButton) {
+        let date = (startTimeTF.inputView as! UIDatePicker).date
         //update startTime and endTime based on chosen date
         
         
@@ -115,6 +104,7 @@ class RecurringTaskTableViewCell: UITableViewCell, UITextFieldDelegate {
         startTimeTF.text = timeDescription(durationSinceMidnight: scheduleItem.startTime!)
         startTimeTF.resignFirstResponder()
     }
+    
     @IBAction func durationEditing(_ sender: UITextField) {
         let datePickerView:UIDatePicker = UIDatePicker()
         
@@ -124,13 +114,10 @@ class RecurringTaskTableViewCell: UITableViewCell, UITextFieldDelegate {
         
         let date = Date(timeInterval: Double(scheduleItem.duration), since: startOfToday)
         datePickerView.setDate(date, animated: true)
-        
-        datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChanged), for: UIControlEvents.valueChanged)
-        
     }
-    @objc func datePickerValueChanged(sender:UIDatePicker) {
+    @objc func doneDurationEditing(sender: UIButton) {
         
-        let duration = sender.countDownDuration
+        let duration = (durationTF.inputView as! UIDatePicker).countDownDuration
         if let startTime = scheduleItem.startTime {
             if isRecurConflict(startTime1: startTime, duration: Int(duration), recurDays: scheduleItem.recurDays!, message: "New duration") {
                 return
@@ -168,6 +155,7 @@ class RecurringTaskTableViewCell: UITableViewCell, UITextFieldDelegate {
         }
         return false
     }
+    
     func durationDescription(duration: Int) -> String {
         let hour:Int = duration / 3600
         let minute:Int = (duration % 3600) / 60
@@ -179,9 +167,7 @@ class RecurringTaskTableViewCell: UITableViewCell, UITextFieldDelegate {
         if(minute < 10) {
             minuteString = "0" + minuteString
         }
-        
         return "\(hourString):\(minuteString)"
-        
     }
         
     func timeDescription(durationSinceMidnight: Int) -> String {
