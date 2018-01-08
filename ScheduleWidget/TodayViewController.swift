@@ -219,4 +219,5 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         let seconds = calendar.component(.second, from: date)
         return hour * 3600 + minutes * 60 + seconds
     }
+    
 }

@@ -47,6 +47,8 @@ class RecurringTaskTableViewCell: UITableViewCell, UITextFieldDelegate {
         taskNameTF.delegate = self
         startTimeTF.delegate = self
         durationTF.delegate = self
+        startTimeTF.doneButton!.addTarget(target: self, action: #selector(doneStartTimeEditing))
+        durationTF.doneButton!.addTarget(target: self, action: #selector(doneDurationEditing))
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -79,6 +81,17 @@ class RecurringTaskTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     //MARK: Input handling
+    @IBAction func startTimeEditing(_ sender: UITextField) {
+        let datePickerView:UIDatePicker = UIDatePicker()
+        datePickerView.datePickerMode = UIDatePickerMode.time
+        sender.inputView = datePickerView
+        
+        let date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)
+        datePickerView.setDate(date, animated: true)
+        
+        datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChangedStartTime), for: UIControlEvents.valueChanged)
+        
+    }
     @IBAction func startTimeEditing(_ sender: UITextField) {
         let datePickerView:UIDatePicker = UIDatePicker()
         datePickerView.datePickerMode = UIDatePickerMode.time

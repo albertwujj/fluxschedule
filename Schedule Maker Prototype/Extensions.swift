@@ -32,3 +32,9 @@ extension Date {
         return dateFormatter.string(from: self).uppercased()
     }
 }
+extension UIBarButtonItem {
+    func addTarget(target: AnyObject, action: Selector) {
+        self.target = target
+        self.action = action
+    }
+}

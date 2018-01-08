@@ -34,6 +34,7 @@
 		75F88A9A1FF8BE7E005316DB /* RecurringTasksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */; };
 		75F88A9E1FF975C6005316DB /* RecurringTaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */; };
 		75F88AA01FF98D77005316DB /* WeekdayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A9F1FF98D77005316DB /* WeekdayButton.swift */; };
+		75F88AC420030B5F005316DB /* TextFieldToolbarExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88AC320030B5F005316DB /* TextFieldToolbarExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +101,7 @@
 		75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTasksTableViewController.swift; sourceTree = "<group>"; };
 		75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTaskTableViewCell.swift; sourceTree = "<group>"; };
 		75F88A9F1FF98D77005316DB /* WeekdayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdayButton.swift; sourceTree = "<group>"; };
+		75F88AC320030B5F005316DB /* TextFieldToolbarExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldToolbarExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +166,7 @@
 				75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */,
 				75F88A951FF5EA4F005316DB /* WeekdaySelection.swift */,
 				75F88A9F1FF98D77005316DB /* WeekdayButton.swift */,
+				75F88AC320030B5F005316DB /* TextFieldToolbarExtension.swift */,
 			);
 			path = "Schedule Maker Prototype";
 			sourceTree = "<group>";
@@ -309,6 +312,7 @@
 				7591A3361FB63576002DA737 /* PersistData.swift in Sources */,
 				7591A3401FBBDB2C002DA737 /* UITextFieldSI.swift in Sources */,
 				75F88A961FF5EA4F005316DB /* WeekdaySelection.swift in Sources */,
+				75F88AC420030B5F005316DB /* TextFieldToolbarExtension.swift in Sources */,
 				75F88A981FF86400005316DB /* RecurringTasksViewController.swift in Sources */,
 				75F88A9E1FF975C6005316DB /* RecurringTaskTableViewCell.swift in Sources */,
 				7591A3341FB27B29002DA737 /* ScheduleTableViewController.swift in Sources */,
