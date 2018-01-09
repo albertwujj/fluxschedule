@@ -17,4 +17,5 @@ struct Paths {
     static let schedulesEdited = "schedulesEdited"
     static let userSettings = "userSettings"
     static let rTasks = "rTasks"
+    static let scrollPosition = "scrollPosition"
 }

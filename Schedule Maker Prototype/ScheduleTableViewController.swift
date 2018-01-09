@@ -13,6 +13,9 @@ import UserNotifications
 class ScheduleTableViewController: UITableViewController {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let sharedDefaults = UserDefaults(suiteName: "group.AlbertWu.ScheduleMakerPrototype")!
+    var cellSnapshot: UIView?
+    var initialIndexPath: IndexPath? = nil
     @IBOutlet weak var header: UIView!
     @IBOutlet weak var deleteButton: UIButton!
     
@@ -24,20 +27,129 @@ class ScheduleTableViewController: UITableViewController {
     //MARK: Initialization
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         update()
         Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(highlightCurrCell), userInfo: nil, repeats: true)
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
+        addLongPressGesture()
+        
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+        if let scrollPosition = loadScrollPosition() {
+            tableView.setContentOffset(scrollPosition, animated: false)
+        }
         update()
     }
-   
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    //MARK: Drag and Drop Table View Cell Functions
+    func addLongPressGesture() {
+        let longpress = UILongPressGestureRecognizer(target: self, action: #selector(onLongPressGesture(sender:)))
+        tableView.addGestureRecognizer(longpress)
     }
+    
+    @objc func onLongPressGesture(sender: UILongPressGestureRecognizer) {
+        
+        let locationInView = sender.location(in: tableView)
+        let indexPath = tableView.indexPathForRow(at: locationInView)
+        
+        if sender.state == .began {
+            if indexPath != nil {
+                initialIndexPath = indexPath!
+                let cell = tableView.cellForRow(at: indexPath!)
+                self.cellSnapshot = snapshotOfCell(inputView: cell!)
+                var center = cell?.center
+                cellSnapshot?.center = center!
+                cellSnapshot?.alpha = 0.0
+                tableView.addSubview(cellSnapshot!)
+                
+                UIView.animate(withDuration: 0.25, animations: { () -> Void in
+                    center?.y = locationInView.y
+                    self.cellSnapshot?.center = center!
+                    self.cellSnapshot?.transform = (self.cellSnapshot?.transform.scaledBy(x: 1.05, y: 1.05))!
+                    self.cellSnapshot?.alpha = 0.99
+                    cell?.alpha = 0.0
+                }, completion: { (finished) -> Void in
+                    if finished {
+                        cell?.isHidden = true
+                    }
+                })
+            }
+        } else if sender.state == .changed {
+            var center = cellSnapshot?.center
+            center?.y = locationInView.y
+            cellSnapshot?.center = center!
+            
+            if ((indexPath != nil) && (indexPath != initialIndexPath)) {
+                let temp = scheduleItems[indexPath!.row]
+                scheduleItems[indexPath!.row] = scheduleItems[initialIndexPath!.row]
+                scheduleItems[initialIndexPath!.row] = temp
+                tableView.moveRow(at: initialIndexPath!, to: indexPath!)
+                recalculateTimes()
+                tableView.reloadData()
+                initialIndexPath = indexPath
+            }
+        } else if sender.state == .ended {
+            let cell = tableView.cellForRow(at: initialIndexPath!) as? ScheduleTableViewCell
+            if initialIndexPath?.row == 0 && scheduleItems.count > 1 && scheduleItems[0].startTime != nil{
+                scheduleItems[0].startTime! = scheduleItems[1].startTime! - scheduleItems[0].duration
+            }
+            cell?.isHidden = false
+            cell?.alpha = 0.0
+            UIView.animate(withDuration: 0.25, animations: { () -> Void in
+                self.cellSnapshot?.center = (cell?.center)!
+                self.cellSnapshot?.transform = CGAffineTransform.identity
+                self.cellSnapshot?.alpha = 0.0
+                cell?.alpha = 1.0
+            }, completion: { (finished) -> Void in
+                if finished {
+                    self.initialIndexPath = nil
+                    self.cellSnapshot?.removeFromSuperview()
+                    self.cellSnapshot = nil
+                }
+            })
+            
+            update()
+        }
+        
+        
+    }
+    
+    func snapshotOfCell(inputView: UIView) -> UIView {
+        UIGraphicsBeginImageContextWithOptions(inputView.bounds.size, false, 0.0)
+        inputView.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        let cellSnapshot = UIImageView(image: image)
+        cellSnapshot.layer.masksToBounds = false
+        cellSnapshot.layer.cornerRadius = 0.0
+        cellSnapshot.layer.shadowOffset = CGSize(width: -5.0, height: 0.0)
+        cellSnapshot.layer.shadowRadius = 5.0
+        cellSnapshot.layer.shadowOpacity = 0.4
+        return cellSnapshot
+    }
+    @objc func saveScrollPosition() {
+        let offset = tableView.contentOffset
+        print("scroll pos saved: \(offset.y)")
+        sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: offset), forKey: Paths.scrollPosition)
+    }
+    
+    
+    func loadScrollPosition() -> CGPoint? {
+        if let data = sharedDefaults.object(forKey: Paths.scrollPosition) as? Data {
+            
+            let unarcher = NSKeyedUnarchiver(forReadingWith: data)
+            
+            return unarcher.decodeObject(forKey: "root") as? CGPoint
+        }
+        print("FUCKING IDIOT")
+        return nil
+    }
+  
+    
+  
 
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -71,7 +183,7 @@ class ScheduleTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        return 50
+        return 65
     }
     /*
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

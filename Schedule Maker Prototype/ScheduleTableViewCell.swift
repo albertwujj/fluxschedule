@@ -11,7 +11,7 @@ import Foundation
 import UserNotifications
 
 
-class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
+class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UITextFieldDelegate {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var tableViewController: ScheduleTableViewController!
@@ -36,17 +36,18 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
     
     
-    @IBOutlet weak var startTimeTF: UITextField!
+    @IBOutlet weak var startTimeTF: AccessoryTextField!
     @IBOutlet weak var endTimeTF: UITextField!
     @IBOutlet weak var taskNameTF: UITextField!
-    @IBOutlet weak var durationTF: UITextField!
+    @IBOutlet weak var durationTF: AccessoryTextField!
     
     @IBOutlet weak var lockButton: UIButton!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        taskNameTF.delegate = self
+        startTimeTF.delegate = self
         durationTF.delegate = self
+        taskNameTF.delegate = self
         
         //set midnight as a global Date variable
        
@@ -55,14 +56,54 @@ class ScheduleTableViewCell: UITableViewCell, UITextFieldDelegate {
         for i in textFields {
             setStyle(textField: (i as! UITextField))
         }
-        startTimeTF.doneButton!.addTarget(target: self, action: #selector(doneStartTimeEditing))
-        durationTF.doneButton!.addTarget(target: self, action: #selector(doneDurationEditing))
+        startTimeTF.accessoryDelegate = self
+        durationTF.accessoryDelegate = self
+        startTimeTF.addButtons(customString: nil)
+        durationTF.addButtons(customString: nil)
+        print("awoken")
     }
     
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
+    }
+    
+    //AccessoryTextFieldDelegateFunctions
+    func textFieldCustomButtonPressed(_ sender: UITextField) {
+        if sender === startTimeTF {
+            
+        }
+        else if sender === durationTF {
+            
+        }
+    }
+    func textFieldCancelButtonPressed(_ sender: UITextField) {
+        sender.resignFirstResponder()
+    }
+    func textFieldDoneButtonPressed(_ sender: UITextField) {
+        if sender === startTimeTF {
+            let date = (startTimeTF.inputView as! UIDatePicker).date
+            //update startTime and endTime based on chosen date
+            scheduleItem.startTime = Int(date.timeIntervalSince(startOfToday))
+            
+            startTimeTF.text = timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+            let endTime = scheduleItem.startTime! + scheduleItem.duration
+            endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
+            
+            ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
+        }
+        else if sender === durationTF {
+            let duration = (durationTF.inputView as! UIDatePicker).countDownDuration
+            scheduleItem.duration = Int(duration)
+            durationTF.text = durationDescription(duration: scheduleItem.duration)
+            if let startTime = scheduleItem.startTime {
+                let endTime = startTime + Int(duration)
+                endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
+                
+            }
+            tableViewController.update()
+        }
     }
     
     

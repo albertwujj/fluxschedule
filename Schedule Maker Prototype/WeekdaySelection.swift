@@ -51,7 +51,7 @@ class WeekdaySelection: UIStackView {
             button.widthAnchor.constraint(equalToConstant: 25).isActive = true
             button.adjustsImageWhenHighlighted = false
             // Setup the button action
-            button.addTarget(self, action: #selector(WeekdaySelection.weekdayButtonTapped(button:)), for: .touchUpInside)
+            button.addTarget(self, action: #selector(WeekdaySelection.weekdayButtonTapped(button: )), for: .touchUpInside)
             button.setTitle(weekdayString[i], for: .normal)
             // Add the button to the stack
             addArrangedSubview(button)

@@ -47,8 +47,7 @@ class RecurringTaskTableViewCell: UITableViewCell, UITextFieldDelegate {
         taskNameTF.delegate = self
         startTimeTF.delegate = self
         durationTF.delegate = self
-        startTimeTF.doneButton!.addTarget(target: self, action: #selector(doneStartTimeEditing))
-        durationTF.doneButton!.addTarget(target: self, action: #selector(doneDurationEditing))
+       
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

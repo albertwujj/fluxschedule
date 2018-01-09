@@ -1,3 +1,4 @@
+/*
 import Foundation
 import UIKit
 
@@ -21,14 +22,23 @@ extension UITextField: PropertyStoring{
     
     
     private struct CustomProperties {
-        static var button: UIBarButtonItem? = nil
+        static var doneButton: UIBarButtonItem? = nil
+        static var todayButton: UIBarButtonItem? = nil
     }
     var doneButton: UIBarButtonItem? {
         get {
-            return getAssociatedObject(&CustomProperties.button, defaultValue: CustomProperties.button)
+            return getAssociatedObject(&CustomProperties.doneButton, defaultValue: CustomProperties.doneButton)
         }
         set {
-            return objc_setAssociatedObject(self, &CustomProperties.button, newValue, .OBJC_ASSOCIATION_RETAIN)
+            return objc_setAssociatedObject(self, &CustomProperties.doneButton, newValue, .OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    var todayButton: UIBarButtonItem? {
+        get {
+            return getAssociatedObject(&CustomProperties.todayButton, defaultValue: CustomProperties.todayButton)
+        }
+        set {
+            return objc_setAssociatedObject(self, &CustomProperties.todayButton, newValue, .OBJC_ASSOCIATION_RETAIN)
         }
     }
     
@@ -42,6 +52,17 @@ extension UITextField: PropertyStoring{
             }
         }
     }
+    @IBInspectable var todayAccessory: Bool{
+        get {
+            return self.todayAccessory
+        }
+        set (todayAccessory) {
+            
+            addDoneButtonOnKeyboard2()
+            
+        }
+    }
+    
     
     func addDoneButtonOnKeyboard()
     {
@@ -50,8 +71,23 @@ extension UITextField: PropertyStoring{
         
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
+       
+        let items = [flexSpace, custo, done]
+        doneToolbar.items = items
+        doneToolbar.sizeToFit()
         
-        let items = [flexSpace, done]
+        self.inputAccessoryView = doneToolbar
+        self.doneButton = done
+    }
+    func addDoneButtonOnKeyboard2()
+    {
+        let doneToolbar: UIToolbar = UIToolbar(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
+        doneToolbar.barStyle = .default
+        
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
+        let today: UIBarButtonItem = UIBarButtonItem(title: todayAccessory, style: .plain, target: self, action: #selector(self.doneButtonAction))
+        let items = [flexSpace, today, done]
         doneToolbar.items = items
         doneToolbar.sizeToFit()
         
@@ -64,3 +100,4 @@ extension UITextField: PropertyStoring{
         self.resignFirstResponder()
     }
 }
+*/

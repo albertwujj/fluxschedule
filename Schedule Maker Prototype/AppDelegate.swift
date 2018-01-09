@@ -75,6 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let rtvc = recurringTasksTableViewController {
             rtvc.saveRTasks()
         }
+        scheduleViewController.tableViewController.saveScrollPosition()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {

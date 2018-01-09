@@ -35,6 +35,7 @@
 		75F88A9E1FF975C6005316DB /* RecurringTaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */; };
 		75F88AA01FF98D77005316DB /* WeekdayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A9F1FF98D77005316DB /* WeekdayButton.swift */; };
 		75F88AC420030B5F005316DB /* TextFieldToolbarExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88AC320030B5F005316DB /* TextFieldToolbarExtension.swift */; };
+		75F88AC620042AE4005316DB /* AccessoryTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88AC520042AE4005316DB /* AccessoryTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,7 @@
 		75F88A9D1FF975C6005316DB /* RecurringTaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTaskTableViewCell.swift; sourceTree = "<group>"; };
 		75F88A9F1FF98D77005316DB /* WeekdayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdayButton.swift; sourceTree = "<group>"; };
 		75F88AC320030B5F005316DB /* TextFieldToolbarExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldToolbarExtension.swift; sourceTree = "<group>"; };
+		75F88AC520042AE4005316DB /* AccessoryTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessoryTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +169,7 @@
 				75F88A951FF5EA4F005316DB /* WeekdaySelection.swift */,
 				75F88A9F1FF98D77005316DB /* WeekdayButton.swift */,
 				75F88AC320030B5F005316DB /* TextFieldToolbarExtension.swift */,
+				75F88AC520042AE4005316DB /* AccessoryTextField.swift */,
 			);
 			path = "Schedule Maker Prototype";
 			sourceTree = "<group>";
@@ -320,6 +323,7 @@
 				7591A3231FB26518002DA737 /* Schedule_Maker_Prototype.xcdatamodeld in Sources */,
 				7591A3301FB26769002DA737 /* ScheduleTableViewCell.swift in Sources */,
 				7544C5231FCA735F001CC0A6 /* Extensions.swift in Sources */,
+				75F88AC620042AE4005316DB /* AccessoryTextField.swift in Sources */,
 				7591A33C1FB683AF002DA737 /* ScheduleViewController.swift in Sources */,
 				7591A33E1FBA6D23002DA737 /* Schedule.swift in Sources */,
 				75F88A9A1FF8BE7E005316DB /* RecurringTasksTableViewController.swift in Sources */,

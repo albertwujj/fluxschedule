@@ -61,7 +61,9 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         */
         changeCurrDate()
         dateTextField.delegate = self
-       
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(textFieldPressed(_:)))
+        weekdayLabel.addGestureRecognizer(tapGesture)
+        weekdayLabel.isUserInteractionEnabled = true
         // Do any additional setup after loading the view.
     }
     /*
@@ -90,6 +92,9 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     
 
     
+    @objc func textFieldPressed(_ sender: UITapGestureRecognizer) {
+        dateTextField.becomeFirstResponder()
+    }
     
     // MARK: - Navigation
 
@@ -118,12 +123,14 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     //UITextFieldDelegateFunctions
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        print("yeahh")
         textField.selectAll(nil)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         update()
+        print("bitchh")
         return false
     }
    
@@ -318,7 +325,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
             return unarcher.decodeObject(forKey: "root") as? [Int:[ScheduleItem]]
         }
         return nil
-    }
+    } 
     func loadSchedulesEdited() -> Set<Int>? {
         if let data = sharedDefaults.object(forKey: Paths.schedulesEdited) as? Data {
             let unarcher = NSKeyedUnarchiver(forReadingWith: data)
@@ -471,4 +478,5 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         update()
         
     }
+    
 }
