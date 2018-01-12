@@ -194,8 +194,7 @@
                                     <color key="titleColor" red="0.10260377079248428" green="0.21100857853889465" blue="0.76990693807601929" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="addButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="27P-Uc-zzc"/>
-                                    <action selector="addButtonPressed:" destination="7yG-W5-uCf" eventType="touchUpInside" id="mjW-vm-Nax"/>
+                                    <action selector="addButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="kIf-O0-wHX"/>
                                 </connections>
                             </button>
                             <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX/XX/XXXX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Y8o-P1-EhR">
@@ -256,7 +255,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1S3-hj-8bP" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="7yG-W5-uCf" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-42" y="138"/>
         </scene>

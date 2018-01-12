@@ -177,13 +177,17 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
             }
         }
         */
-        if let savedSchedules = loadSchedules() {
-            schedules = savedSchedules
-        }
-        else {
-            schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "1", duration: 30 * 60)]
-            print("AYYY")
-            print(schedules[selectedDateInt ?? currDateInt]![0].taskName)
+        if schedules[selectedDateInt ?? currDateInt] == nil {
+            
+        
+            if let savedSchedules = loadSchedules() {
+                schedules = savedSchedules
+            }
+            if schedules[selectedDateInt ?? currDateInt] == nil {
+                schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "1", duration: 30 * 60)]
+                print(schedules[selectedDateInt ?? currDateInt]![0].taskName)
+            }
+            
         }
         tableViewController.scheduleItems = schedules[selectedDateInt ?? currDateInt]!
         tableViewController.currDateInt = selectedDateInt ?? currDateInt
@@ -197,6 +201,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         saveSchedules()
         //saveSchedulesData()
     }
+    
     func currentScheduleUpdated() {
         schedulesEdited.insert(selectedDateInt ?? currDateInt)
         print(intDateDescription(int: selectedDateInt ?? currDateInt))

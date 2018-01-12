@@ -336,7 +336,6 @@ class ScheduleTableViewController: UITableViewController {
         //scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
         highlightCurrCell()
         scheduleViewController.currentScheduleUpdated()
-        scheduleViewController.update()
         
     }
     func updateFromSVC() {
@@ -445,8 +444,11 @@ class ScheduleTableViewController: UITableViewController {
     }
     //MARK: Outer functions
     func addButtonPressed() {
+        print("Before append: \(scheduleItems.count)")
         scheduleItems.append(ScheduleItem(name: "\(scheduleItems.count + 1)", duration: 20 * 60, locked: false))
+        print("Before update: \(scheduleItems.count)")
         update()
+        print("After update: \(scheduleItems.count)")
     }
     
     /*
