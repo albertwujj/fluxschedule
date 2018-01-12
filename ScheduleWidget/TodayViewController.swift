@@ -17,7 +17,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBOutlet weak var nextTaskLabel: UILabel!
 
     
-    let sharedDefaults = UserDefaults(suiteName: "group.AlbertWu.ScheduleMakerPrototype")!
+    let sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
     var schedules: [Int:[ScheduleItem]] = [:]
     var scheduleItems: [ScheduleItem] = []
     var currDateInt = 0

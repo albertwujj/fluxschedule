@@ -22,7 +22,16 @@ public class ScheduleItem: NSObject, NSCoding {
     public var startTime: Int?
     public var locked:Bool = false
     public var recurDays:Set<Int>? = Set<Int>()
+    public var oldRow: Int?
     
+    public struct PropertyKey {
+        static let taskName = "taskName"
+        static let duration = "duration"
+        static let startTime = "startTime"
+        static let locked = "locked"
+        static let recurDays = "recurDays"
+        static let row = "row"
+    }
     
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(taskName, forKey: PropertyKey.taskName)
@@ -30,6 +39,7 @@ public class ScheduleItem: NSObject, NSCoding {
         aCoder.encode(startTime, forKey: PropertyKey.startTime)
         aCoder.encode(locked, forKey: PropertyKey.locked)
         aCoder.encode(recurDays, forKey: PropertyKey.recurDays)
+        aCoder.encode(oldRow, forKey: PropertyKey.row)
     }
     
     
@@ -46,13 +56,7 @@ public class ScheduleItem: NSObject, NSCoding {
         self.startTime = startTime
     }
     
-    public struct PropertyKey {
-        static let taskName = "taskName"
-        static let duration = "duration"
-        static let startTime = "startTime"
-        static let locked = "locked"
-        static let recurDays = "recurDays"
-    }
+   
     public required convenience init?(coder aDecoder: NSCoder) {
         guard let taskName = aDecoder.decodeObject(forKey: PropertyKey.taskName) as? String else {
             os_log("Unable to decode taskName for ScheduleItem object", log: .default, type: .debug)
@@ -60,7 +64,7 @@ public class ScheduleItem: NSObject, NSCoding {
         }
         
         let duration = aDecoder.decodeInteger(forKey: PropertyKey.duration)
-        
+        let row = aDecoder.decodeObject(forKey: PropertyKey.row) as! Int?
         let startTime = aDecoder.decodeObject(forKey: PropertyKey.startTime) as! Int?
         let locked = aDecoder.decodeBool(forKey: PropertyKey.locked)
         let recurDays = aDecoder.decodeObject(forKey: PropertyKey.recurDays) as! Set<Int>?
@@ -68,5 +72,12 @@ public class ScheduleItem: NSObject, NSCoding {
         self.startTime = startTime
         self.locked = locked
         self.recurDays = recurDays
+        self.oldRow = row
+    }
+    public func deepCopy() -> ScheduleItem {
+        let deepCopy = ScheduleItem(name: self.taskName, duration: self.duration, locked: self.locked)
+        deepCopy.startTime = self.startTime
+        deepCopy.recurDays = self.recurDays
+        return deepCopy
     }
 }

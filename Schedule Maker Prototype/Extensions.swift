@@ -38,3 +38,8 @@ extension UIBarButtonItem {
         self.action = action
     }
 }
+extension IndexPath {
+    init(_ row: Int) {
+        self.init(row: row, section: 0)
+    }
+}

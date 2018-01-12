@@ -31,7 +31,7 @@ class Settings: NSObject, NSCoding {
         self.init()
         self.is24Mode = aDecoder.decodeBool(forKey: PropertyKey.is24Mode)
         self.notifDelayTime = aDecoder.decodeInteger(forKey: PropertyKey.notifDelayTime)
-        self.themeColor = aDecoder.decodeObject(forKey: PropertyKey.themeColor) as! UIColor
+        //self.themeColor = aDecoder.decodeObject(forKey: PropertyKey.themeColor) as! UIColor
       
         //self.insertOption = InsertOption(rawValue: aDecoder.decodeInteger(forKey: PropertyKey.insertOption))!
         self.insertOption = .split

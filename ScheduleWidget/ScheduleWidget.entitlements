@@ -5,6 +5,7 @@
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.AlbertWu.ScheduleMakerPrototype</string>
+		<string>group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype</string>
 	</array>
 </dict>
 </plist>

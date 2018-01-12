@@ -40,7 +40,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         topStripe.backgroundColor = appDelegate.userSettings.themeColor
         AppDelegate.changeStatusBarColor(color: appDelegate.userSettings.themeColor)
         recurringTasksButton.setTitle("\u{2630}", for: .normal)
-        sharedDefaults = UserDefaults.init(suiteName: "group.AlbertWu.ScheduleMakerPrototype")
+        sharedDefaults = UserDefaults.init(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")
         if let savedSchedules = loadSchedules() {
             schedules = savedSchedules
         }
@@ -154,8 +154,10 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     //updates tableViewController
     //updates self
     func update() {
+        /*
         var oneRTask = false
         if !schedulesEdited.contains(selectedDateInt ?? currDateInt) {
+            /*
             if let rTasks = RecurringTasksTableViewController.loadRTasks() {
                 var scheduleItems:[ScheduleItem] = []
                 for rTask in rTasks {
@@ -169,14 +171,24 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
                 }
                 schedules[selectedDateInt ?? currDateInt] = scheduleItems
             }
-            
+            */
             if(schedules[selectedDateInt ?? currDateInt] == nil || !oneRTask) {
-                schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "", duration: 30 * 60)]
+                
             }
+        }
+        */
+        if let savedSchedules = loadSchedules() {
+            schedules = savedSchedules
+        }
+        else {
+            schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "1", duration: 30 * 60)]
+            print("AYYY")
+            print(schedules[selectedDateInt ?? currDateInt]![0].taskName)
         }
         tableViewController.scheduleItems = schedules[selectedDateInt ?? currDateInt]!
         tableViewController.currDateInt = selectedDateInt ?? currDateInt
         tableViewController.updateFromSVC()
+        
         let date = intToDate(int: selectedDateInt ?? currDateInt)
         dateTextField.text = dateDescription(date: intToDate(int: selectedDateInt ?? currDateInt))
         weekdayLabel.text = "\(date.format(format: "EEEE")), \(date.format(format: "MMM")) \(date.format(format: "d"))"
@@ -311,18 +323,25 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     }
  */
     func saveSchedules() {
-        NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
-        sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedules), forKey: Paths.schedules)
-        sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedulesEdited), forKey: Paths.schedulesEdited)
-        print("schedulesSaved")
+        if sharedDefaults != nil {
+            NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
+            sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedules), forKey: Paths.schedules)
+            sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedulesEdited), forKey: Paths.schedulesEdited)
+            print("schedulesSaved")
+        }
     }
     
     func loadSchedules() -> [Int:[ScheduleItem]]? {
-        if let data = sharedDefaults.object(forKey: Paths.schedules) as? Data {
-            NSKeyedUnarchiver.setClass(ScheduleItem.self, forClassName: "ScheduleItem")
-            let unarcher = NSKeyedUnarchiver(forReadingWith: data)
-            
-            return unarcher.decodeObject(forKey: "root") as? [Int:[ScheduleItem]]
+        if sharedDefaults != nil {
+            if let data = sharedDefaults.object(forKey: Paths.schedules) as? Data {
+                NSKeyedUnarchiver.setClass(ScheduleItem.self, forClassName: "ScheduleItem")
+                let unarcher = NSKeyedUnarchiver(forReadingWith: data)
+                
+                return unarcher.decodeObject(forKey: "root") as? [Int:[ScheduleItem]]
+            }
+        }
+        else {
+            print("defaults BROKEN")
         }
         return nil
     } 
@@ -336,8 +355,6 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
  
     @IBAction func addButtonPressed(_ sender: UIButton) {
         tableViewController!.addButtonPressed()
-    
-        
     }
     
    /*
