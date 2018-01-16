@@ -12,12 +12,13 @@ import Foundation
 import UserNotifications
 
 
-class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotificationCenterDelegate {
+class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let userSettings = (UIApplication.shared.delegate as! AppDelegate).userSettings
     @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var weekdayLabel: UILabel!
-    @IBOutlet weak var dateTextField: UITextField!
+    @IBOutlet weak var dateTextField: AccessoryTextField!
     
     @IBOutlet weak var recurringTasksButton: UIButton!
     @IBOutlet weak var topStripe: UIView!
@@ -42,7 +43,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         recurringTasksButton.setTitle("\u{2630}", for: .normal)
         sharedDefaults = UserDefaults.init(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")
         if let savedSchedules = loadSchedules() {
-            schedules = savedSchedules
+            //schedules = savedSchedules
         }
         if let savedSchedulesEdited = loadSchedulesEdited() {
             schedulesEdited = savedSchedulesEdited
@@ -61,10 +62,34 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         */
         changeCurrDate()
         dateTextField.delegate = self
+        dateTextField.addButtons(customString: "Today")
+        dateTextField.accessoryDelegate = self
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(textFieldPressed(_:)))
         weekdayLabel.addGestureRecognizer(tapGesture)
         weekdayLabel.isUserInteractionEnabled = true
+        weekdayLabel.textAlignment = .center
         // Do any additional setup after loading the view.
+    }
+    
+    //MARK: AccessoryTextFieldDelegate functions
+    func textFieldContainerButtonPressed(_ sender: AccessoryTextField) {
+        sender.resignFirstResponder()
+        if sender === dateTextField {
+            changeDate(dateInt: currDateInt)
+        }
+    }
+    func textFieldCancelButtonPressed(_ sender: AccessoryTextField) {
+        sender.resignFirstResponder()
+    }
+    func textFieldDoneButtonPressed(_ sender: AccessoryTextField) {
+        if sender === dateTextField {
+            sender.resignFirstResponder()
+            selectedDateInt = dateToHashableInt(date: (sender.inputView as! UIDatePicker).date)
+            
+        }
+        
+        
+        
     }
     /*
     private func loadSavedData() {
@@ -123,14 +148,13 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     //UITextFieldDelegateFunctions
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        print("yeahh")
+      
         textField.selectAll(nil)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         update()
-        print("bitchh")
         return false
     }
    
@@ -140,7 +164,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         datePickerView.datePickerMode = UIDatePickerMode.date
         sender.inputView = datePickerView
         datePickerView.setDate(intToDate(int: selectedDateInt ?? currDateInt), animated: true)
-        datePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: UIControlEvents.valueChanged)
+        //datePickerView.addTarget(self, action: #selector(datePickerValueChanged), for: UIControlEvents.valueChanged)
         
     }
     @objc func datePickerValueChanged(sender: UIDatePicker) {
@@ -153,6 +177,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
     //adds recurring tasks to new schedules
     //updates tableViewController
     //updates self
+   // FICI SFOUSDFHFDS
     func update() {
         /*
         var oneRTask = false
@@ -177,18 +202,21 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
             }
         }
         */
+        
         if schedules[selectedDateInt ?? currDateInt] == nil {
             
         
             if let savedSchedules = loadSchedules() {
-                schedules = savedSchedules
+                //schedules = savedSchedules
             }
+            
             if schedules[selectedDateInt ?? currDateInt] == nil {
-                schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "1", duration: 30 * 60)]
+                schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "1", duration: 30 * 60, startTime: userSettings.defaultStartTime)]
                 print(schedules[selectedDateInt ?? currDateInt]![0].taskName)
             }
             
         }
+        
         tableViewController.scheduleItems = schedules[selectedDateInt ?? currDateInt]!
         tableViewController.currDateInt = selectedDateInt ?? currDateInt
         tableViewController.updateFromSVC()
@@ -497,8 +525,12 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, UNUserNotif
         } else {
             selectedDateInt = currDateInt + change
         }
+        
         update()
         
     }
-    
+    func changeDate(dateInt: Int) {
+        selectedDateInt = dateInt
+        update()
+    }
 }

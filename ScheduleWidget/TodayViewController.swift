@@ -17,7 +17,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBOutlet weak var nextTaskLabel: UILabel!
 
     
-    let sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
+    var sharedDefaults: UserDefaults! = nil
     var schedules: [Int:[ScheduleItem]] = [:]
     var scheduleItems: [ScheduleItem] = []
     var currDateInt = 0
@@ -25,6 +25,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     var currScheduleItem: ScheduleItem?
     override func viewDidLoad() {
         super.viewDidLoad()
+        sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
         changeCurrDate()
         if let savedSettings = loadUserSettings() {
             userSettings = savedSettings

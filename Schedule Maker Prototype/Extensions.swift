@@ -43,3 +43,33 @@ extension IndexPath {
         self.init(row: row, section: 0)
     }
 }
+extension UIView {
+    func isScrolling() -> Bool {
+        
+        if let scrollView = self as? UIScrollView {
+            if (scrollView.isDragging || scrollView.isDecelerating) {
+                return true
+            }
+        }
+        
+        for subview in self.subviews {
+            if ( subview.isScrolling()) {
+                return true
+            }
+        }
+        return false
+    }
+    func waitTillDoneScrolling (completion: @escaping () -> Void) {
+        var isMoving = true
+        DispatchQueue.global(qos: .background).async {
+            while isMoving == true {
+                isMoving = self.isScrolling()
+            }
+            DispatchQueue.main.async {
+                completion()}
+            
+        }
+    }
+    
+}
+

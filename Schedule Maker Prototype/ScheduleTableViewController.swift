@@ -13,7 +13,8 @@ import UserNotifications
 class ScheduleTableViewController: UITableViewController {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    let sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
+    let userSettings = (UIApplication.shared.delegate as! AppDelegate).userSettings
+    var sharedDefaults: UserDefaults!
     var cellSnapshot: UIView?
     var initialIndexPath: IndexPath? = nil
     var isAnyLockedItems: Bool = false
@@ -31,9 +32,9 @@ class ScheduleTableViewController: UITableViewController {
     //MARK: Initialization
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        update()
-        Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(highlightCurrCell), userInfo: nil, repeats: true)
+        sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
+        //update()
+        Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(highlightCurrCell), userInfo: nil, repeats: true)
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         addLongPressGesture()
@@ -74,9 +75,28 @@ class ScheduleTableViewController: UITableViewController {
             let cell = tableView.cellForRow(at: path) as! ScheduleTableViewCell
             cell.startTimeTF.text = cell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
             cell.durationTF.text = cell.durationDescription(duration: scheduleItem.duration)
+            cell.row = row
         }
-        
+        highlightCurrCell()
     }
+    func quickReloadCells() {
+            for path in tableView.indexPathsForVisibleRows! {
+                let row = path.row
+                if row < scheduleItems.count{
+                    let scheduleItem = scheduleItems[row]
+                    if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
+                        cell.startTimeTF.text = cell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+                        cell.durationTF.text = cell.durationDescription(duration: scheduleItem.duration)
+                        cell.lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+                        cell.taskNameTF.text = scheduleItem.taskName
+                        cell.row = row
+                    }
+                }
+            }
+            highlightCurrCell()
+    }
+
+    
     @objc func onLongPressGesture(sender: UILongPressGestureRecognizer) {
         
         let locationInView = sender.location(in: tableView)
@@ -167,7 +187,8 @@ class ScheduleTableViewController: UITableViewController {
             isAnyLockedItems = false
             
             //update
-            recalculateTimesWith(origLockedItems: origLockedItems)
+            //recalculateTimesWith(origLockedItems: origLockedItems)
+            recalculateTimes(with: origLockedItems)
             tableView.reloadData()
             scheduleViewController.schedules[currDateInt] = scheduleItems
             //scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
@@ -176,13 +197,14 @@ class ScheduleTableViewController: UITableViewController {
         }
         
     }
+    
+    /*
     func recalculateTimesWith(origLockedItems: [ScheduleItem]) {
         if scheduleItems.count != 0 {
             if var currStartTime = scheduleItems[0].startTime {
                 var i = 0
-                while(i < scheduleItems.count){
+                while(i < scheduleItems.count) {
                     if scheduleItems[i].locked && scheduleItems[i].startTime != nil {
-                        
                         scheduleItems.remove(at: i)
                         i -= 1
                     }
@@ -191,29 +213,114 @@ class ScheduleTableViewController: UITableViewController {
                         currStartTime += scheduleItems[i].duration
                     }
                     i += 1
-                    
                 }
                 //let sortedOrigLockedItems = origLockedItems.sorted(by: { $0.startTime! < $1.startTime! })
                 for j in origLockedItems {
                     insertItem(item: j, newStartTime: j.startTime!)
                     recalculateTimesBasic()
                 }
-                
             }
-            
         }
     }
-    //just remove and then put back locked times into array, based on locked start time, in order of said start time
-    func recalculateTimes() {
-        
+    
+    func recalculateTimesAdding(additionalLockedItems: [ScheduleItem]) {
         if scheduleItems.count != 0 {
             if var currStartTime = scheduleItems[0].startTime {
                 var origLockedItems: [ScheduleItem] = []
-                
                 var i = 0
                 while(i < scheduleItems.count){
                     if scheduleItems[i].locked && scheduleItems[i].startTime != nil {
                         scheduleItems[i].oldRow = i
+                        
+                        origLockedItems.append(scheduleItems.remove(at: i))
+                        
+                        i -= 1
+                    }
+                        
+                    else {
+                        scheduleItems[i].startTime = currStartTime
+                        currStartTime += scheduleItems[i].duration
+                    }
+                    i += 1
+                    
+                }
+                for a in additionalLockedItems {
+                    origLockedItems.append(a)
+                }
+                origLockedItems = origLockedItems.sorted(by: { $0.startTime! < $1.startTime! })
+                for j in origLockedItems {
+                    insertItem(item: j, newStartTime: j.startTime!)
+                    recalculateTimesBasic()
+                }
+            }
+        }
+    }
+ */
+    func deletedLockedItemsAndOrdered() -> [ScheduleItem] {
+        var scheduleItemsC = self.scheduleItems
+        var i = 0
+        var currStartTime = 0
+        if scheduleItemsC.count > 0 {
+            currStartTime = scheduleItemsC[0].startTime!
+        }
+        while i < scheduleItemsC.count {
+            let task = scheduleItemsC[i]
+            if task.locked {
+                scheduleItemsC.remove(at: i)
+                print("DELETE")
+            }
+            else {
+                task.startTime = currStartTime
+                currStartTime += task.duration
+                i += 1
+                
+            }
+        }
+        
+        return scheduleItemsC
+    }
+    func getLockedItems() -> [ScheduleItem] {
+        var lockedItems: [ScheduleItem] = []
+        for i in scheduleItems {
+            if i.locked {
+                lockedItems.append(i)
+                print("ADD")
+            }
+            
+        }
+        return lockedItems
+    }
+    func recalculateTimes(with lockedTasksP: [ScheduleItem]?) {
+        
+        var cleanedSchedule = deletedLockedItemsAndOrdered()
+        var lockedTasks: [ScheduleItem] = []
+        if lockedTasksP == nil {
+            lockedTasks = getLockedItems()
+        }
+        else {
+            lockedTasks = lockedTasksP!
+        }
+        for i in lockedTasks {
+            print(i.taskName)
+            print("SHOULD BE\(cleanedSchedule.count)")
+            cleanedSchedule = insertItem(item: i, newStartTime: i.startTime!, sItemsP: cleanedSchedule)
+            print("NOW\(cleanedSchedule.count)")
+            cleanedSchedule = recalculateTimesBasic(with: cleanedSchedule)
+           
+        }
+        self.scheduleItems = cleanedSchedule
+    }
+    /*
+    //just remove and then put back locked times into array, based on locked start time, in order of said start time
+    func recalculateTimes() {
+        if scheduleItems.count != 0 {
+            if var currStartTime = scheduleItems[0].startTime {
+                var origLockedItems: [ScheduleItem] = []
+                var i = 0
+                while(i < scheduleItems.count){
+                    if scheduleItems[i].locked && scheduleItems[i].startTime != nil {
+                        scheduleItems[i].oldRow = i
+                        
                         origLockedItems.append(scheduleItems.remove(at: i))
                         i -= 1
                     }
@@ -228,14 +335,29 @@ class ScheduleTableViewController: UITableViewController {
                 origLockedItems = origLockedItems.sorted(by: { $0.startTime! < $1.startTime! })
                 for j in origLockedItems {
                     //print("jcount: \(origLockedItems.count)")
+                    insertItem(item: j, newStartTime: j.startTime!, sItemsP: nil)
                     
-                    tableView.moveRow(at: IndexPath(row: j.oldRow!, section: 0), to: IndexPath(row: insertItem(item: j, newStartTime: j.startTime!), section: 0))
+                   
+                    
+                    //tableView.moveRow(at: IndexPath(row: j.oldRow!, section: 0), to: IndexPath(row: insertItem(item: j, newStartTime: j.startTime!), section: 0))
                     recalculateTimesBasic()
                 }
                 
             }
             
         }
+    }
+ */
+    func recalculateTimesBasic(with scheduleItemsP: [ScheduleItem]) -> [ScheduleItem] {
+        var currStartTime = 0
+        if scheduleItemsP.count > 0, let st = scheduleItemsP[0].startTime {
+            currStartTime = st
+        }
+        for i in scheduleItemsP {
+            i.startTime = currStartTime
+            currStartTime += i.duration
+        }
+        return scheduleItemsP
     }
     func recalculateTimesBasic() {
         var currStartTime = 0
@@ -247,7 +369,7 @@ class ScheduleTableViewController: UITableViewController {
             currStartTime += i.duration
         }
     }
-    
+ 
     func snapshotOfCell(inputView: UIView) -> UIView {
         UIGraphicsBeginImageContextWithOptions(inputView.bounds.size, false, 0.0)
         inputView.layer.render(in: UIGraphicsGetCurrentContext()!)
@@ -330,34 +452,54 @@ class ScheduleTableViewController: UITableViewController {
     func update() {
         //when a ScheduleItem's duration is changed, or when the first ScheduleItem's startTime is changed,
         //recalculate all startTimes based on the first startTime and each scheduleItem's duration
-        recalculateTimes()
+        recalculateTimes(with: nil)
+        /*
+        var rows: [IndexPath] = []
+        for i in 0..<scheduleItems.count {
+            rows.append(IndexPath(i))
+        } */
+        //tableView.reloadRows(at: rows, with: .none)
         tableView.reloadData()
+        //quickReloadCells()
+        //tableView.reloadData()
         scheduleViewController.schedules[currDateInt] = scheduleItems
         //scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
         highlightCurrCell()
         scheduleViewController.currentScheduleUpdated()
-        
+        scheduleViewController.saveSchedules()
+ 
     }
     func updateFromSVC() {
-        recalculateTimes()
         tableView.reloadData()
+        print("HERE: \(scheduleItems.count)")
+        recalculateTimes(with: nil)
+        print("THERE: \(scheduleItems.count)")
+        var rows: [IndexPath] = []
+        for i in 0..<scheduleItems.count {
+            rows.append(IndexPath(i))
+        }
+        tableView.reloadRows(at: rows, with: .none)
         highlightCurrCell()
+        
     }
-   
-    
     
     //inserts an item at the given start time, handling the item in the old spot by the user's insertOption
     //returns row inserted in
-    func insertItem(item: ScheduleItem, newStartTime: Int) -> Int {
-        
+    func insertItem(item: ScheduleItem, newStartTime: Int, sItemsP: [ScheduleItem]?) -> [ScheduleItem] {
+        var sItems:[ScheduleItem] = []
+        if sItemsP != nil {
+            sItems = sItemsP!
+        } else {
+            sItems = self.scheduleItems
+        }
         let insertOption = appDelegate.userSettings.insertOption
         item.startTime = newStartTime
         
-        var prevRow = scheduleItems.count
+        var prevRow = sItems.count
         //find correct previous item
         swapLoop: while(prevRow >= 0) {
             prevRow -= 1
-            if prevRow == -1 || (item.startTime! > scheduleItems[prevRow].startTime! || (item.startTime! == scheduleItems[prevRow].startTime! && insertOption == .extend)) {
+            if prevRow == -1 || (item.startTime! > sItems[prevRow].startTime! || (item.startTime! == sItems[prevRow].startTime! && insertOption == .extend)) {
                 break swapLoop
             }
         }
@@ -365,10 +507,12 @@ class ScheduleTableViewController: UITableViewController {
         if (insertOption == .extend) {
             prevRow -= 1
         }
-        scheduleItems.insert(item, at: prevRow + 1)
-        let rowInserted = prevRow + 1
-        let lastRow = scheduleItems.count - 1
-        let secondLast = lastRow > 0 ? scheduleItems[lastRow - 1] : nil
+        
+        sItems.insert(item, at: prevRow + 1)
+        tableView.insertRows(at: [IndexPath(prevRow + 1)], with: .none)
+        
+        let lastRow = sItems.count - 1
+        let secondLast = lastRow > 0 ? sItems[lastRow - 1] : nil
         if lastRow > 0 && item.startTime! >= secondLast!.startTime! + secondLast!.duration  {
             secondLast!.duration = item.startTime! - secondLast!.startTime!
         }
@@ -378,20 +522,22 @@ class ScheduleTableViewController: UITableViewController {
             var diff = 0
             var prev: ScheduleItem!
             if (prevRow >= 0) {
-                prev = scheduleItems[prevRow]
+                prev = sItems[prevRow]
                 diff = prev.startTime! + prev.duration - item.startTime!
                 prev.duration -= diff
                 
                 
             }
             
-            if(prevRow >= 0 && insertOption == .split && diff != 0) {
+            if(prevRow >= 0 && insertOption == .split && diff > 0) {
                 splitItem = ScheduleItem(name: prev.taskName, duration: diff, startTime: item.startTime! + item.duration)
-                scheduleItems.insert(splitItem, at: prevRow + 2)
+                sItems.insert(splitItem, at: prevRow + 2)
+                tableView.insertRows(at: [IndexPath(prevRow + 1)], with: .none)
+                
             }
             
         }
-        return rowInserted
+        return sItems
     }
     /*
     //MARK: Persist Data
@@ -444,11 +590,14 @@ class ScheduleTableViewController: UITableViewController {
     }
     //MARK: Outer functions
     func addButtonPressed() {
-        print("Before append: \(scheduleItems.count)")
-        scheduleItems.append(ScheduleItem(name: "\(scheduleItems.count + 1)", duration: 20 * 60, locked: false))
-        print("Before update: \(scheduleItems.count)")
-        update()
-        print("After update: \(scheduleItems.count)")
+        
+        let newTask = ScheduleItem(name: "\(scheduleItems.count + 1)", duration: 20 * 60, locked: false)
+        newTask.startTime = userSettings.defaultStartTime
+        scheduleItems.append(newTask)
+        recalculateTimes(with: nil)
+ 
+        tableView.reloadData()
+       
     }
     
     /*
@@ -495,34 +644,32 @@ class ScheduleTableViewController: UITableViewController {
             }
         }
  */
-        for cell in tableView.visibleCells  {
-            let scheduleItem = (cell as! ScheduleTableViewCell).scheduleItem!
-            if let startTime = scheduleItem.startTime {
-                let currentTime = getCurrentDurationFromMidnight()
-                
-                if startTime <= currentTime && startTime + scheduleItem.duration > currentTime  {
-                    let bgColorView = UIView()
-                    //bgColorView.backgroundColor = UIColor(red: 76.0/255.0, green: 161.0/255.0, blue: 255.0/255.0, alpha: 1.0)
-                    let orig = appDelegate.userSettings.themeColor
-                    //bgColorView.backgroundColor = tintOf(color: orig, tintFactor: 1/3)
-                    //bgColorView.backgroundColor = orig.lighter(by: 10.0)
-                    bgColorView.backgroundColor = orig.withAlphaComponent(0.8)
-                    print("FUCKER: \(String(describing: bgColorView.backgroundColor?.components.alpha))")
-                    bgColorView.layer.masksToBounds = true
-                    (cell as! ScheduleTableViewCell).backgroundView = bgColorView
+        if scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.dateToHashableInt(date: Date()) {
+            for cell in tableView.visibleCells  {
+                let scheduleItem = (cell as! ScheduleTableViewCell).scheduleItem!
+                if let startTime = scheduleItem.startTime {
+                    let currentTime = getCurrentDurationFromMidnight()
+                    
+                    if startTime <= currentTime && startTime + scheduleItem.duration > currentTime  {
+                        let bgColorView = UIView()
+                        //bgColorView.backgroundColor = UIColor(red: 76.0/255.0, green: 161.0/255.0, blue: 255.0/255.0, alpha: 1.0)
+                        let orig = appDelegate.userSettings.themeColor
+                        //bgColorView.backgroundColor = tintOf(color: orig, tintFactor: 1/3)
+                        //bgColorView.backgroundColor = orig.lighter(by: 10.0)
+                        bgColorView.backgroundColor = orig.withAlphaComponent(0.3)
+                        
+                        bgColorView.layer.masksToBounds = true
+                        (cell as! ScheduleTableViewCell).backgroundView = bgColorView
+                    }
+                    else {
+                        let whiteColorView = UIView()
+                        whiteColorView.backgroundColor = .white
+                        whiteColorView.layer.masksToBounds = true
+                        (cell as! ScheduleTableViewCell).backgroundView = whiteColorView
+                    }
                 }
-                else {
-                    let whiteColorView = UIView()
-                    whiteColorView.backgroundColor = .white
-                    whiteColorView.layer.masksToBounds = true
-                    (cell as! ScheduleTableViewCell).backgroundView = whiteColorView
-                }
-                
-                
             }
         }
-        
-        
     }
     
     

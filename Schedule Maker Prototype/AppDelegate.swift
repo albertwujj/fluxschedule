@@ -20,10 +20,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var fullVersionPurchased = true
     var scheduleViewController: ScheduleViewController!
     var notifPermitted = false
-    let sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
+    var sharedDefaults: UserDefaults! = nil
     var recurringTasksTableViewController: RecurringTasksTableViewController?
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+        sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
         // Override point for customization after application launch.
         /*
         if (launchOptions != nil)

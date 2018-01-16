@@ -9,9 +9,9 @@
 import UIKit
 
 protocol AccessoryTextFieldDelegate{
-    func textFieldCustomButtonPressed(_ sender: UITextField)
-    func textFieldCancelButtonPressed(_ sender: UITextField)
-    func textFieldDoneButtonPressed(_ sender: UITextField)
+    func textFieldContainerButtonPressed(_ sender: AccessoryTextField)
+    func textFieldCancelButtonPressed(_ sender: AccessoryTextField)
+    func textFieldDoneButtonPressed(_ sender: AccessoryTextField)
 }
 
 class AccessoryTextField: UITextField {
@@ -24,6 +24,8 @@ class AccessoryTextField: UITextField {
     }
     */
     var accessoryDelegate: AccessoryTextFieldDelegate?
+    var doneButton: UIBarButtonItem!
+    
     
     init() {
         super.init(frame: .zero)
@@ -32,25 +34,30 @@ class AccessoryTextField: UITextField {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
     public func addButtons(customString: String?) {
+        addButtons(customString: customString, customButton: nil)
+    }
+    
+    public func addButtons(customString: String?, customButton: UIButton?) {
         let doneToolbar: UIToolbar = UIToolbar(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
         doneToolbar.barStyle = .default
         
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let cancel: UIBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(self.cancelButtonPressed))
-        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonPressed))
+        let done: UIBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(self.doneButtonPressed))
         var items:[UIBarButtonItem] = []
         if let customText = customString {
-            let customButton: UIBarButtonItem = UIBarButtonItem(title: customText, style: .plain, target: self, action: #selector(self.customButtonPressed))
-            items = [cancel, customButton, done]
+            let containerButton: UIBarButtonItem = UIBarButtonItem(title: customText, style: .plain, target: self, action: #selector(self.containerButtonPressed))
+            items = [cancel, flexSpace, containerButton, flexSpace, done]
+        } else if let givenButton = customButton{
+            let containerButton = UIBarButtonItem(customView: givenButton)
+            items = [cancel, flexSpace, containerButton, flexSpace, done]
         }
         else { items = [cancel, flexSpace, done] }
         doneToolbar.items = items
         doneToolbar.sizeToFit()
-        
         self.inputAccessoryView = doneToolbar
-   
+        self.doneButton = done
     }
     @objc func cancelButtonPressed() {
         accessoryDelegate?.textFieldCancelButtonPressed(self)
@@ -59,8 +66,8 @@ class AccessoryTextField: UITextField {
         
         accessoryDelegate?.textFieldDoneButtonPressed(self)
     }
-    @objc func customButtonPressed() {
-        accessoryDelegate?.textFieldCustomButtonPressed(self)
+    @objc func containerButtonPressed() {
+        accessoryDelegate?.textFieldContainerButtonPressed(self)
     }
     
 }
