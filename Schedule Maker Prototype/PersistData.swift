@@ -18,4 +18,5 @@ struct Paths {
     static let userSettings = "userSettings"
     static let rTasks = "rTasks"
     static let scrollPosition = "scrollPosition"
+    static let tutorialStep = "tutorialStep"
 }

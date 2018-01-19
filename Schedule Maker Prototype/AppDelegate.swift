@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.scheduleViewController = self.window!.rootViewController?.childViewControllers.first as! ScheduleViewController
         UNUserNotificationCenter.current().delegate = scheduleViewController
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        
+        print("THIS IS THE SCREEN SIZE: \(UIScreen.main.bounds)")
         return true
     }
     func registerForPushNotifications() {

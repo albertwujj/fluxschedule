@@ -63,13 +63,13 @@
                                             </connections>
                                         </textField>
                                         <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Task Name" borderStyle="roundedRect" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="3RJ-X4-MO2">
-                                            <rect key="frame" x="144" y="10" width="149" height="30"/>
+                                            <rect key="frame" x="154" y="10" width="139" height="30"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <textInputTraits key="textInputTraits"/>
                                         </textField>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="37v-Co-Zac">
-                                            <rect key="frame" x="105" y="10" width="30" height="30"/>
+                                            <rect key="frame" x="116" y="10" width="30" height="30"/>
                                             <state key="normal" title="🌀"/>
                                             <connections>
                                                 <action selector="lockButtonPressed:" destination="evD-WS-gY8" eventType="touchUpInside" id="1bn-WM-G78"/>
@@ -79,7 +79,7 @@
                                     <constraints>
                                         <constraint firstItem="L0Z-Zn-mhf" firstAttribute="centerY" secondItem="Fug-9y-DCG" secondAttribute="centerY" id="0ob-VR-kid"/>
                                         <constraint firstItem="L0Z-Zn-mhf" firstAttribute="width" secondItem="Fug-9y-DCG" secondAttribute="width" id="2Ks-iQ-4Wl"/>
-                                        <constraint firstItem="3RJ-X4-MO2" firstAttribute="leading" secondItem="37v-Co-Zac" secondAttribute="trailing" constant="9" id="4KZ-4c-KOk"/>
+                                        <constraint firstItem="3RJ-X4-MO2" firstAttribute="leading" secondItem="37v-Co-Zac" secondAttribute="trailing" constant="8" id="4KZ-4c-KOk"/>
                                         <constraint firstItem="Iz8-IK-xC5" firstAttribute="leading" secondItem="3RJ-X4-MO2" secondAttribute="trailing" constant="13" id="F4I-zv-pps"/>
                                         <constraint firstItem="L0Z-Zn-mhf" firstAttribute="height" secondItem="Fug-9y-DCG" secondAttribute="height" id="IiC-hr-2EE"/>
                                         <constraint firstItem="3RJ-X4-MO2" firstAttribute="centerY" secondItem="L0Z-Zn-mhf" secondAttribute="centerY" id="RE4-Xv-ghF"/>
@@ -88,8 +88,8 @@
                                         <constraint firstItem="Fug-9y-DCG" firstAttribute="centerY" secondItem="O4r-qH-0yz" secondAttribute="centerY" id="b87-e1-JHT"/>
                                         <constraint firstItem="Iz8-IK-xC5" firstAttribute="centerY" secondItem="3RJ-X4-MO2" secondAttribute="centerY" id="bSC-Rq-Cwq"/>
                                         <constraint firstItem="L0Z-Zn-mhf" firstAttribute="leading" secondItem="Fug-9y-DCG" secondAttribute="trailing" id="dkW-xZ-PXj"/>
-                                        <constraint firstItem="37v-Co-Zac" firstAttribute="leading" secondItem="O4r-qH-0yz" secondAttribute="leading" constant="105" id="jtm-Pa-6lG"/>
                                         <constraint firstItem="Fug-9y-DCG" firstAttribute="leading" secondItem="O4r-qH-0yz" secondAttribute="leading" constant="10" id="mQ0-SE-pGl"/>
+                                        <constraint firstItem="37v-Co-Zac" firstAttribute="leading" secondItem="Fug-9y-DCG" secondAttribute="trailing" constant="10" id="wRe-u5-55f"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -222,6 +222,14 @@
                                     <action selector="testingModeButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="CBc-2z-UEN"/>
                                 </connections>
                             </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S1F-bE-qaP">
+                                <rect key="frame" x="166.5" y="523" width="41" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <action selector="tutorialNextButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="Lj5-Id-Hx6"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -237,7 +245,9 @@
                             <constraint firstItem="seG-dg-VIZ" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" constant="24" id="JwP-bc-tWi"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="centerX" secondItem="SKS-Gt-Yfv" secondAttribute="centerX" id="Kay-hM-6pB"/>
                             <constraint firstItem="Tck-CV-ptU" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" id="Kdg-9i-Itg"/>
+                            <constraint firstItem="S1F-bE-qaP" firstAttribute="top" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="-100" id="OUk-RJ-kXJ"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="trailing" secondItem="Tck-CV-ptU" secondAttribute="trailing" constant="10" id="Od4-y4-vDX"/>
+                            <constraint firstItem="S1F-bE-qaP" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="QLY-cz-ebC"/>
                             <constraint firstItem="7V9-x7-620" firstAttribute="leading" secondItem="zRD-x9-WHF" secondAttribute="trailing" constant="-79" id="SfX-rM-mpz"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="top" id="V9q-3A-cQa"/>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="leading" secondItem="IVK-sZ-5AT" secondAttribute="trailing" id="VPq-lh-ju5"/>
@@ -266,6 +276,7 @@
                         <outlet property="rightDateButton" destination="Nws-Cy-H1T" id="eyK-VV-Mwb"/>
                         <outlet property="settingsButton" destination="seG-dg-VIZ" id="09b-3M-8Bo"/>
                         <outlet property="topStripe" destination="Je9-4Q-GfF" id="gf4-rY-va5"/>
+                        <outlet property="tutorialNextButton" destination="S1F-bE-qaP" id="oSV-uL-WKy"/>
                         <outlet property="weekdayLabel" destination="Ljn-hE-dG9" id="IrB-dy-zER"/>
                     </connections>
                 </viewController>

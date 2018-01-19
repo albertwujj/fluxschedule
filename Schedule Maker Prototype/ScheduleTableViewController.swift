@@ -56,31 +56,76 @@ class ScheduleTableViewController: UITableViewController {
  */
         
         
+        if (UIScreen.main.bounds.height < 600) {
+            tableView.rowHeight = 45
+        } else {
+            tableView.rowHeight = 65
+        }
         tableView.delegate = self
+        
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         
         update()
         if currDateInt == scheduleViewController.dateToHashableInt(date: Date()), let scrollPosition = loadScrollPosition() {
-            tableView.scrollToRow(at: scrollPosition, at: .top, animated: true)
+            scrollToTop(indexPath: scrollPosition)
         }
     }
     func flashScheduleItem(scheduleItem: ScheduleItem) {
+        /*
+        var j = 99
         for i in 0..<scheduleItems.count {
             if tableView.indexPathsForVisibleRows != nil && tableView.indexPathsForVisibleRows!.contains(IndexPath(i)) {
                 if scheduleItems[i] === scheduleItem {
                     let cell = tableView.cellForRow(at: IndexPath(i)) as! ScheduleTableViewCell
                     let greenColorView = UIView()
-                    let orig = UIColor.green
-                    greenColorView.backgroundColor = orig.withAlphaComponent(0.3)
+                    let green = UIColor.green
+                    greenColorView.backgroundColor = green.withAlphaComponent(0.3)
                     greenColorView.layer.masksToBounds = true
-                    cell.backgroundView = greenColorView
-                    Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(dehighlightCell(timer:)), userInfo: scheduleItem, repeats: true)
+                    
+                 
+                    let whiteColorView = UIView()
+                    let white = UIColor.white
+                    whiteColorView.backgroundColor = white
+                    whiteColorView.layer.masksToBounds = true
+                    UIView.animate(withDuration: 1, animations: { () -> Void in
+                        cell.backgroundView = greenColorView
+                        
+                        
+                    }, completion: { (finished) -> Void in
+                        UIView.animate(withDuration: 1, animations: { () -> Void in
+                            cell.backgroundView = whiteColorView
+                            
+                        }, completion: { (finished) -> Void in
+                            
+                        })
+                        
+                    })
+                    
+                    j = i
+                    break
                 }
             }
         }
+        */
+        var j = 0
+        DispatchQueue.main.async {
+            for i in 0..<self.scheduleItems.count {
+                if self.scheduleItems[i] === scheduleItem {
+                    self.scheduleItems.remove(at: i)
+                    self.tableView.deleteRows(at: [IndexPath(i)], with: .right)
+                    j = i
+                    break
+                }
+            }
+        }
+        DispatchQueue.main.async {
+            self.scheduleItems.insert(scheduleItem, at: j)
+            self.tableView.insertRows(at: [IndexPath(j)], with: .right)
+        }
     }
+    /*
     @objc func dehighlightCell(timer: Timer) {
         let scheduleItem = timer.userInfo as! ScheduleItem
         for i in 0..<scheduleItems.count {
@@ -90,18 +135,20 @@ class ScheduleTableViewController: UITableViewController {
                     let whiteColorView = UIView()
                     let orig = UIColor.white
                     whiteColorView.layer.masksToBounds = true
-                    UIView.animate(withDuration: 0.25, animations: { () -> Void in
+                    UIView.animate(withDuration: 0.25, dealyanimations: { () -> Void in
                         cell.backgroundView = whiteColorView
                         
                     }, completion: { (finished) -> Void in
                         
                     })
                     
+                    
                 }
                 
             }
         }
     }
+    */
     //MARK: Drag and Drop Table View Cell Functions
     func addLongPressGesture() {
         
@@ -237,12 +284,9 @@ class ScheduleTableViewController: UITableViewController {
             isAnyLockedItems = false
             didDragLockedItem = false
             
-            recalculateTimes(with: origLockedItems)
             
             update()
-            scheduleViewController.schedules[currDateInt] = scheduleItems
-            highlightCurrCell()
-            scheduleViewController.currentScheduleUpdated()
+            scheduleViewController.step3Complete()
         }
         
     }
@@ -342,14 +386,9 @@ class ScheduleTableViewController: UITableViewController {
         deletedLockedItemsAndOrdered()
         lockedTasks = lockedTasks.sorted(by: { $0.startTime! < $1.startTime! })
         for i in lockedTasks {
-          
-          
             insertItem(item: i, newStartTime: i.startTime!)
-           
-            
             recalculateTimesBasic()
         }
-        
     }
     /*
     //just remove and then put back locked times into array, based on locked start time, in order of said start time
@@ -410,7 +449,6 @@ class ScheduleTableViewController: UITableViewController {
             currStartTime += i.duration
         }
     }
- 
     func snapshotOfCell(inputView: UIView) -> UIView {
         UIGraphicsBeginImageContextWithOptions(inputView.bounds.size, false, 0.0)
         inputView.layer.render(in: UIGraphicsGetCurrentContext()!)
@@ -430,7 +468,7 @@ class ScheduleTableViewController: UITableViewController {
         
         if let visRows = tableView.indexPathsForVisibleRows{
             if visRows.count > 0 {
-                let topPath = visRows[visRows.count - 1]
+                let topPath = visRows[0]
                 sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: topPath), forKey: Paths.scrollPosition)
             }
         }
@@ -463,6 +501,7 @@ class ScheduleTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! ScheduleTableViewCell
+        cell.changeFontForScreenSize(tvc: self)
         cell.tableViewController = self
         cell.row = indexPath.row
         cell.scheduleItem = scheduleItems[indexPath.row]
@@ -472,10 +511,10 @@ class ScheduleTableViewController: UITableViewController {
         
         return cell
     }
-    
+    /*
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 65
-    }
+        return
+    } */
     /*
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         return header
@@ -504,17 +543,34 @@ class ScheduleTableViewController: UITableViewController {
         mergeSameName()
         tableView.reloadData()
         //tableView.reloadData()
-        scheduleViewController.schedules[currDateInt] = scheduleItems
+        
         //scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
         highlightCurrCell()
-        scheduleViewController.currentScheduleUpdated()
-        scheduleViewController.saveSchedules()
+       
+        normalizeTFLengths()
+        if scheduleViewController.tutorialStep == 0 {
+            scheduleViewController.schedules[currDateInt] = scheduleItems
+            scheduleViewController.currentScheduleUpdated()
+            scheduleViewController.saveSchedules()
+        }
     }
-    
+    func normalizeTFLengths() {
+        var largestLength: CGFloat = 0.0
+        for i in tableView.visibleCells {
+            let cell = i as! ScheduleTableViewCell
+            if cell.startTimeTF.frame.width > largestLength {
+                largestLength = cell.startTimeTF.frame.width
+            }
+        }
+        for i in tableView.visibleCells {
+            let cell = i as! ScheduleTableViewCell
+            cell.startTimeTF.frame = CGRect(x: cell.startTimeTF.frame.minX, y: cell.startTimeTF.frame.minY, width: largestLength, height: cell.startTimeTF.frame.height)
+        }
+    }
     func updateFromSVC() {
         tableView.reloadData()
         if currDateInt == scheduleViewController.dateToHashableInt(date: Date()), let scrollPosition = loadScrollPosition() {
-            tableView.scrollToRow(at: scrollPosition, at: .top, animated: true)
+            scrollToTop(indexPath: scrollPosition)
         }
         recalculateTimes(with: nil)
         var rows: [IndexPath] = []
@@ -644,17 +700,28 @@ class ScheduleTableViewController: UITableViewController {
     //MARK: Outer functions
     func addButtonPressed() {
         var newTask: ScheduleItem!
+        
         if testingMode {
             newTask = ScheduleItem(name: "\(scheduleItems.count + 1)", duration: userSettings.defaultDuration, locked: false)
         }
-        else { newTask = ScheduleItem(name: userSettings.defaultName, duration: userSettings.defaultDuration, locked: false) }
+        else { newTask = ScheduleItem(name: "\(userSettings.defaultName) \(scheduleItems.count + 1)", duration: userSettings.defaultDuration, locked: false) }
         newTask.startTime = userSettings.defaultStartTime
         scheduleItems.append(newTask)
         tableView.insertRows(at: [IndexPath(scheduleItems.count - 1)], with: .none)
         update()
+        scrollToBottom(indexPath: IndexPath(scheduleItems.count - 1))
        
     }
-    
+    func scrollToBottom(indexPath: IndexPath){
+        DispatchQueue.main.async {
+            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        }
+    }
+    func scrollToTop(indexPath: IndexPath){
+        DispatchQueue.main.async {
+            self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+        }
+    }
     /*
      // Override to support conditional rearranging of the table view.
      override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -673,54 +740,30 @@ class ScheduleTableViewController: UITableViewController {
      }
      */
     @objc func highlightCurrCell() {
-        /*
-        for i in 0..<scheduleItems.count {
-            let scheduleItem = scheduleItems[i]
-            if let startTime = scheduleItem.startTime {
-                let currentTime = getCurrentDurationFromMidnight()
-                let thisTableView = tableView!
-                let indexPath = IndexPath(row: i, section: 0)
-                let cell = tableView.cellForRow(at: indexPath)!
-                
-                if startTime <= currentTime && startTime + scheduleItem.duration > currentTime  {
-                    let bgColorView = UIView()
-                    bgColorView.backgroundColor = UIColor(red: 76.0/255.0, green: 161.0/255.0, blue: 255.0/255.0, alpha: 1.0)
-                    bgColorView.layer.masksToBounds = true
-                    cell.backgroundView = bgColorView
-                }
-                else {
-                    let whiteColorView = UIView()
-                    whiteColorView.backgroundColor = .white
-                    whiteColorView.layer.masksToBounds = true
-                    cell.backgroundView = whiteColorView
-                }
- 
-                
-            }
-        }
- */
-        if scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.dateToHashableInt(date: Date()) {
-            for cell in tableView.visibleCells  {
-                let scheduleItem = (cell as! ScheduleTableViewCell).scheduleItem!
-                if let startTime = scheduleItem.startTime {
-                    let currentTime = getCurrentDurationFromMidnight()
-                    
-                    if startTime <= currentTime && startTime + scheduleItem.duration > currentTime  {
-                        let bgColorView = UIView()
-                        //bgColorView.backgroundColor = UIColor(red: 76.0/255.0, green: 161.0/255.0, blue: 255.0/255.0, alpha: 1.0)
-                        let orig = appDelegate.userSettings.themeColor
-                        //bgColorView.backgroundColor = tintOf(color: orig, tintFactor: 1/3)
-                        //bgColorView.backgroundColor = orig.lighter(by: 10.0)
-                        bgColorView.backgroundColor = orig.withAlphaComponent(0.3)
+        if scheduleViewController.tutorialStep == 0 {
+            if scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.dateToHashableInt(date: Date()) {
+                for cell in tableView.visibleCells  {
+                    let scheduleItem = (cell as! ScheduleTableViewCell).scheduleItem!
+                    if let startTime = scheduleItem.startTime {
+                        let currentTime = getCurrentDurationFromMidnight()
                         
-                        bgColorView.layer.masksToBounds = true
-                        (cell as! ScheduleTableViewCell).backgroundView = bgColorView
-                    }
-                    else {
-                        let whiteColorView = UIView()
-                        whiteColorView.backgroundColor = .white
-                        whiteColorView.layer.masksToBounds = true
-                        (cell as! ScheduleTableViewCell).backgroundView = whiteColorView
+                        if startTime <= currentTime && startTime + scheduleItem.duration > currentTime  {
+                            let bgColorView = UIView()
+                            //bgColorView.backgroundColor = UIColor(red: 76.0/255.0, green: 161.0/255.0, blue: 255.0/255.0, alpha: 1.0)
+                            let orig = appDelegate.userSettings.themeColor
+                            //bgColorView.backgroundColor = tintOf(color: orig, tintFactor: 1/3)
+                            //bgColorView.backgroundColor = orig.lighter(by: 10.0)
+                            bgColorView.backgroundColor = orig.withAlphaComponent(0.3)
+                            
+                            bgColorView.layer.masksToBounds = true
+                            (cell as! ScheduleTableViewCell).backgroundView = bgColorView
+                        }
+                        else {
+                            let whiteColorView = UIView()
+                            whiteColorView.backgroundColor = .white
+                            whiteColorView.layer.masksToBounds = true
+                            (cell as! ScheduleTableViewCell).backgroundView = whiteColorView
+                        }
                     }
                 }
             }

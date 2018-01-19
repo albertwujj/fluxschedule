@@ -20,7 +20,7 @@ class Settings: NSObject, NSCoding {
     var themeColor:UIColor = .blue
     var insertOption: InsertOption = .split
     var defaultStartTime: Int = 7 * 3600
-    var defaultName: String = "New Event"
+    var defaultName: String = "New Item"
     var defaultDuration = 30 * 60
     func encode(with aCoder: NSCoder) {
         aCoder.encode(is24Mode, forKey: PropertyKey.is24Mode)
