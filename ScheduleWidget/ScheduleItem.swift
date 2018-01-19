@@ -31,6 +31,7 @@ public class ScheduleItem: NSObject, NSCoding {
         static let locked = "locked"
         static let recurDays = "recurDays"
         static let row = "row"
+        static let pseudoLocked = "pseudoLocked"
     }
     
     public func encode(with aCoder: NSCoder) {

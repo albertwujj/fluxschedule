@@ -15,7 +15,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBOutlet weak var extendButton: UIButton!
     @IBOutlet weak var currentTaskLabel: UILabel!
     @IBOutlet weak var nextTaskLabel: UILabel!
-
+    @IBOutlet weak var nextTaskTimeLabel: UILabel!
+    @IBOutlet weak var currentTaskLockButton: UIButton!
+    @IBOutlet weak var nextTaskLockButton: UIButton!
     
     var sharedDefaults: UserDefaults! = nil
     var schedules: [Int:[ScheduleItem]] = [:]
@@ -23,6 +25,8 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     var currDateInt = 0
     var userSettings = Settings()
     var currScheduleItem: ScheduleItem?
+    var nextScheduleItem: ScheduleItem?
+    var startOfToday = Calendar.current.startOfDay(for: Date())
     override func viewDidLoad() {
         super.viewDidLoad()
         sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
@@ -33,28 +37,40 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         if let savedSchedules = loadSchedules() {
             schedules = savedSchedules
         }
+        updateDisplay()
+        // Do any additional setup after loading the view from its nib.
+        Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateDisplay), userInfo: nil, repeats: true)
+    }
+    @objc func updateDisplay() {
         if let currSchedule = schedules[currDateInt] {
             scheduleItems = currSchedule
             var prevWasCurr = false
             for scheduleItem in currSchedule  {
-              
+                
                 if let startTime = scheduleItem.startTime {
                     let currentTime = getCurrentDurationFromMidnight()
                     
                     if prevWasCurr {
                         nextTaskLabel.text = scheduleItem.taskName
+                        nextTaskTimeLabel.text = timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+                        nextScheduleItem = scheduleItem
+                        nextTaskLockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀", for: .normal)
                         prevWasCurr = false
+                        
                     }
                     if startTime <= currentTime && startTime + scheduleItem.duration > currentTime  {
                         currScheduleItem = scheduleItem
                         currentTaskLabel.text = currScheduleItem!.taskName
+                        currScheduleItem = scheduleItem
+                        currentTaskLockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀", for: .normal)
                         prevWasCurr = true
+                        
                     }
                 }
             }
         }
-        // Do any additional setup after loading the view from its nib.
-        
+        currentTaskLockButton.isHidden = currScheduleItem == nil ? true : false
+        nextTaskLockButton.isHidden = nextScheduleItem == nil ? true : false
     }
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
         
@@ -72,10 +88,12 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBAction func extendTaskButtonPressed(_ sender: UIButton) {
         print("extended")
         if let currItem = currScheduleItem {
-            currItem.duration += 10 * 60
+            currItem.duration += 5 * 60
         }
         recalculateTimes()
+        updateDisplay()
         saveSchedules()
+        
     }
     func saveSchedules() {
         NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
@@ -220,5 +238,43 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         let seconds = calendar.component(.second, from: date)
         return hour * 3600 + minutes * 60 + seconds
     }
+    func timeDescription(durationSinceMidnight: Int) -> String {
+       
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        let date = startOfToday.addingTimeInterval(Double(durationSinceMidnight))
+        var text = formatter.string(from: date)
+        if durationSinceMidnight >= 13 * 3600 {
+            text = text + " "
+        }
+       
+        if durationSinceMidnight < 10 * 3600 {
+            text = text + " "
+        }
+       
+        return text
+       
+    }
     
+    @IBAction func currTaskLockButtonPressed(_ sender: UIButton) {
+        let scheduleItem = currScheduleItem!
+        if (scheduleItem.startTime != nil) {
+            scheduleItem.locked = !scheduleItem.locked
+            sender.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+            saveSchedules()
+        }
+    }
+    
+    
+    @IBAction func nextTaskLockButtonPressed(_ sender: UIButton) {
+        let scheduleItem = nextScheduleItem!
+        if (scheduleItem.startTime != nil) {
+            scheduleItem.locked = !scheduleItem.locked
+            sender.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+            extendButton.isEnabled = !scheduleItem.locked
+            saveSchedules()
+        }
+    }
 }

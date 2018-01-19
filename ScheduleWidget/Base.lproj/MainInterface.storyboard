@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -19,10 +19,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="kNn-1R-LnO">
-                                <rect key="frame" x="11" y="8" width="138" height="51"/>
+                                <rect key="frame" x="11" y="8" width="118" height="51"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="Whi-2g-A9b">
-                                        <rect key="frame" x="0.0" y="0.0" width="138" height="20.5"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Whi-2g-A9b">
+                                        <rect key="frame" x="0.0" y="0.0" width="118" height="20.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Now:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NSj-cG-zJ4">
                                                 <rect key="frame" x="0.0" y="0.0" width="67" height="20.5"/>
@@ -31,15 +31,15 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yse-A3-TaP">
-                                                <rect key="frame" x="97" y="0.0" width="41" height="20.5"/>
+                                                <rect key="frame" x="77" y="0.0" width="41" height="20.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="omb-N7-Zxm">
-                                        <rect key="frame" x="0.0" y="30.5" width="138" height="20.5"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="omb-N7-Zxm">
+                                        <rect key="frame" x="0.0" y="30.5" width="118" height="20.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Up next:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6w7-Kv-JxJ">
                                                 <rect key="frame" x="0.0" y="0.0" width="67" height="20.5"/>
@@ -48,7 +48,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bbw-dy-DYt">
-                                                <rect key="frame" x="97" y="0.0" width="41" height="20.5"/>
+                                                <rect key="frame" x="77" y="0.0" width="41" height="20.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -61,18 +61,47 @@
                                 </constraints>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X1h-5Y-sfh">
-                                <rect key="frame" x="170" y="8" width="94" height="21"/>
+                                <rect key="frame" x="210" y="8" width="94" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Extend 5 min"/>
                                 <connections>
                                     <action selector="extendTaskButtonPressed:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="bla-dd-7Fy"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bsb-jj-wX0">
+                                <rect key="frame" x="137" y="6" width="25" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="7yq-UD-Qat"/>
+                                    <constraint firstAttribute="width" constant="25" id="DJd-Cl-MOQ"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <state key="normal" title="🌀"/>
+                                <connections>
+                                    <action selector="currTaskLockButtonPressed:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="OvI-56-hme"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nBW-9J-Abm">
+                                <rect key="frame" x="137" y="36.5" width="25" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="8qI-My-aa2"/>
+                                    <constraint firstAttribute="width" constant="25" id="j3R-Rv-GWo"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <state key="normal" title="🌀"/>
+                                <connections>
+                                    <action selector="nextTaskLockButtonPressed:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="VC8-EW-KMp"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="X1h-5Y-sfh" firstAttribute="top" secondItem="Yse-A3-TaP" secondAttribute="top" id="0X3-M8-guB"/>
                             <constraint firstItem="kNn-1R-LnO" firstAttribute="top" secondItem="ssy-KU-ocm" secondAttribute="top" constant="8" id="1ll-dQ-m9X"/>
-                            <constraint firstItem="X1h-5Y-sfh" firstAttribute="leading" secondItem="kNn-1R-LnO" secondAttribute="trailing" constant="21" id="QHg-Kh-tFk"/>
+                            <constraint firstItem="bsb-jj-wX0" firstAttribute="centerY" secondItem="Yse-A3-TaP" secondAttribute="centerY" id="Ho5-m8-dfj"/>
+                            <constraint firstItem="ssy-KU-ocm" firstAttribute="trailing" secondItem="X1h-5Y-sfh" secondAttribute="trailing" constant="16" id="ZQn-o5-736"/>
+                            <constraint firstItem="bsb-jj-wX0" firstAttribute="leading" secondItem="Yse-A3-TaP" secondAttribute="trailing" constant="8" id="b32-oE-9lB"/>
                             <constraint firstItem="kNn-1R-LnO" firstAttribute="leading" secondItem="ssy-KU-ocm" secondAttribute="leading" constant="11" id="b81-Sp-8Se"/>
+                            <constraint firstItem="X1h-5Y-sfh" firstAttribute="centerY" secondItem="Yse-A3-TaP" secondAttribute="centerY" id="iP9-Lt-aOo"/>
+                            <constraint firstItem="nBW-9J-Abm" firstAttribute="centerY" secondItem="bbw-dy-DYt" secondAttribute="centerY" id="uVf-bn-z3J"/>
+                            <constraint firstItem="nBW-9J-Abm" firstAttribute="centerX" secondItem="bsb-jj-wX0" secondAttribute="centerX" id="wJr-Hy-LMl"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="ssy-KU-ocm"/>
                     </view>
@@ -81,8 +110,11 @@
                     <size key="freeformSize" width="320" height="90"/>
                     <connections>
                         <outlet property="currentTaskLabel" destination="Yse-A3-TaP" id="iSQ-sE-QBe"/>
+                        <outlet property="currentTaskLockButton" destination="bsb-jj-wX0" id="HMc-0d-YFW"/>
                         <outlet property="extendButton" destination="X1h-5Y-sfh" id="oiU-Eb-Dnf"/>
                         <outlet property="nextTaskLabel" destination="bbw-dy-DYt" id="HUC-j0-4Yp"/>
+                        <outlet property="nextTaskLockButton" destination="nBW-9J-Abm" id="orW-pZ-sdD"/>
+                        <outlet property="nextTaskTimeLabel" destination="6w7-Kv-JxJ" id="ldF-SC-hlJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vXp-U4-Rya" userLabel="First Responder" sceneMemberID="firstResponder"/>

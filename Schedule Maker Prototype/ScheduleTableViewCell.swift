@@ -31,7 +31,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                 startTimeTF.text = "XX:XX"
                 endTimeTF.text = "XX:XX"
             }
-            lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀", for: .normal)
+            lockButtonUpdated()
         }
     }
     
@@ -50,7 +50,6 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         startTimeTF.delegate = self
         durationTF.delegate = self
         taskNameTF.delegate = self
-        
         //set midnight as a global Date variable
        
         startOfToday = Calendar.current.startOfDay(for: Date())
@@ -66,10 +65,8 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         durationTFCustomButton = UIButton()
         durationTFCustomButton.setTitle(" 88:88 ", for: .normal)
         durationTFCustomButton.setTitleColor(.black, for: .normal)
-        
         startTimeTF.addButtons(customString: nil, customButton: startTimeTFCustomButton)
         durationTF.addButtons(customString: nil, customButton: durationTFCustomButton)
-        
     }
     
     
@@ -93,38 +90,67 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     func textFieldDoneButtonPressed(_ sender: AccessoryTextField) {
         //if !sender.inputView!.isScrolling() {
             sender.resignFirstResponder()
-            if sender === startTimeTF {
+            if sender === startTimeTF{
+                let intDate = Int((startTimeTF.inputView as! UIDatePicker).date.timeIntervalSince(startOfToday))
+                //let scheduleItem = self.scheduleItem!
+                for compared in tableViewController.scheduleItems {
+                    if compared.startTime != nil && compared.locked && compared !== scheduleItem {
+                        if intDate > compared.startTime! && intDate < compared.startTime! + compared.duration {
+                            let alertController = UIAlertController(title: "Locked event conflict", message: "New start time would cause conflict with locked event \"\(compared.taskName)\".", preferredStyle: UIAlertControllerStyle.alert)
+                            
+                            let okAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+                            {
+                                (result : UIAlertAction) -> Void in
+                            }
+                            alertController.addAction(okAction)
+                            tableViewController.present(alertController, animated: true, completion: nil)
+                            return
+
+                        }
+                    }
+                }
+                if scheduleItem.locked {
+                    let alertController = UIAlertController(title: "Event is locked!", message: "Cannot change the start time of a locked task.", preferredStyle: UIAlertControllerStyle.alert)
+                    
+                    let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                    {
+                        (result : UIAlertAction) -> Void in
+                    }
+                    alertController.addAction(okAction)
+                    tableViewController.present(alertController, animated: true, completion: nil)
+                    return
+                }
                 
-                let date = (startTimeTF.inputView as! UIDatePicker).date
                 //update startTime and endTime based on chosen date
-                scheduleItem.startTime = Int(date.timeIntervalSince(startOfToday))
+                scheduleItem.startTime = intDate
                 
                 startTimeTF.text = timeDescription(durationSinceMidnight: scheduleItem.startTime!)
-                let endTime = scheduleItem.startTime! + scheduleItem.duration
-                endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
                 
-                //ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
-                tableViewController.scheduleItems.remove(at: self.row)
+
+                
                 var origLockedItems = tableViewController.getLockedItems()
-                origLockedItems.append(scheduleItem)
-                tableViewController.recalculateTimes(with: origLockedItems)
-                tableViewController.update()
+                
+                if origLockedItems.count > 0 {
+                    tableViewController.scheduleItems.remove(at: self.row)
+                    origLockedItems.append(scheduleItem.deepCopy())
+                    tableViewController.recalculateTimes(with: origLockedItems)
+                    tableViewController.update()
+                }
+                else {
+                    ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
+                }
+                //tableViewController.flashScheduleItem(scheduleItem: scheduleItem)
+                
             }
+            
             else if sender === durationTF {
                 let duration = (durationTF.inputView as! UIDatePicker).countDownDuration
                 scheduleItem.duration = Int(duration)
-                durationTF.text = durationDescription(duration: scheduleItem.duration)
-                if let startTime = scheduleItem.startTime {
-                    let endTime = startTime + Int(duration)
-                    endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
-                    
-                }
+                
+              
                 
                 tableViewController.update()
             }
-        
-        //}
-     
     }
    
     
@@ -132,13 +158,27 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
-        //textField.selectAll(nil)
+        
         
         if textField is AccessoryTextField {
             let accessoryTF = textField as! AccessoryTextField
          
             //Timer.scheduledTimer(timeInterval: 0.0001, target: self, selector: #selector(checkEnableDoneButton(timer:)), userInfo: accessoryTF, repeats: true)
         }
+        if textField === taskNameTF {
+            if taskNameTF.text == "New Event" {
+                taskNameTF.selectAll(nil)
+            }
+        }
+        if textField === startTimeTF || textField === durationTF {
+            var desiredPosition: UITextPosition = textField.endOfDocument
+            if(textField.text?.last != nil && textField.text!.last! == " ") {
+                desiredPosition = textField.position(from: desiredPosition, offset: -1) ?? desiredPosition
+            }
+            textField.selectedTextRange = textField.textRange(from: desiredPosition, to: desiredPosition)
+            
+        }
+        
         
     }
     @objc func checkEnableDoneButton(timer: Timer) {
@@ -164,14 +204,16 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     
     //MARK: Input handling
     @IBAction func startTimeEditing(_ sender: UITextField) {
-        let datePickerView:UIDatePicker = UIDatePicker()
-        datePickerView.datePickerMode = UIDatePickerMode.time
-        sender.inputView = datePickerView
-        
-        let date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)
-        datePickerView.setDate(date, animated: true)
-        startTimeTFCustomButton.setTitle(" \(timeDescription(durationSinceMidnight: Int(date.timeIntervalSince(startOfToday)))) ", for: .normal)
-        datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChangedStartTime), for: UIControlEvents.valueChanged)
+        if !scheduleItem.locked {
+            let datePickerView:UIDatePicker = UIDatePicker()
+            datePickerView.datePickerMode = UIDatePickerMode.time
+            sender.inputView = datePickerView
+            
+            let date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)
+            datePickerView.setDate(date, animated: true)
+            startTimeTFCustomButton.setTitle(" \(timeDescription(durationSinceMidnight: Int(date.timeIntervalSince(startOfToday)))) ", for: .normal)
+            datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChangedStartTime), for: UIControlEvents.valueChanged)
+        }
  
     }
     @objc func datePickerValueChangedStartTime(sender:UIDatePicker) {
@@ -208,7 +250,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
        // ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
     }
 
-    static func moveItem(tvc: ScheduleTableViewController, origRow: Int, newStartTime: Int, insertOption: InsertOption) {
+    static func moveItem(tvc: ScheduleTableViewController, origRow: Int, newStartTime: Int, insertOption: InsertOption) -> IndexPath?{
      
         let tableView = tvc.tableView!
         var finalRow = 0
@@ -216,7 +258,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         let scheduleItem = scheduleItems[origRow]
         scheduleItem.startTime = newStartTime
         var prevRow = origRow
-        let cell = tvc.tableView.cellForRow(at: IndexPath(row: origRow, section: 0)) as! ScheduleTableViewCell
+      
         //find correct previous item
         swapLoop: while(prevRow >= 0) {
             prevRow -= 1
@@ -232,53 +274,56 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         if origRow > 0 && scheduleItem.startTime! >= prev!.startTime! + prev!.duration  {
             isExtension = true
         }
-        else {
-            var splitItem: ScheduleItem!
-            //let curr = scheduleItems[i+1]
-            var diff = 0
-            var newPrev: ScheduleItem!
-            if (prevRow >= 0) {
-                newPrev = scheduleItems[prevRow]
-                if newPrev.locked == true {
-                    let alertController = UIAlertController(title: "Locked event conflict", message: "New start time would cause event \"\(scheduleItem.taskName)\" to conflict with locked event \"\(newPrev.taskName)\".", preferredStyle: UIAlertControllerStyle.alert)
-                    
-                    let okAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
-                    {
-                        (result : UIAlertAction) -> Void in
-                    }
-                    alertController.addAction(okAction)
-                    tvc.present(alertController, animated: true, completion: nil)
-                    return
+       
+        var splitItem: ScheduleItem!
+        //let curr = scheduleItems[i+1]
+        var diff = 0
+        var newPrev: ScheduleItem!
+        if (prevRow >= 0) {
+            newPrev = scheduleItems[prevRow]
+            if newPrev.locked == true {
+                let alertController = UIAlertController(title: "Locked event conflict", message: "New start time would cause event \"\(scheduleItem.taskName)\" to conflict with locked event \"\(newPrev.taskName)\".", preferredStyle: UIAlertControllerStyle.alert)
+                
+                let okAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+                {
+                    (result : UIAlertAction) -> Void in
                 }
-                diff = newPrev.startTime! + newPrev.duration - scheduleItem.startTime!
-                newPrev.duration -= diff
+                alertController.addAction(okAction)
+                tvc.present(alertController, animated: true, completion: nil)
+                return nil
             }
+            diff = newPrev.startTime! + newPrev.duration - scheduleItem.startTime!
+            newPrev.duration -= diff
+        
     
             //cell.startTimeTF.text = "\(cell.timeDescription(durationSinceMidnight: newStartTime))"
-            finalRow = prevRow + 1
+            
             
            
             
-            scheduleItems.insert(scheduleItems.remove(at: origRow), at: prevRow + 1)
             
+        }
+        finalRow = prevRow + 1
+        var finalRowWOffset = finalRow
+        
+        if (origRow < finalRow) {
+            finalRowWOffset -= 1
+          
+        }
+        if origRow != finalRow {
+            scheduleItems.insert(scheduleItems.remove(at: origRow), at: finalRowWOffset)
+        }
             
-            /*
-            if(i >= 0 && insertOption == .split && diff != 0) {
-                splitItem = ScheduleItem(name: newPrev.taskName, duration: diff, startTime: scheduleItem.startTime! + scheduleItem.duration)
-                scheduleItems.insert(splitItem, at: i + 2)
-            }
-            */
+        if(finalRow != origRow && prevRow >= 0 && insertOption == .split && diff > 0) {
+            splitItem = ScheduleItem(name: newPrev.taskName, duration: diff, startTime: scheduleItem.startTime! + scheduleItem.duration)
+            scheduleItems.insert(splitItem, at: finalRowWOffset+1)
         }
-        if (!isExtension) {
-            tableView.moveRow(at: IndexPath(row: origRow, section: 0), to: IndexPath(row: finalRow, section: 0))
-        }
+        
+        
         tvc.scheduleItems = scheduleItems
         
-        
-        
-        
-        
         tvc.update()
+        return IndexPath(finalRow)
     }
     /*
     static func insertItem(tvc: ScheduleTableViewController, item: ScheduleItem, newStartTime: Int, insertOption: InsertOption) {
@@ -407,15 +452,26 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             textField.font = UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)
         }
         */
-        
     }
     //MARK: Actions
     
     @IBAction func lockButtonPressed(_ sender: UIButton) {
         if (scheduleItem.startTime != nil) {
             scheduleItem.locked = !scheduleItem.locked
-            sender.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
-            tableViewController.update()
+            lockButtonUpdated()
         }
+    }
+    func lockButtonUpdated() {
+        if scheduleItem.locked {
+            startTimeTF.isUserInteractionEnabled = false
+            if tableViewController.testingMode {
+                scheduleItem.taskName = timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+                taskNameTF.text = scheduleItem.taskName
+            }
+        } else {
+            startTimeTF.isUserInteractionEnabled = true
+        }
+        
+        lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
     }
 }

@@ -14,7 +14,7 @@
         <scene sceneID="USl-fU-MSJ">
             <objects>
                 <tableViewController id="Di3-sW-qHo" customClass="ScheduleTableViewController" customModule="Schedule_Maker_Prototype" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="jG1-6o-cg5">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="jG1-6o-cg5">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="562"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -167,7 +167,7 @@
                                     <segue destination="Di3-sW-qHo" kind="embed" identifier="EmbeddedTable" id="1Wq-dJ-ZZG"/>
                                 </connections>
                             </containerView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="seG-dg-VIZ">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="seG-dg-VIZ">
                                 <rect key="frame" x="24" y="25.5" width="30" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="⚙">
@@ -212,6 +212,16 @@
                                     <action selector="startTimeEditing:" destination="MWw-Go-rfF" eventType="editingDidBegin" id="L1G-3D-iFl"/>
                                 </connections>
                             </textField>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tck-CV-ptU">
+                                <rect key="frame" x="313" y="26" width="58" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="8"/>
+                                <state key="normal" title="Testing Mode">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="testingModeButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="CBc-2z-UEN"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -226,6 +236,8 @@
                             <constraint firstItem="IVK-sZ-5AT" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="-1" id="HNO-mk-y7A"/>
                             <constraint firstItem="seG-dg-VIZ" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" constant="24" id="JwP-bc-tWi"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="centerX" secondItem="SKS-Gt-Yfv" secondAttribute="centerX" id="Kay-hM-6pB"/>
+                            <constraint firstItem="Tck-CV-ptU" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" id="Kdg-9i-Itg"/>
+                            <constraint firstItem="SKS-Gt-Yfv" firstAttribute="trailing" secondItem="Tck-CV-ptU" secondAttribute="trailing" constant="10" id="Od4-y4-vDX"/>
                             <constraint firstItem="7V9-x7-620" firstAttribute="leading" secondItem="zRD-x9-WHF" secondAttribute="trailing" constant="-79" id="SfX-rM-mpz"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="top" id="V9q-3A-cQa"/>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="leading" secondItem="IVK-sZ-5AT" secondAttribute="trailing" id="VPq-lh-ju5"/>

@@ -498,6 +498,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Schedule Maker Prototype/Schedule Maker Prototype.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9P3FVEPY7V;
+				ENABLE_ON_DEMAND_RESOURCES = NO;
 				INFOPLIST_FILE = "Schedule Maker Prototype/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -516,6 +517,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Schedule Maker Prototype/Schedule Maker Prototype.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9P3FVEPY7V;
+				ENABLE_ON_DEMAND_RESOURCES = NO;
 				INFOPLIST_FILE = "Schedule Maker Prototype/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

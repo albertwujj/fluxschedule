@@ -20,12 +20,15 @@ class Settings: NSObject, NSCoding {
     var themeColor:UIColor = .blue
     var insertOption: InsertOption = .split
     var defaultStartTime: Int = 7 * 3600
+    var defaultName: String = "New Event"
+    var defaultDuration = 30 * 60
     func encode(with aCoder: NSCoder) {
         aCoder.encode(is24Mode, forKey: PropertyKey.is24Mode)
         aCoder.encode(notifDelayTime, forKey: PropertyKey.notifDelayTime)
         aCoder.encode(themeColor, forKey: PropertyKey.themeColor)
         aCoder.encode(insertOption.rawValue, forKey: PropertyKey.insertOption)
         aCoder.encode(defaultStartTime, forKey: PropertyKey.defaultStartTime)
+        aCoder.encode(defaultName, forKey: PropertyKey.defaultName)
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
@@ -37,6 +40,7 @@ class Settings: NSObject, NSCoding {
         //self.insertOption = InsertOption(rawValue: aDecoder.decodeInteger(forKey: PropertyKey.insertOption))!
         self.insertOption = .split
         //self.defaultStartTime = aDecoder.decodeInteger(forKey: PropertyKey.defaultStartTime)
+        //self.defaultName =
     }
     
     struct PropertyKey {
@@ -45,6 +49,7 @@ class Settings: NSObject, NSCoding {
         static let themeColor = "themeColor"
         static let insertOption = "insertOption"
         static let defaultStartTime = "defaultStartTime"
+        static let defaultName = "defaultName"
     }
     
    
