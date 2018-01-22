@@ -69,7 +69,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
        print("Tutorial: \(tutorialStep)")
         
         if let savedSchedules = loadSchedules(), !testingMode {
-            //schedules = savedSchedules
+            schedules = savedSchedules
         }
         if let savedSchedulesEdited = loadSchedulesEdited() {
             schedulesEdited = savedSchedulesEdited
@@ -283,7 +283,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil {
 
             schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "\(userSettings.defaultName) 1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "\(userSettings.defaultName) 2", duration: userSettings.defaultDuration), ScheduleItem(name: "\(userSettings.defaultName) 3", duration: userSettings.defaultDuration)]
-            print("WHATTF: \(ScheduleTableViewCell.timeDescription(durationSinceMidnight: userSettings.defaultStartTime))")
+            
         }
         
         if tutorialStep != 0 {
