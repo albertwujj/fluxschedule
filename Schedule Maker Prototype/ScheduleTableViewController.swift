@@ -20,7 +20,7 @@ class ScheduleTableViewController: UITableViewController {
     var isAnyLockedItems: Bool = false
     var didDragLockedItem = false
     var testingMode = false
-    
+    var viewsToWhiten: [UIView] = []
     @IBOutlet weak var header: UIView!
     @IBOutlet weak var deleteButton: UIButton!
     
@@ -561,10 +561,41 @@ class ScheduleTableViewController: UITableViewController {
             scheduleViewController.currentScheduleUpdated()
             scheduleViewController.saveSchedules()
         }
-        updateTextFonts()
+        /*
+        for i in tableView.indexPathsForVisibleRows ?? [] {
+            let stvcell = tableView.cellForRow(at: i) as! ScheduleTableViewCell
+            let textFields = stvcell.subviews[0].subviews.filter{$0 is AccessoryTextField}
+            print("\(textFields.count)")
+            for j in textFields {
+                let accessoryTF = j as! AccessoryTextField
+               
+                if accessoryTF.backgroundColor == nil || !accessoryTF.backgroundColor!.isEqual(UIColor.white) {
+                    
+                
+                    UIView.animate(withDuration: 0.3, animations: { () -> Void in
+                        accessoryTF.backgroundColor = .white
+                        
+                    }, completion: { (finished) -> Void in
+                        
+                    })
+                }
+            }
+        }
+        */
+        
+            for i in viewsToWhiten {
+                UIView.animate(withDuration: 0.3, animations: { () -> Void in
+                    i.backgroundColor = .white
+                    
+                }, completion: { (finished) -> Void in
+                    
+                })
+            }
+        
+       
     }
     func normalizeTFLengths() {
-        
+        /*
         var largestLength: CGFloat = 0.0
         for i in tableView.visibleCells {
             let cell = i as! ScheduleTableViewCell
@@ -576,7 +607,7 @@ class ScheduleTableViewController: UITableViewController {
             let cell = i as! ScheduleTableViewCell
             cell.startTimeTF.frame = CGRect(x: cell.startTimeTF.frame.minX, y: cell.startTimeTF.frame.minY, width: largestLength, height: cell.startTimeTF.frame.height)
         }
- 
+    */
     }
     func updateFromSVC() {
         tableView.reloadData()
@@ -843,26 +874,7 @@ class ScheduleTableViewController: UITableViewController {
         let newR = currR + (1 - currR) * tintFactor
         return UIColor(red: CGFloat(newR), green: CGFloat(newG), blue: CGFloat(newB), alpha: CGFloat(components.alpha))
     }
-    func updateTextFonts() {
-        if UIScreen.main.bounds.width < 330 {
-            for j in tableView.visibleCells {
-                let textFields = j.subviews[0].subviews.filter{$0 is UITextField}
-                for i in textFields {
-                    let tf = i as! UITextField
-                    //setStyle(textField: tf)
-                    if appDelegate.scheduleViewController.tutorialStep != 0 {
-                        
-                        tf.font = UIFont.systemFont(ofSize: 11)
-                        
-                    } else {
-                        
-                        tf.font = UIFont.systemFont(ofSize: 13)
-                        
-                    }
-                }
-            }
-        }
-    }
+    
 }
 extension UIColor {
     var coreImageColor: CIColor {

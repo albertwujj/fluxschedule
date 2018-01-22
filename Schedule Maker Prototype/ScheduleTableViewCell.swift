@@ -58,7 +58,26 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        
+        let textFields = self.subviews[0].subviews.filter{$0 is UITextField}
+        for i in textFields {
+            let tf = i as! UITextField
+            setStyle(textField: tf)
+            if UIScreen.main.bounds.width < 330 {
+                if appDelegate.scheduleViewController.tutorialStep != 0 {
+                    
+                    tf.font = UIFont.systemFont(ofSize: 11)
+                    startTimeWidthConstraint.constant = 70
+                    
+                } else {
+                    
+                    tf.font = UIFont.systemFont(ofSize: 13)
+                    startTimeWidthConstraint.constant = 73
+                    
+                }
+            } else {
+                startTimeWidthConstraint.constant = 81
+            }
+        }
         startTimeTF.delegate = self
         durationTF.delegate = self
         taskNameTF.delegate = self
@@ -76,26 +95,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         startTimeTF.addButtons(customString: nil, customButton: startTimeTFCustomButton)
         durationTF.addButtons(customString: nil, customButton: durationTFCustomButton)
         Timer.scheduledTimer(timeInterval: 20, target: self, selector: #selector(updateStartOfToday), userInfo: nil, repeats: true)
-        let textFields = self.subviews[0].subviews.filter{$0 is UITextField}
-        for i in textFields {
-            let tf = i as! UITextField
-            //setStyle(textField: tf)
-            if UIScreen.main.bounds.width < 330 {
-                if appDelegate.scheduleViewController.tutorialStep != 0 {
-                    
-                    tf.font = UIFont.systemFont(ofSize: 11)
-                    //startTimeWidthConstraint.constant = 70
-                    
-                } else {
-                    
-                    tf.font = UIFont.systemFont(ofSize: 13)
-                    //startTimeWidthConstraint.constant = 73
-                    
-                }
-            } else {
-                //startTimeWidthConstraint.constant = 81
-            }
-        }
+       
         
     }
     @objc func updateStartOfToday() {
@@ -218,7 +218,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     }
    
     
-    //UITextFieldDelegateFunctions
+    //MARK: UITextFieldDelegateFunctions
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
@@ -226,8 +226,17 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         
         if textField is AccessoryTextField {
             let accessoryTF = textField as! AccessoryTextField
+            let bgColorView = UIView()
          
-            //Timer.scheduledTimer(timeInterval: 0.0001, target: self, selector: #selector(checkEnableDoneButton(timer:)), userInfo: accessoryTF, repeats: true)
+            let orig = UIColor.purple
+            UIView.animate(withDuration: 0.3, animations: { () -> Void in
+                accessoryTF.backgroundColor = orig.withAlphaComponent(0.3)
+                
+            }, completion: { (finished) -> Void in
+                
+            })
+            
+            
         }
         if textField === taskNameTF {
             if taskNameTF.text?.range(of: "New Item \\d", options: .regularExpression, range: nil, locale: nil) != nil {
@@ -239,8 +248,9 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             if(textField.text?.last != nil && textField.text!.last! == " ") {
                 desiredPosition = textField.position(from: desiredPosition, offset: -1) ?? desiredPosition
             }
-            textField.selectedTextRange = textField.textRange(from: desiredPosition, to: desiredPosition)
-            
+            //textField.selectedTextRange = textField.textRange(from: desiredPosition, to: desiredPosition)
+            textField.selectedTextRange = nil
+            textField.isHighlighted = true
         }
         
         
@@ -265,6 +275,9 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         }
         else if textField == startTimeTF {
           
+        }
+        if textField is AccessoryTextField {
+            tableViewController.viewsToWhiten.append(textField)
         }
         tableViewController.update()
     }

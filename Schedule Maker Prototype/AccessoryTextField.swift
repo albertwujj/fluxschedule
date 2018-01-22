@@ -69,6 +69,8 @@ class AccessoryTextField: UITextField {
     @objc func containerButtonPressed() {
         accessoryDelegate?.textFieldContainerButtonPressed(self)
     }
-    
+    override func caretRect(for position: UITextPosition) -> CGRect {
+        return CGRect.zero
+    }
 }
 
