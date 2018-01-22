@@ -28,7 +28,7 @@
                                 <rect key="frame" x="0.0" y="28" width="375" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="evD-WS-gY8" id="O4r-qH-0yz">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <view hidden="YES" alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q9b-ms-59u">
@@ -44,14 +44,11 @@
                                             </subviews>
                                             <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </view>
-                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" contentHorizontalAlignment="fill" contentVerticalAlignment="center" text="12:59 AM" borderStyle="roundedRect" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Fug-9y-DCG" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
-                                            <rect key="frame" x="10" y="10" width="72" height="30"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="72" id="gGl-UF-2K3"/>
-                                            </constraints>
+                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" contentHorizontalAlignment="fill" contentVerticalAlignment="center" text="12:59 AM" borderStyle="roundedRect" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Fug-9y-DCG" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
+                                            <rect key="frame" x="10" y="10" width="87" height="30"/>
                                             <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
                                             <nil key="textColor"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <textInputTraits key="textInputTraits"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="doneAccessory" value="YES"/>
@@ -61,7 +58,7 @@
                                                 <action selector="startTimeEditing:" destination="evD-WS-gY8" eventType="editingDidBegin" id="eQZ-q5-8gl"/>
                                             </connections>
                                         </textField>
-                                        <textField opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX:XX" borderStyle="roundedRect" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Iz8-IK-xC5" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
+                                        <textField opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX:XX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Iz8-IK-xC5" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
                                             <rect key="frame" x="306" y="10" width="59" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="59" id="fR8-ij-A2w"/>
@@ -77,14 +74,14 @@
                                                 <action selector="durationEditing:" destination="evD-WS-gY8" eventType="editingDidBegin" id="pLw-l9-5iy"/>
                                             </connections>
                                         </textField>
-                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Task Name" borderStyle="roundedRect" textAlignment="natural" adjustsFontForContentSizeCategory="YES" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="3RJ-X4-MO2">
-                                            <rect key="frame" x="130" y="10" width="163" height="30"/>
+                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Task Name" borderStyle="roundedRect" textAlignment="natural" adjustsFontForContentSizeCategory="YES" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="3RJ-X4-MO2">
+                                            <rect key="frame" x="145" y="10" width="148" height="30"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <textInputTraits key="textInputTraits"/>
                                         </textField>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="37v-Co-Zac">
-                                            <rect key="frame" x="92" y="10" width="30" height="30"/>
+                                            <rect key="frame" x="107" y="10" width="30" height="30"/>
                                             <state key="normal" title="🌀"/>
                                             <connections>
                                                 <action selector="lockButtonPressed:" destination="evD-WS-gY8" eventType="touchUpInside" id="1bn-WM-G78"/>
@@ -102,6 +99,7 @@
                                         <constraint firstItem="37v-Co-Zac" firstAttribute="centerY" secondItem="Fug-9y-DCG" secondAttribute="centerY" id="avZ-oU-rdS"/>
                                         <constraint firstItem="Fug-9y-DCG" firstAttribute="centerY" secondItem="O4r-qH-0yz" secondAttribute="centerY" id="b87-e1-JHT"/>
                                         <constraint firstItem="Iz8-IK-xC5" firstAttribute="centerY" secondItem="3RJ-X4-MO2" secondAttribute="centerY" id="bSC-Rq-Cwq"/>
+                                        <constraint firstItem="3RJ-X4-MO2" firstAttribute="centerY" secondItem="Fug-9y-DCG" secondAttribute="centerY" id="d1b-8K-0X8"/>
                                         <constraint firstItem="Fug-9y-DCG" firstAttribute="leading" secondItem="O4r-qH-0yz" secondAttribute="leading" constant="10" id="mQ0-SE-pGl"/>
                                         <constraint firstItem="37v-Co-Zac" firstAttribute="leading" secondItem="Fug-9y-DCG" secondAttribute="trailing" constant="10" id="wRe-u5-55f"/>
                                     </constraints>

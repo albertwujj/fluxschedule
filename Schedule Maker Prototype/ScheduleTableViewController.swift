@@ -564,7 +564,7 @@ class ScheduleTableViewController: UITableViewController {
         updateTextFonts()
     }
     func normalizeTFLengths() {
-        /*
+        
         var largestLength: CGFloat = 0.0
         for i in tableView.visibleCells {
             let cell = i as! ScheduleTableViewCell
@@ -576,7 +576,7 @@ class ScheduleTableViewController: UITableViewController {
             let cell = i as! ScheduleTableViewCell
             cell.startTimeTF.frame = CGRect(x: cell.startTimeTF.frame.minX, y: cell.startTimeTF.frame.minY, width: largestLength, height: cell.startTimeTF.frame.height)
         }
- */
+ 
     }
     func updateFromSVC() {
         tableView.reloadData()

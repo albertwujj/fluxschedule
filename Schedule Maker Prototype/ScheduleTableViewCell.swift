@@ -13,6 +13,7 @@ import UserNotifications
 
 class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UITextFieldDelegate {
     
+    @IBOutlet weak var startTimeWidthConstraint: NSLayoutConstraint!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     let userSettings = (UIApplication.shared.delegate as! AppDelegate).userSettings
     var tableViewController: ScheduleTableViewController!
@@ -57,6 +58,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
         startTimeTF.delegate = self
         durationTF.delegate = self
         taskNameTF.delegate = self
@@ -78,14 +80,20 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         for i in textFields {
             let tf = i as! UITextField
             //setStyle(textField: tf)
-            if appDelegate.scheduleViewController.tutorialStep != 0 {
-                if UIScreen.main.bounds.width < 330 {
+            if UIScreen.main.bounds.width < 330 {
+                if appDelegate.scheduleViewController.tutorialStep != 0 {
+                    
                     tf.font = UIFont.systemFont(ofSize: 11)
+                    //startTimeWidthConstraint.constant = 70
+                    
+                } else {
+                    
+                    tf.font = UIFont.systemFont(ofSize: 13)
+                    //startTimeWidthConstraint.constant = 73
+                    
                 }
             } else {
-                if UIScreen.main.bounds.width < 330 {
-                    tf.font = UIFont.systemFont(ofSize: 13)
-                }
+                //startTimeWidthConstraint.constant = 81
             }
         }
         
