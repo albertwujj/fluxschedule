@@ -66,12 +66,12 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                 if appDelegate.scheduleViewController.tutorialStep != 0 {
                     
                     tf.font = UIFont.systemFont(ofSize: 11)
-                    startTimeWidthConstraint.constant = 70
+                    startTimeWidthConstraint.constant = 68
                     
                 } else {
                     
                     tf.font = UIFont.systemFont(ofSize: 13)
-                    startTimeWidthConstraint.constant = 73
+                    startTimeWidthConstraint.constant = 72
                     
                 }
             } else {
