@@ -44,10 +44,10 @@ class AccessoryTextField: UITextField {
         
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let cancel: UIBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(self.cancelButtonPressed))
-        let done: UIBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(self.doneButtonPressed))
+        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonPressed))
         var items:[UIBarButtonItem] = []
         if let customText = customString {
-            let containerButton: UIBarButtonItem = UIBarButtonItem(title: customText, style: .plain, target: self, action: #selector(self.containerButtonPressed))
+            let containerButton: UIBarButtonItem = UIBarButtonItem(title: customText, style: .done, target: self, action: #selector(self.containerButtonPressed))
             items = [cancel, flexSpace, containerButton, flexSpace, done]
         } else if let givenButton = customButton{
             let containerButton = UIBarButtonItem(customView: givenButton)

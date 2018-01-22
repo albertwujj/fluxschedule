@@ -13,7 +13,7 @@ import UserNotifications
 class ScheduleTableViewController: UITableViewController {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    let userSettings = (UIApplication.shared.delegate as! AppDelegate).userSettings
+    var userSettings: Settings!
     var sharedDefaults: UserDefaults!
     var cellSnapshot: UIView?
     var initialIndexPath: IndexPath? = nil
@@ -34,6 +34,7 @@ class ScheduleTableViewController: UITableViewController {
     
     //MARK: Initialization
     override func viewDidLoad() {
+        userSettings = appDelegate.userSettings
         super.viewDidLoad()
         sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
         //update()
@@ -59,7 +60,7 @@ class ScheduleTableViewController: UITableViewController {
         if (UIScreen.main.bounds.height < 600) {
             tableView.rowHeight = 45
         } else {
-            tableView.rowHeight = 65
+            tableView.rowHeight = 60
         }
         tableView.delegate = self
         
@@ -72,6 +73,7 @@ class ScheduleTableViewController: UITableViewController {
             scrollToTop(indexPath: scrollPosition)
         }
     }
+    
     func flashScheduleItem(scheduleItem: ScheduleItem) {
         /*
         var j = 99
@@ -109,6 +111,7 @@ class ScheduleTableViewController: UITableViewController {
             }
         }
         */
+        /*
         var j = 0
         DispatchQueue.main.async {
             for i in 0..<self.scheduleItems.count {
@@ -124,6 +127,8 @@ class ScheduleTableViewController: UITableViewController {
             self.scheduleItems.insert(scheduleItem, at: j)
             self.tableView.insertRows(at: [IndexPath(j)], with: .right)
         }
+         highlightCurrCell()
+        */
     }
     /*
     @objc func dehighlightCell(timer: Timer) {
@@ -162,8 +167,8 @@ class ScheduleTableViewController: UITableViewController {
             let row = path.row
             let scheduleItem = scheduleItems[row]
             if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
-                cell.startTimeTF.text = cell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
-                cell.durationTF.text = cell.durationDescription(duration: scheduleItem.duration)
+                cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+                cell.durationTF.text = ScheduleTableViewCell.durationDescription(duration: scheduleItem.duration)
                 cell.row = row
             }
         }
@@ -175,8 +180,8 @@ class ScheduleTableViewController: UITableViewController {
                 if row < scheduleItems.count{
                     let scheduleItem = scheduleItems[row]
                     if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
-                        cell.startTimeTF.text = cell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
-                        cell.durationTF.text = cell.durationDescription(duration: scheduleItem.duration)
+                        cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+                        cell.durationTF.text = ScheduleTableViewCell.durationDescription(duration: scheduleItem.duration)
                         cell.lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
                         cell.taskNameTF.text = scheduleItem.taskName
                         cell.row = row
@@ -287,6 +292,9 @@ class ScheduleTableViewController: UITableViewController {
             
             update()
             scheduleViewController.step3Complete()
+            scheduleViewController.schedulesEdited.insert(currDateInt)
+            self.cellSnapshot?.removeFromSuperview()
+            
         }
         
     }
@@ -553,8 +561,10 @@ class ScheduleTableViewController: UITableViewController {
             scheduleViewController.currentScheduleUpdated()
             scheduleViewController.saveSchedules()
         }
+        updateTextFonts()
     }
     func normalizeTFLengths() {
+        /*
         var largestLength: CGFloat = 0.0
         for i in tableView.visibleCells {
             let cell = i as! ScheduleTableViewCell
@@ -566,9 +576,11 @@ class ScheduleTableViewController: UITableViewController {
             let cell = i as! ScheduleTableViewCell
             cell.startTimeTF.frame = CGRect(x: cell.startTimeTF.frame.minX, y: cell.startTimeTF.frame.minY, width: largestLength, height: cell.startTimeTF.frame.height)
         }
+ */
     }
     func updateFromSVC() {
         tableView.reloadData()
+        currDateInt = scheduleViewController.selectedDateInt ?? currDateInt
         if currDateInt == scheduleViewController.dateToHashableInt(date: Date()), let scrollPosition = loadScrollPosition() {
             scrollToTop(indexPath: scrollPosition)
         }
@@ -579,6 +591,7 @@ class ScheduleTableViewController: UITableViewController {
         }
         tableView.reloadRows(at: rows, with: .none)
         tableView.reloadData()
+        normalizeTFLengths()
         unhighlightAllCells()
         highlightCurrCell()
     }
@@ -710,6 +723,7 @@ class ScheduleTableViewController: UITableViewController {
         tableView.insertRows(at: [IndexPath(scheduleItems.count - 1)], with: .none)
         update()
         scrollToBottom(indexPath: IndexPath(scheduleItems.count - 1))
+        scheduleViewController.schedulesEdited.insert(currDateInt)
        
     }
     func scrollToBottom(indexPath: IndexPath){
@@ -743,7 +757,8 @@ class ScheduleTableViewController: UITableViewController {
         if scheduleViewController.tutorialStep == 0 {
             if scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.dateToHashableInt(date: Date()) {
                 for cell in tableView.visibleCells  {
-                    let scheduleItem = (cell as! ScheduleTableViewCell).scheduleItem!
+                    let sCell = (cell as! ScheduleTableViewCell)
+                    let scheduleItem = sCell.scheduleItem!
                     if let startTime = scheduleItem.startTime {
                         let currentTime = getCurrentDurationFromMidnight()
                         
@@ -754,15 +769,29 @@ class ScheduleTableViewController: UITableViewController {
                             //bgColorView.backgroundColor = tintOf(color: orig, tintFactor: 1/3)
                             //bgColorView.backgroundColor = orig.lighter(by: 10.0)
                             bgColorView.backgroundColor = orig.withAlphaComponent(0.3)
-                            
                             bgColorView.layer.masksToBounds = true
-                            (cell as! ScheduleTableViewCell).backgroundView = bgColorView
+                            sCell.backgroundView = bgColorView
+                            /*
+                            sCell.addSubview(bgColorView)
+                            let leftConstraint = NSLayoutConstraint(item:bgColorView, attribute: .leading, relatedBy: .equal, toItem: sCell.startTimeTF, attribute: .leading, multiplier: 1.0, constant: -5).isActive = true
+                            let rightConstraint = NSLayoutConstraint(item:bgColorView, attribute: .trailing, relatedBy: .equal, toItem: sCell.startTimeTF, attribute: .trailing, multiplier: 1.0, constant: 5).isActive = true
+                            sCell.sendSubview(toBack: bgColorView)
+ */
+ 
                         }
                         else {
                             let whiteColorView = UIView()
                             whiteColorView.backgroundColor = .white
                             whiteColorView.layer.masksToBounds = true
-                            (cell as! ScheduleTableViewCell).backgroundView = whiteColorView
+                            sCell.backgroundView = whiteColorView
+                            /*
+                            sCell.addSubview(whiteColorView)
+                            let leftConstraint = NSLayoutConstraint(item:whiteColorView, attribute: .leading, relatedBy: .equal, toItem: sCell.startTimeTF, attribute: .leading, multiplier: 1.0, constant: -5).isActive = true
+                            let rightConstraint = NSLayoutConstraint(item:whiteColorView, attribute: .trailing, relatedBy: .equal, toItem: sCell.startTimeTF, attribute: .trailing, multiplier: 1.0, constant: 5).isActive = true
+                            
+                            sCell.sendSubview(toBack: whiteColorView)
+                            */
+                            
                         }
                     }
                 }
@@ -789,7 +818,9 @@ class ScheduleTableViewController: UITableViewController {
         if (!decelerate) {
             scrollingStopped()
         }
+        normalizeTFLengths()
     }
+    
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         scrollingStopped()
     }
@@ -798,6 +829,7 @@ class ScheduleTableViewController: UITableViewController {
             saveScrollPosition()
         }
         highlightCurrCell()
+        normalizeTFLengths()
     }
     
     func tintOf(color: UIColor, tintFactor: Double) -> UIColor {
@@ -810,6 +842,26 @@ class ScheduleTableViewController: UITableViewController {
         let newB = currB + (1 - currB) * tintFactor
         let newR = currR + (1 - currR) * tintFactor
         return UIColor(red: CGFloat(newR), green: CGFloat(newG), blue: CGFloat(newB), alpha: CGFloat(components.alpha))
+    }
+    func updateTextFonts() {
+        if UIScreen.main.bounds.width < 330 {
+            for j in tableView.visibleCells {
+                let textFields = j.subviews[0].subviews.filter{$0 is UITextField}
+                for i in textFields {
+                    let tf = i as! UITextField
+                    //setStyle(textField: tf)
+                    if appDelegate.scheduleViewController.tutorialStep != 0 {
+                        
+                        tf.font = UIFont.systemFont(ofSize: 11)
+                        
+                    } else {
+                        
+                        tf.font = UIFont.systemFont(ofSize: 13)
+                        
+                    }
+                }
+            }
+        }
     }
 }
 extension UIColor {
@@ -839,5 +891,6 @@ extension UIColor {
             return nil
         }
     }
+    
 }
 

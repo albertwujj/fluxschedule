@@ -14,6 +14,7 @@ import UserNotifications
 class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UITextFieldDelegate {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let userSettings = (UIApplication.shared.delegate as! AppDelegate).userSettings
     var tableViewController: ScheduleTableViewController!
     var startOfToday: Date!
     var row: Int!
@@ -21,11 +22,20 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         //Have cell display proper TextField content based on ScheduleItem data
         didSet {
             taskNameTF.text = scheduleItem.taskName
-            durationTF.text = durationDescription(duration: scheduleItem.duration)
+            if userSettings.is5MinIncrement {
+                durationTF.text = ScheduleTableViewCell.durationDescription(duration: roundTo5(integer: scheduleItem.duration))
+            }
+            else {
+                durationTF.text = ScheduleTableViewCell.durationDescription(duration: scheduleItem.duration)
+            }
+            
             if let startTime = scheduleItem.startTime {
-                startTimeTF.text = timeDescription(durationSinceMidnight: startTime)
-                let endTime = startTime + scheduleItem.duration
-                endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
+                if userSettings.is5MinIncrement {
+                    startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: roundTo5(integer: startTime))
+                } else {
+                    startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: startTime)
+                }
+                
             }
             else {
                 startTimeTF.text = "XX:XX"
@@ -63,23 +73,28 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         durationTFCustomButton.setTitleColor(.black, for: .normal)
         startTimeTF.addButtons(customString: nil, customButton: startTimeTFCustomButton)
         durationTF.addButtons(customString: nil, customButton: durationTFCustomButton)
-        
-    }
-    func changeFontForScreenSize(tvc: ScheduleTableViewController) {
+        Timer.scheduledTimer(timeInterval: 20, target: self, selector: #selector(updateStartOfToday), userInfo: nil, repeats: true)
         let textFields = self.subviews[0].subviews.filter{$0 is UITextField}
         for i in textFields {
             let tf = i as! UITextField
             //setStyle(textField: tf)
-            if tvc.scheduleViewController.tutorialStep != 0 {
+            if appDelegate.scheduleViewController.tutorialStep != 0 {
                 if UIScreen.main.bounds.width < 330 {
-                    tf.font = UIFont.systemFont(ofSize: 10)
+                    tf.font = UIFont.systemFont(ofSize: 11)
                 }
             } else {
                 if UIScreen.main.bounds.width < 330 {
-                    tf.font = UIFont.systemFont(ofSize: 10)
+                    tf.font = UIFont.systemFont(ofSize: 13)
                 }
             }
         }
+        
+    }
+    @objc func updateStartOfToday() {
+        startOfToday = Calendar.current.startOfDay(for: Date())
+    }
+    func changeFontForScreenSize(tvc: ScheduleTableViewController) {
+        
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -158,9 +173,12 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                 //update startTime and endTime based on chosen date
                 scheduleItem.startTime = intDate
                 
-                startTimeTF.text = timeDescription(durationSinceMidnight: scheduleItem.startTime!)
-                
-
+                if userSettings.is5MinIncrement {
+                    startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: roundTo5(integer: scheduleItem.startTime!))
+                }
+                else {
+                    startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+                }
                 
                 var origLockedItems = tableViewController.getLockedItems()
                 
@@ -174,7 +192,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                     ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
                 }
                 tableViewController.flashScheduleItem(scheduleItem: origScheduleItem)
-        
+                
             }
             
             else if sender === durationTF {
@@ -188,6 +206,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                 
                 tableViewController.update()
             }
+        tableViewController.scheduleViewController.schedulesEdited.insert(tableViewController.currDateInt)
     }
    
     
@@ -229,6 +248,9 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == taskNameTF {
             scheduleItem.taskName = textField.text ?? ""
+            if textField.text?.range(of: "New Item \\d", options: .regularExpression, range: nil, locale: nil) != nil {
+                tableViewController.scheduleViewController.schedulesEdited.insert(tableViewController.currDateInt)
+            }
         }
         else if textField == durationTF {
             
@@ -245,44 +267,67 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             let datePickerView:UIDatePicker = UIDatePicker()
             datePickerView.datePickerMode = UIDatePickerMode.time
             sender.inputView = datePickerView
-            
-            let date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)
+            var date: Date!
+            if(userSettings.is5MinIncrement) {
+                date = Date(timeInterval: Double(roundTo5(integer: (scheduleItem.startTime ?? 7 * 3600))), since: startOfToday)
+                datePickerView.minuteInterval = 5
+                print(roundTo5(integer: scheduleItem.startTime!))
+            }
+            else {
+                date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)
+            }
             datePickerView.setDate(date, animated: true)
-            startTimeTFCustomButton.setTitle(" \(timeDescription(durationSinceMidnight: Int(date.timeIntervalSince(startOfToday)))) ", for: .normal)
+            startTimeTFCustomButton.setTitle(" \(ScheduleTableViewCell.timeDescription(durationSinceMidnight: Int(date.timeIntervalSince(startOfToday)))) ", for: .normal)
+            startTimeTFCustomButton.sizeToFit()
             datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChangedStartTime), for: UIControlEvents.valueChanged)
         }
  
     }
     @objc func datePickerValueChangedStartTime(sender:UIDatePicker) {
         
-        startTimeTFCustomButton.setTitle(timeDescription(durationSinceMidnight: Int(sender.date.timeIntervalSince(startOfToday))), for: .normal)
+        startTimeTFCustomButton.setTitle(ScheduleTableViewCell.timeDescription(durationSinceMidnight: Int(sender.date.timeIntervalSince(startOfToday))), for: .normal)
+        startTimeTFCustomButton.sizeToFit()
         
     }
     @IBAction func durationEditing(_ sender: UITextField) {
         let datePickerView:UIDatePicker = UIDatePicker()
-        
         datePickerView.datePickerMode = UIDatePickerMode.countDownTimer
-        
         sender.inputView = datePickerView
-        
-        let date = Date(timeInterval: Double(scheduleItem.duration), since: startOfToday)
+        var date: Date!
+        if(userSettings.is5MinIncrement) {
+            date = Date(timeInterval: Double(roundTo5(integer: scheduleItem.duration)), since: startOfToday)
+            datePickerView.minuteInterval = 5
+            
+        }
+        else {
+            date = Date(timeInterval: Double(scheduleItem.duration), since: startOfToday)
+        }
         datePickerView.setDate(date, animated: true)
-        durationTFCustomButton.setTitle(" \(durationDescription(duration: Int(date.timeIntervalSince(startOfToday)))) ", for: .normal)
+        durationTFCustomButton.setTitle(" \(ScheduleTableViewCell.durationDescription(duration: Int(date.timeIntervalSince(startOfToday)))) ", for: .normal)
+        durationTFCustomButton.sizeToFit()
         datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChanged), for: UIControlEvents.valueChanged)
         
     }
-    
+    func roundTo5(integer: Int) -> Int {
+        return Int((Double(integer / 60) + 2.5) / Double(5).rounded(.down)) * 5 * 60
+    }
     @objc func datePickerValueChanged(sender:UIDatePicker) {
-        durationTFCustomButton.setTitle(durationDescription(duration: Int(sender.countDownDuration)), for: .normal)
+        durationTFCustomButton.setTitle(ScheduleTableViewCell.durationDescription(duration: Int(sender.countDownDuration)), for: .normal)
+        durationTFCustomButton.sizeToFit()
     }
     @objc func doneStartTimeEditing(sender: UIBarButtonItem) {
         let date = (startTimeTF.inputView as! UIDatePicker).date
         //update startTime and endTime based on chosen date
         scheduleItem.startTime = Int(date.timeIntervalSince(startOfToday))
         
-        startTimeTF.text = timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+        if userSettings.is5MinIncrement {
+            startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: roundTo5(integer: scheduleItem.startTime!))
+        }
+        else {
+            startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+        }
         let endTime = scheduleItem.startTime! + scheduleItem.duration
-        endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
+        endTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: endTime)
         
        // ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
     }
@@ -414,17 +459,22 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         
         let duration = (durationTF.inputView as! UIDatePicker).countDownDuration
         scheduleItem.duration = Int(duration)
-        durationTF.text = durationDescription(duration: scheduleItem.duration)
+        if userSettings.is5MinIncrement {
+            durationTF.text = ScheduleTableViewCell.durationDescription(duration: roundTo5(integer: scheduleItem.duration))
+        }
+        else {
+            durationTF.text = ScheduleTableViewCell.durationDescription(duration: scheduleItem.duration)
+        }
         if let startTime = scheduleItem.startTime {
             let endTime = startTime + Int(duration)
-            endTimeTF.text = timeDescription(durationSinceMidnight: endTime)
+            endTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: endTime)
             
         }
         tableViewController.update()
     }
     
     //MARK: Helper functions
-    func timeDescription(durationSinceMidnight: Int) -> String {
+    static func timeDescription(durationSinceMidnight: Int) -> String {
         /*
         if(durationSinceMidnight / 3600 < 13) {
             return "\(Int(durationSinceMidnight) / 3600):\((Int(durationSinceMidnight) % 3600) / 60) AM"
@@ -436,15 +486,15 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             return "ERROR: durationSinceMidnight greater than a day"
         }
         */
-        let is24Mode = appDelegate.userSettings.is24Mode
+        let is24Mode = (UIApplication.shared.delegate as! AppDelegate).userSettings.is24Mode
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         formatter.dateStyle = .none
         formatter.timeStyle = .short
-        let date = startOfToday.addingTimeInterval(Double(durationSinceMidnight))
+        let date = Calendar.current.startOfDay(for: Date()).addingTimeInterval(Double(durationSinceMidnight))
         var text = formatter.string(from: date)
         if durationSinceMidnight >= 13 * 3600 {
-            text = text + " "
+            //text = text + " "
         }
         if(is24Mode) {
             let hour = String(durationSinceMidnight / 3600)
@@ -455,7 +505,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             text = hour + ":" + minute
         }
         if durationSinceMidnight < 10 * 3600 {
-            text = text + " "
+            //text = text + " "
         }
         /*
         let attributedString = NSMutableAttributedString(string: text, attributes: [NSAttributedStringKey.font : UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)])
@@ -467,7 +517,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         return text
         //return "ERROR: durationSinceMidnight greater than a day"
     }
-    func durationDescription(duration: Int) -> String {
+    static func durationDescription(duration: Int) -> String {
         let hour:Int = duration / 3600
         let minute:Int = (duration % 3600) / 60
         var hourString = "\(hour)"
@@ -502,7 +552,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         if scheduleItem.locked {
             startTimeTF.isUserInteractionEnabled = false
             if tableViewController.testingMode {
-                scheduleItem.taskName = timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+                scheduleItem.taskName = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
                 taskNameTF.text = scheduleItem.taskName
             }
         } else {
@@ -510,5 +560,6 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         }
         
         lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+        
     }
 }

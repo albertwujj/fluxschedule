@@ -152,6 +152,7 @@
 				7591A3331FB27B29002DA737 /* ScheduleTableViewController.swift */,
 				7591A32F1FB26769002DA737 /* ScheduleTableViewCell.swift */,
 				7591A33B1FB683AE002DA737 /* ScheduleViewController.swift */,
+				75A332EA1FC7E7A1001050B8 /* SettingsViewController.swift */,
 				7591A3351FB63576002DA737 /* PersistData.swift */,
 				7544C5221FCA735E001CC0A6 /* Extensions.swift */,
 				7591A33D1FBA6D23002DA737 /* Schedule.swift */,
@@ -161,7 +162,6 @@
 				7591A3211FB26518002DA737 /* Schedule_Maker_Prototype.xcdatamodeld */,
 				7591A33F1FBBDB2B002DA737 /* UITextFieldSI.swift */,
 				7591A31E1FB26518002DA737 /* Main.storyboard */,
-				75A332EA1FC7E7A1001050B8 /* SettingsViewController.swift */,
 				75A332EC1FC8D2D5001050B8 /* Settings.swift */,
 				75F88A971FF86400005316DB /* RecurringTasksViewController.swift */,
 				75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */,
@@ -494,7 +494,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				CODE_SIGN_ENTITLEMENTS = "Schedule Maker Prototype/Schedule Maker Prototype.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9P3FVEPY7V;
@@ -513,7 +513,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-2";
 				CODE_SIGN_ENTITLEMENTS = "Schedule Maker Prototype/Schedule Maker Prototype.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9P3FVEPY7V;
