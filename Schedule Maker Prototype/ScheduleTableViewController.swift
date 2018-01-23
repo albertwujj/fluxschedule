@@ -20,6 +20,7 @@ class ScheduleTableViewController: UITableViewController {
     var isAnyLockedItems: Bool = false
     var didDragLockedItem = false
     var testingMode = false
+    var rowHeight = 0
     var viewsToWhiten: [UIView] = []
     @IBOutlet weak var header: UIView!
     @IBOutlet weak var deleteButton: UIButton!
@@ -64,6 +65,9 @@ class ScheduleTableViewController: UITableViewController {
         tableView.delegate = self
         
     }
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return CGFloat(rowHeight)
+    }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         
@@ -77,22 +81,26 @@ class ScheduleTableViewController: UITableViewController {
         changeRowHeight()
     }
     func changeRowHeight() {
-        if UIDevice.current.orientation.isLandscape {
-            print("Landscape")
-            if (UIScreen.main.bounds.height < 600) {
-                tableView.rowHeight = 43
+        DispatchQueue.main.async {
+            
+        
+            if UIDevice.current.orientation.isLandscape {
+                print("Landscape")
+                if (UIScreen.main.bounds.height < 600) {
+                    self.rowHeight = 43
+                } else {
+                    self.rowHeight = 45
+                }
             } else {
-                tableView.rowHeight = 45
+                print("Portrait")
+                if (UIScreen.main.bounds.height < 600) {
+                    self.rowHeight = 45
+                } else {
+                    self.rowHeight = 60
+                }
             }
-        } else {
-            print("Portrait")
-            if (UIScreen.main.bounds.height < 600) {
-                tableView.rowHeight = 45
-            } else {
-                tableView.rowHeight = 60
-            }
+            self.tableView.reloadData()
         }
-        tableView.reloadData()
     }
     func flashScheduleItem(_ time: Int, for tfID: Int) {
         /*
@@ -341,8 +349,8 @@ class ScheduleTableViewController: UITableViewController {
             isAnyLockedItems = false
             didDragLockedItem = false
             
-            
-            update()
+            recalculateTimes(with: origLockedItems)
+            updateNoRecalculate()
             scheduleViewController.step3Complete()
             scheduleViewController.schedulesEdited.insert(currDateInt)
             self.cellSnapshot?.removeFromSuperview()
@@ -572,9 +580,7 @@ class ScheduleTableViewController: UITableViewController {
         return cell
     }
     /*
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return
-    } */
+     */
     /*
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         return header
@@ -592,40 +598,25 @@ class ScheduleTableViewController: UITableViewController {
         //when a ScheduleItem's duration is changed, or when the first ScheduleItem's startTime is changed,
         //recalculate all startTimes based on the first startTime and each scheduleItem's duration
         recalculateTimes(with: nil)
-        /*
-        var rows: [IndexPath] = []
-        for i in 0..<scheduleItems.count {
-            rows.append(IndexPath(i))
-        } */
-        //tableView.reloadRows(at: rows, with: .none)
-       // tableView.reloadData()
-        tableView.reloadData()
+        updateNoRecalculate()
+        
+       
+       
+    }
+    func updateNoRecalculate() {
         mergeSameName()
         tableView.reloadData()
         //tableView.reloadData()
         
         //scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
         highlightCurrCell()
-       
+        
         normalizeTFLengths()
         if scheduleViewController.tutorialStep == 0 {
             scheduleViewController.schedules[currDateInt] = scheduleItems
             scheduleViewController.currentScheduleUpdated()
             scheduleViewController.saveSchedules()
         }
-        
- 
-        /*
-            for i in viewsToWhiten {
-                UIView.animate(withDuration: 0.3, animations: { () -> Void in
-                    i.backgroundColor = .white
-                    
-                }, completion: { (finished) -> Void in
-                    
-                })
-            }
-        */
-       
     }
     func normalizeTFLengths() {
         /*
