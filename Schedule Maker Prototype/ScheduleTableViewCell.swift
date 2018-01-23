@@ -120,6 +120,12 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         }
     }
     func textFieldCancelButtonPressed(_ sender: AccessoryTextField) {
+        UIView.animate(withDuration: 0.4, animations: { () -> Void in
+            sender.backgroundColor = .white
+            
+        }, completion: { (finished) -> Void in
+            
+        })
         sender.resignFirstResponder()
     }
     func textFieldDoneButtonPressed(_ sender: AccessoryTextField) {
@@ -131,6 +137,12 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                 
                 let intDate = Int((startTimeTF.inputView as! UIDatePicker).date.timeIntervalSince(startOfToday))
                 if intDate == scheduleItem.startTime ?? 0 {
+                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
+                        sender.backgroundColor = .white
+                        
+                    }, completion: { (finished) -> Void in
+                        
+                    })
                     return
                 }
                 
@@ -199,13 +211,20 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                 else {
                     ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
                 }
-                tableViewController.flashScheduleItem(scheduleItem: origScheduleItem)
-                
+     
+                tableViewController.flashScheduleItem(intDate, for: 0)
             }
             
             else if sender === durationTF {
+                let intDate = origScheduleItem.startTime ?? 0
                 let duration = (durationTF.inputView as! UIDatePicker).countDownDuration
                 if Int(duration) == scheduleItem.duration {
+                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
+                        sender.backgroundColor = .white
+                        
+                    }, completion: { (finished) -> Void in
+                        
+                    })
                     return
                 }
                 scheduleItem.duration = Int(duration)
@@ -213,7 +232,9 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
               
                 
                 tableViewController.update()
+                tableViewController.flashScheduleItem(intDate, for: 1)
             }
+        
         tableViewController.scheduleViewController.schedulesEdited.insert(tableViewController.currDateInt)
     }
    
@@ -229,7 +250,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             let bgColorView = UIView()
          
             let orig = UIColor.purple
-            UIView.animate(withDuration: 0.3, animations: { () -> Void in
+            UIView.animate(withDuration: 0.4, animations: { () -> Void in
                 accessoryTF.backgroundColor = orig.withAlphaComponent(0.3)
                 
             }, completion: { (finished) -> Void in
@@ -277,7 +298,12 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
           
         }
         if textField is AccessoryTextField {
-            tableViewController.viewsToWhiten.append(textField)
+            UIView.animate(withDuration: 0.8, animations: { () -> Void in
+                textField.backgroundColor = .white
+                
+            }, completion: { (finished) -> Void in
+                
+            })
         }
         tableViewController.update()
     }
@@ -554,7 +580,11 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         
     }
     func setStyle(textField: UITextField) {
-        textField.layer.cornerRadius = 0
+        /*
+        textField.layer.cornerRadius = 7
+        textField.layer.borderWidth = 0.5
+        textField.layer.borderColor = UIColor.purple.withAlphaComponent(0.2).cgColor
+        */
         /*
         if(textField == startTimeTF || textField == durationTF) {
             textField.font = UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)

@@ -34,6 +34,9 @@ class ScheduleTableViewController: UITableViewController {
     
     //MARK: Initialization
     override func viewDidLoad() {
+        let darkPurple = UIColor(displayP3Red: 52/255, green: 8/255, blue: 107/255, alpha: 0.35)
+        //tableView.separatorColor = darkPurple
+        
         userSettings = appDelegate.userSettings
         super.viewDidLoad()
         sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
@@ -57,11 +60,7 @@ class ScheduleTableViewController: UITableViewController {
  */
         
         
-        if (UIScreen.main.bounds.height < 600) {
-            tableView.rowHeight = 45
-        } else {
-            tableView.rowHeight = 60
-        }
+        changeRowHeight()
         tableView.delegate = self
         
     }
@@ -73,8 +72,29 @@ class ScheduleTableViewController: UITableViewController {
             scrollToTop(indexPath: scrollPosition)
         }
     }
-    
-    func flashScheduleItem(scheduleItem: ScheduleItem) {
+   
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        changeRowHeight()
+    }
+    func changeRowHeight() {
+        if UIDevice.current.orientation.isLandscape {
+            print("Landscape")
+            if (UIScreen.main.bounds.height < 600) {
+                tableView.rowHeight = 43
+            } else {
+                tableView.rowHeight = 45
+            }
+        } else {
+            print("Portrait")
+            if (UIScreen.main.bounds.height < 600) {
+                tableView.rowHeight = 45
+            } else {
+                tableView.rowHeight = 60
+            }
+        }
+        tableView.reloadData()
+    }
+    func flashScheduleItem(_ time: Int, for tfID: Int) {
         /*
         var j = 99
         for i in 0..<scheduleItems.count {
@@ -110,26 +130,58 @@ class ScheduleTableViewController: UITableViewController {
                 }
             }
         }
+        
+        
         */
-        /*
-        var j = 0
-        DispatchQueue.main.async {
+       
+            
+        
             for i in 0..<self.scheduleItems.count {
-                if self.scheduleItems[i] === scheduleItem {
-                    self.scheduleItems.remove(at: i)
-                    self.tableView.deleteRows(at: [IndexPath(i)], with: .right)
-                    j = i
-                    break
+                if (tfID == 0 ? self.scheduleItems[i].startTime : self.scheduleItems[i].duration) == time {
+                    
+                    if let cell = self.tableView.cellForRow(at: IndexPath(i)) as? ScheduleTableViewCell {
+                        var tf: AccessoryTextField!
+                        if tfID == 0 {
+                            tf = cell.startTimeTF
+                        } else {
+                            tf = cell.durationTF
+                        }
+                        print("Huh")
+                        
+                        
+                        UIView.animate(withDuration: 0.7, animations: { () -> Void in
+                            tf.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
+                            
+                        }, completion: { (finished) -> Void in
+                            DispatchQueue.main.async {
+                                UIView.animate(withDuration: 1.5, animations: { () -> Void in
+                                    tf.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
+                                    
+                                }, completion: { (finished) -> Void in
+                                    DispatchQueue.main.async {
+                                        UIView.animate(withDuration: 0.9, animations: { () -> Void in
+                                            tf.backgroundColor = .white
+                                            
+                                        }, completion: { (finished) -> Void in
+                                            
+                                        })
+                                    }
+                                })
+                            }
+                        })
+                        
+                       
+                        
+                    }
                 }
             }
-        }
-        DispatchQueue.main.async {
-            self.scheduleItems.insert(scheduleItem, at: j)
-            self.tableView.insertRows(at: [IndexPath(j)], with: .right)
-        }
-         highlightCurrCell()
-        */
+        
+    
+   
+        highlightCurrCell()
+    
     }
+ 
     /*
     @objc func dehighlightCell(timer: Timer) {
         let scheduleItem = timer.userInfo as! ScheduleItem
@@ -196,7 +248,7 @@ class ScheduleTableViewController: UITableViewController {
         let locationInView = sender.location(in: tableView)
         var indexPath = tableView.indexPathForRow(at: locationInView)
         
-        if sender.state == .began {
+        if sender.state == .began && indexPath != nil {
             didDragLockedItem = false
             if let path = indexPath  {
                 let cell = scheduleItems[path.row]
@@ -233,7 +285,7 @@ class ScheduleTableViewController: UITableViewController {
                     }
                 })
             }
-        } else if !didDragLockedItem && sender.state == .changed {
+        } else if initialIndexPath != nil && !didDragLockedItem && sender.state == .changed {
             var center = cellSnapshot!.center
             center.y = locationInView.y
             cellSnapshot?.center = center
@@ -266,7 +318,7 @@ class ScheduleTableViewController: UITableViewController {
                 }
                 
             }
-        } else if !didDragLockedItem && sender.state == .ended {
+        } else if initialIndexPath != nil && !didDragLockedItem && sender.state == .ended {
             let cell = tableView.cellForRow(at: initialIndexPath!) as? ScheduleTableViewCell
             if initialIndexPath?.row == 0 && scheduleItems.count > 1 && scheduleItems[0].startTime != nil{
                 scheduleItems[0].startTime! = scheduleItems[1].startTime! - scheduleItems[0].duration
@@ -561,28 +613,9 @@ class ScheduleTableViewController: UITableViewController {
             scheduleViewController.currentScheduleUpdated()
             scheduleViewController.saveSchedules()
         }
-        /*
-        for i in tableView.indexPathsForVisibleRows ?? [] {
-            let stvcell = tableView.cellForRow(at: i) as! ScheduleTableViewCell
-            let textFields = stvcell.subviews[0].subviews.filter{$0 is AccessoryTextField}
-            print("\(textFields.count)")
-            for j in textFields {
-                let accessoryTF = j as! AccessoryTextField
-               
-                if accessoryTF.backgroundColor == nil || !accessoryTF.backgroundColor!.isEqual(UIColor.white) {
-                    
-                
-                    UIView.animate(withDuration: 0.3, animations: { () -> Void in
-                        accessoryTF.backgroundColor = .white
-                        
-                    }, completion: { (finished) -> Void in
-                        
-                    })
-                }
-            }
-        }
-        */
         
+ 
+        /*
             for i in viewsToWhiten {
                 UIView.animate(withDuration: 0.3, animations: { () -> Void in
                     i.backgroundColor = .white
@@ -591,7 +624,7 @@ class ScheduleTableViewController: UITableViewController {
                     
                 })
             }
-        
+        */
        
     }
     func normalizeTFLengths() {

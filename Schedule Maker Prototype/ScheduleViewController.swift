@@ -65,6 +65,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         else {
             tutorialStep = 1
         }
+        tutorialStep = 1
         addTutorial()
        print("Tutorial: \(tutorialStep)")
         
@@ -282,8 +283,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
         else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil {
 
-            schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "\(userSettings.defaultName) 1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "\(userSettings.defaultName) 2", duration: userSettings.defaultDuration), ScheduleItem(name: "\(userSettings.defaultName) 3", duration: userSettings.defaultDuration)]
-            
+            //schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "\(userSettings.defaultName) 1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "\(userSettings.defaultName) 2", duration: userSettings.defaultDuration), ScheduleItem(name: "\(userSettings.defaultName) 3", duration: userSettings.defaultDuration)]
+             schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
         }
         
         if tutorialStep != 0 {
