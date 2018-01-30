@@ -63,7 +63,7 @@
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X1h-5Y-sfh">
                                 <rect key="frame" x="210" y="8" width="94" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <state key="normal" title="Extend 5 min"/>
+                                <state key="normal" title="+5"/>
                                 <connections>
                                     <action selector="extendTaskButtonPressed:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="bla-dd-7Fy"/>
                                 </connections>
@@ -95,8 +95,8 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="kNn-1R-LnO" firstAttribute="top" secondItem="ssy-KU-ocm" secondAttribute="top" constant="8" id="1ll-dQ-m9X"/>
+                            <constraint firstItem="X1h-5Y-sfh" firstAttribute="leading" secondItem="bsb-jj-wX0" secondAttribute="trailing" constant="10" id="8eK-Pk-Rpr"/>
                             <constraint firstItem="bsb-jj-wX0" firstAttribute="centerY" secondItem="Yse-A3-TaP" secondAttribute="centerY" id="Ho5-m8-dfj"/>
-                            <constraint firstItem="ssy-KU-ocm" firstAttribute="trailing" secondItem="X1h-5Y-sfh" secondAttribute="trailing" constant="16" id="ZQn-o5-736"/>
                             <constraint firstItem="bsb-jj-wX0" firstAttribute="leading" secondItem="Yse-A3-TaP" secondAttribute="trailing" constant="8" id="b32-oE-9lB"/>
                             <constraint firstItem="kNn-1R-LnO" firstAttribute="leading" secondItem="ssy-KU-ocm" secondAttribute="leading" constant="11" id="b81-Sp-8Se"/>
                             <constraint firstItem="X1h-5Y-sfh" firstAttribute="centerY" secondItem="Yse-A3-TaP" secondAttribute="centerY" id="iP9-Lt-aOo"/>

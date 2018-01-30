@@ -31,7 +31,6 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var schedules : [Int: [ScheduleItem]] = [:]
     var schedulesEdited: Set<Int> = Set<Int>()
     var tableViewController: ScheduleTableViewController!
-    
     var currDateInt = 0
     var selectedDateInt: Int?
     var sharedDefaults: UserDefaults!
@@ -39,6 +38,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var tutorialStep2: [ScheduleItem]!
     var tutorialStep3: [ScheduleItem]!
     var tutorialStep4: [ScheduleItem]!
+    var tutorialStep5: [ScheduleItem]!
+    var lockedTasksEnabled = true
     
     var tutorialStep = 0
     override func viewDidLoad() {
@@ -52,7 +53,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         tutorialStep1 = [ScheduleItem(name: "Welcome to Flux!", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "These are", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "schedule items.", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
         tutorialStep2 = [ScheduleItem(name: "Try tapping", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "any of", duration: userSettings.defaultDuration), ScheduleItem(name: "the boxes.", duration: userSettings.defaultDuration), ScheduleItem(name: "Left is start time.", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "Right is duration.", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
         tutorialStep3 = [ScheduleItem(name: "Now, try", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "holding the", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "blue swirly button", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "Can you move us", duration: userSettings.defaultDuration), ScheduleItem(name: "around?", duration: userSettings.defaultDuration)]
-        tutorialStep4 = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
+         tutorialStep4 = [ScheduleItem(name: "Tap the", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "blue swirly button", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "to lock a task.", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
+        tutorialStep5 = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
         tutorialNextButton.layer.cornerRadius = 2
         tutorialNextButton.layer.borderWidth = 1
         tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
@@ -60,12 +62,10 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
         if let savedTutorialStep = loadTutorialStep() {
             tutorialStep = savedTutorialStep
-            
         }
         else {
             tutorialStep = 1
         }
-        tutorialStep = 1
         addTutorial()
        print("Tutorial: \(tutorialStep)")
         
@@ -105,10 +105,17 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
     
     func step3Complete() {
-        tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
-        tutorialNextButton.isEnabled = true
+        if tutorialStep == 3 {
+            tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
+            tutorialNextButton.isEnabled = true
+        }
     }
-    
+    func stepLockedComplete() {
+        if tutorialStep == 4 || tutorialStep == 6 {
+            tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
+            tutorialNextButton.isEnabled = true
+        }
+    }
     //MARK: AccessoryTextFieldDelegate functions
     func textFieldContainerButtonPressed(_ sender: AccessoryTextField) {
         sender.resignFirstResponder()
@@ -226,9 +233,14 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             tutorialStep += 1
             tableViewController.scheduleItems = tutorialStep3
             tableViewController.updateFromSVC()
-            sender.setTitle("Done! Now give me an example.", for: .normal)
+            sender.setTitle("Done!", for: .normal)
+            if !lockedTasksEnabled {
+                tutorialStep += 1
+                tableViewController.scheduleItems = tutorialStep4
+                tableViewController.updateFromSVC()
+                sender.setTitle("Done! Now give me an example.", for: .normal)
+            }
             saveTutorialStep()
-            
             tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
             sender.isEnabled = false
         }
@@ -236,10 +248,19 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             tutorialStep += 1
             tableViewController.scheduleItems = tutorialStep4
             tableViewController.updateFromSVC()
-            sender.setTitle("Done. Let me make my own!", for: .normal)
+            sender.setTitle("Done! Now give me an example.", for: .normal)
+            tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
+            sender.isEnabled = false
             saveTutorialStep()
         }
         else if tutorialStep == 4 {
+            tutorialStep += 1
+            tableViewController.scheduleItems = tutorialStep5
+            tableViewController.updateFromSVC()
+            sender.setTitle("Done. Let me make my own!", for: .normal)
+            saveTutorialStep()
+        }
+        else if tutorialStep == 5 || tutorialStep == 6 {
             tutorialStep = 0
             update()
             saveTutorialStep()
@@ -283,8 +304,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
         else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil {
 
-            //schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "\(userSettings.defaultName) 1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "\(userSettings.defaultName) 2", duration: userSettings.defaultDuration), ScheduleItem(name: "\(userSettings.defaultName) 3", duration: userSettings.defaultDuration)]
-             schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
+            schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "\(userSettings.defaultName) 1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "\(userSettings.defaultName) 2", duration: userSettings.defaultDuration), ScheduleItem(name: "\(userSettings.defaultName) 3", duration: userSettings.defaultDuration)]
+             //schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
         }
         
         if tutorialStep != 0 {
@@ -298,7 +319,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
                 tableViewController.scheduleItems = tutorialStep3
             }
             else if (tutorialStep == 4) {
-                tableViewController.scheduleItems = tutorialStep4
+                tableViewController.scheduleItems = tutorialStep5
             }
         }
         else {

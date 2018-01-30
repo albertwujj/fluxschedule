@@ -8,6 +8,7 @@
 
 import UIKit
 import NotificationCenter
+import UserNotifications
 
 
 class TodayViewController: UIViewController, NCWidgetProviding {
@@ -276,5 +277,110 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             extendButton.isEnabled = !scheduleItem.locked
             saveSchedules()
         }
+    }
+    func registerCategories() {
+        let view = UNNotificationAction(identifier: "view",
+                                        title: "View",
+                                        options: .foreground)
+        let delay = UNNotificationAction(identifier: "delay",
+                                         title: "Delay by \(userSettings.notifDelayTime) minutes",
+            options: UNNotificationActionOptions(rawValue: 0))
+        
+        let taskNoAction = UNNotificationCategory(identifier: "taskNoAction",
+                                                  actions: [],
+                                                  intentIdentifiers: [],
+                                                  options: UNNotificationCategoryOptions(rawValue: 0))
+        let taskWithAction = UNNotificationCategory(identifier: "taskWithAction",
+                                                    actions: [delay],
+                                                    intentIdentifiers: [],
+                                                    options: UNNotificationCategoryOptions(rawValue: 0))
+        let center = UNUserNotificationCenter.current()
+        
+        center.setNotificationCategories([taskNoAction, taskWithAction])
+    }
+    @objc func scheduleTaskNotifs(withAction: Bool) {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        if(userSettings.notificationsOn) {
+            registerCategories()
+            let center = UNUserNotificationCenter.current()
+            let inactiveTrigger = UNTimeIntervalNotificationTrigger(timeInterval: (48*60*60), repeats: false)
+            let inactiveContent = UNMutableNotificationContent()
+            inactiveContent.title = "You haven't used the app for 48 hours"
+            inactiveContent.body = "You've been gone for 48 hours. Wanna get back on a schedule?"
+            inactiveContent.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
+            inactiveContent.sound = UNNotificationSound.default()
+            
+            let inactiveRequest = UNNotificationRequest(identifier: UUID().uuidString, content: inactiveContent, trigger: inactiveTrigger)
+            center.add(inactiveRequest)
+            for i in schedules[currDateInt] ?? [] {
+                if let startDate = i.startTime {
+                    if startDate > getCurrentDurationFromMidnight() {
+                        let content = UNMutableNotificationContent()
+                        content.title = "Time for: \(i.taskName)"
+                        content.body = "Leggo!"
+                        content.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
+                        content.userInfo = ["notifDate": startDate]
+                        content.sound = UNNotificationSound.default()
+                        
+                        var dateComponents = DateComponents()
+                        dateComponents.hour = startDate / 3600
+                        dateComponents.minute = (startDate % 3600) / 60
+                        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+                        
+                        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                        center.add(request)
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // pull out the buried userInfo dictionary
+        self.currDateInt = dateToHashableInt(date: Date())
+        let userInfo = response.notification.request.content.userInfo
+        
+        if let notifDate = userInfo["notifDate"] as? Int {
+            print("notifDate received: \(notifDate)")
+            
+            switch response.actionIdentifier {
+            case UNNotificationDefaultActionIdentifier:
+                
+                print("Default identifier")
+                
+            case "delay":
+                print("pls")
+                // the user tapped our "show more info…" button
+                print("delay task")
+                
+                saveSchedules()
+                
+                for i in 0..<(schedules[currDateInt] ?? []).count {
+                    print("Hey: \(i)")
+                    if schedules[currDateInt]![i].startTime != nil && schedules[currDateInt]![i].startTime! == notifDate {
+                        
+                        if(i > 0) {
+                            schedules[currDateInt]![i - 1].duration += userSettings.notifDelayTime * 60
+                           
+                        
+                            break
+                        }
+                        if(i == 0) {
+                            schedules[currDateInt]![0].startTime! += userSettings.notifDelayTime * 60
+                            
+                            
+                        }
+                    }
+                    
+                }
+                updateDisplay()
+            default:
+                break
+            }
+        }
+        
+        // you must call the completion handler when you're done
+        completionHandler()
     }
 }

@@ -146,6 +146,11 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                     return
                 }
                 
+                if row == 0 {
+                    scheduleItem.startTime = intDate
+                    tvc.update()
+                    return
+                } 
                 if row > 0 && intDate > tableViewController.scheduleItems[row - 1].startTime! && intDate < scheduleItem.startTime! {
                     tvc.scheduleItems[row-1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
                     tvc.update()
@@ -202,7 +207,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                 
                 var origLockedItems = tableViewController.getLockedItems()
                 
-                if origLockedItems.count > 0 {
+                if true || origLockedItems.count > 0 {
                     tableViewController.scheduleItems.remove(at: self.row)
                     origLockedItems.append(scheduleItem.deepCopy())
                     tableViewController.recalculateTimes(with: origLockedItems)
@@ -212,9 +217,8 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                     ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
                 }
      
-                tableViewController.flashScheduleItem(intDate, for: 0)
+                tableViewController.flashScheduleItem(intDate, for: 0, color: UIColor.purple)
             }
-            
             else if sender === durationTF {
                 let intDate = origScheduleItem.startTime ?? 0
                 let duration = (durationTF.inputView as! UIDatePicker).countDownDuration
@@ -223,28 +227,17 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                         sender.backgroundColor = .white
                         
                     }, completion: { (finished) -> Void in
-                        
                     })
                     return
                 }
                 scheduleItem.duration = Int(duration)
-                
-              
-                
                 tableViewController.update()
-                tableViewController.flashScheduleItem(intDate, for: 1)
+                tableViewController.flashScheduleItem(intDate, for: 1, color: UIColor.purple)
             }
-        
         tableViewController.scheduleViewController.schedulesEdited.insert(tableViewController.currDateInt)
     }
-   
-    
     //MARK: UITextFieldDelegateFunctions
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        
-        
-        
         if textField is AccessoryTextField {
             let accessoryTF = textField as! AccessoryTextField
             let bgColorView = UIView()
@@ -260,7 +253,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             
         }
         if textField === taskNameTF {
-            if taskNameTF.text?.range(of: "New Item \\d", options: .regularExpression, range: nil, locale: nil) != nil {
+            if taskNameTF.text?.range(of: "New Item \\d*", options: .regularExpression, range: nil, locale: nil) != nil {
                 taskNameTF.selectAll(nil)
             }
         }
@@ -324,7 +317,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                 date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)
             }
             datePickerView.setDate(date, animated: true)
-            startTimeTFCustomButton.setTitle(" \(ScheduleTableViewCell.timeDescription(durationSinceMidnight: Int(date.timeIntervalSince(startOfToday)))) ", for: .normal)
+            startTimeTFCustomButton.setTitle(ScheduleTableViewCell.timeDescription(durationSinceMidnight: Int(date.timeIntervalSince(startOfToday))), for: .normal)
             startTimeTFCustomButton.sizeToFit()
             datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChangedStartTime), for: UIControlEvents.valueChanged)
         }
@@ -611,6 +604,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         }
         
         lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+        appDelegate.scheduleViewController.stepLockedComplete()
         
     }
 }

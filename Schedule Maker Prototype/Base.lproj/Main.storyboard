@@ -170,6 +170,24 @@
                                             <action selector="leftDateButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="X96-Nu-jBT"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tck-CV-ptU">
+                                        <rect key="frame" x="187" y="44" width="54" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="8"/>
+                                        <state key="normal" title="Testing Mode">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="testingModeButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="CBc-2z-UEN"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gxe-LF-NkH">
+                                        <rect key="frame" x="312" y="63" width="46" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="↑">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
@@ -233,16 +251,6 @@
                                     <action selector="startTimeEditing:" destination="MWw-Go-rfF" eventType="editingDidBegin" id="L1G-3D-iFl"/>
                                 </connections>
                             </textField>
-                            <button hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tck-CV-ptU">
-                                <rect key="frame" x="311" y="31" width="54" height="22"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="8"/>
-                                <state key="normal" title="Testing Mode">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="testingModeButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="CBc-2z-UEN"/>
-                                </connections>
-                            </button>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S1F-bE-qaP">
                                 <rect key="frame" x="166.5" y="523" width="41" height="36"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
@@ -266,9 +274,7 @@
                             <constraint firstItem="IVK-sZ-5AT" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="-1" id="HNO-mk-y7A"/>
                             <constraint firstItem="seG-dg-VIZ" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" constant="27" id="JwP-bc-tWi"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="centerX" secondItem="SKS-Gt-Yfv" secondAttribute="centerX" id="Kay-hM-6pB"/>
-                            <constraint firstItem="Tck-CV-ptU" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" id="Kdg-9i-Itg"/>
                             <constraint firstItem="S1F-bE-qaP" firstAttribute="top" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="-100" id="OUk-RJ-kXJ"/>
-                            <constraint firstItem="SKS-Gt-Yfv" firstAttribute="trailing" secondItem="Tck-CV-ptU" secondAttribute="trailing" constant="10" id="Od4-y4-vDX"/>
                             <constraint firstItem="S1F-bE-qaP" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="QLY-cz-ebC"/>
                             <constraint firstItem="7V9-x7-620" firstAttribute="leading" secondItem="zRD-x9-WHF" secondAttribute="trailing" constant="-79" id="SfX-rM-mpz"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="top" constant="60" id="V9q-3A-cQa"/>
@@ -326,10 +332,10 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </switch>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pNe-yF-mLY">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="61"/>
+                                <rect key="frame" x="0.0" y="-40" width="375" height="101"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Settings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jji-Jo-Mb6">
-                                        <rect key="frame" x="156" y="30" width="63.5" height="21"/>
+                                        <rect key="frame" x="156" y="70" width="63.5" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
@@ -347,7 +353,7 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="61" id="1gm-zp-4U8"/>
+                                    <constraint firstAttribute="height" constant="101" id="1gm-zp-4U8"/>
                                     <constraint firstAttribute="bottom" secondItem="jji-Jo-Mb6" secondAttribute="bottom" constant="10" id="ICn-1H-2BV"/>
                                     <constraint firstItem="wVE-cu-Fen" firstAttribute="leading" secondItem="pNe-yF-mLY" secondAttribute="leading" constant="14" id="Mqo-0q-CGI"/>
                                     <constraint firstItem="wVE-cu-Fen" firstAttribute="centerY" secondItem="jji-Jo-Mb6" secondAttribute="centerY" id="cof-dv-sVU"/>
@@ -420,7 +426,7 @@
                             <constraint firstItem="ClR-u3-Spj" firstAttribute="trailing" secondItem="pNe-yF-mLY" secondAttribute="trailing" id="iHy-pE-DAV"/>
                             <constraint firstItem="ZCa-1X-QC4" firstAttribute="leading" secondItem="U7I-YE-JK3" secondAttribute="leading" id="ikd-B0-0Ho"/>
                             <constraint firstItem="qvq-3e-xSR" firstAttribute="leading" secondItem="bU3-zs-53c" secondAttribute="trailing" constant="35.5" id="jvX-d3-Pkn"/>
-                            <constraint firstItem="pNe-yF-mLY" firstAttribute="top" secondItem="ClR-u3-Spj" secondAttribute="top" constant="-20" id="mEE-Zd-9oQ"/>
+                            <constraint firstItem="pNe-yF-mLY" firstAttribute="top" secondItem="ClR-u3-Spj" secondAttribute="top" constant="-60" id="mEE-Zd-9oQ"/>
                             <constraint firstItem="iLU-B9-HXa" firstAttribute="centerY" secondItem="P6G-C6-k4p" secondAttribute="centerY" id="tdn-ti-bhQ"/>
                             <constraint firstItem="bU3-zs-53c" firstAttribute="top" secondItem="P6G-C6-k4p" secondAttribute="bottom" constant="24" id="xKz-wt-DEH"/>
                             <constraint firstItem="P6G-C6-k4p" firstAttribute="leading" secondItem="ClR-u3-Spj" secondAttribute="leading" constant="29" id="y3j-OZ-2OV"/>
