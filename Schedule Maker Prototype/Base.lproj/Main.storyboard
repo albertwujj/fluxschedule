@@ -10,6 +10,9 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
+        <array key="AlNile.ttc">
+            <string>AlNile-Bold</string>
+        </array>
         <array key="Menlo.ttc">
             <string>Menlo-Regular</string>
         </array>
@@ -340,10 +343,10 @@
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wVE-cu-Fen">
-                                        <rect key="frame" x="8" y="23" width="46" height="30"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <state key="normal" title="&lt;-">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wVE-cu-Fen" userLabel="&lt; (custom symbol)">
+                                        <rect key="frame" x="20" y="54" width="30" height="53"/>
+                                        <fontDescription key="fontDescription" name="AlNile-Bold" family="Al Nile" pointSize="30"/>
+                                        <state key="normal" title="&lt;">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
@@ -355,7 +358,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="101" id="1gm-zp-4U8"/>
                                     <constraint firstAttribute="bottom" secondItem="jji-Jo-Mb6" secondAttribute="bottom" constant="10" id="ICn-1H-2BV"/>
-                                    <constraint firstItem="wVE-cu-Fen" firstAttribute="leading" secondItem="pNe-yF-mLY" secondAttribute="leading" constant="14" id="Mqo-0q-CGI"/>
+                                    <constraint firstItem="wVE-cu-Fen" firstAttribute="leading" secondItem="pNe-yF-mLY" secondAttribute="leading" constant="20" id="Mqo-0q-CGI"/>
                                     <constraint firstItem="wVE-cu-Fen" firstAttribute="centerY" secondItem="jji-Jo-Mb6" secondAttribute="centerY" id="cof-dv-sVU"/>
                                     <constraint firstItem="jji-Jo-Mb6" firstAttribute="centerX" secondItem="pNe-yF-mLY" secondAttribute="centerX" id="vZe-zm-pPA"/>
                                 </constraints>
