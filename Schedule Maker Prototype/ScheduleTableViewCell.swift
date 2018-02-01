@@ -95,9 +95,8 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         startTimeTF.addButtons(customString: nil, customButton: startTimeTFCustomButton)
         durationTF.addButtons(customString: nil, customButton: durationTFCustomButton)
         Timer.scheduledTimer(timeInterval: 20, target: self, selector: #selector(updateStartOfToday), userInfo: nil, repeats: true)
-       
-        
     }
+    
     @objc func updateStartOfToday() {
         startOfToday = Calendar.current.startOfDay(for: Date())
     }
@@ -230,7 +229,12 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                     })
                     return
                 }
+                
                 scheduleItem.duration = Int(duration)
+                tableViewController.scheduleItems.remove(at: self.row)
+                var origLockedItems = tableViewController.getLockedItems()
+                origLockedItems.append(scheduleItem.deepCopy())
+                tableViewController.recalculateTimes(with: origLockedItems)
                 tableViewController.update()
                 tableViewController.flashScheduleItem(intDate, for: 1, color: UIColor.purple)
             }
