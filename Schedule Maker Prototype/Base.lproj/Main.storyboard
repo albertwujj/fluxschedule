@@ -174,7 +174,7 @@
                                             <action selector="leftDateButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="X96-Nu-jBT"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tck-CV-ptU">
+                                    <button hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tck-CV-ptU">
                                         <rect key="frame" x="187" y="44" width="54" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="8"/>
@@ -185,7 +185,7 @@
                                             <action selector="testingModeButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="CBc-2z-UEN"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gxe-LF-NkH">
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gxe-LF-NkH">
                                         <rect key="frame" x="312" y="63" width="46" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" title="↑">
@@ -345,7 +345,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wVE-cu-Fen" userLabel="&lt; (custom symbol)">
-                                        <rect key="frame" x="20" y="48.5" width="30" height="64"/>
+                                        <rect key="frame" x="20" y="52.5" width="30" height="64"/>
                                         <fontDescription key="fontDescription" name="AlNile-Bold" family="Al Nile" pointSize="38"/>
                                         <state key="normal" title="&lt;">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -360,7 +360,7 @@
                                     <constraint firstAttribute="height" constant="101" id="1gm-zp-4U8"/>
                                     <constraint firstAttribute="bottom" secondItem="jji-Jo-Mb6" secondAttribute="bottom" constant="10" id="ICn-1H-2BV"/>
                                     <constraint firstItem="wVE-cu-Fen" firstAttribute="leading" secondItem="pNe-yF-mLY" secondAttribute="leading" constant="20" id="Mqo-0q-CGI"/>
-                                    <constraint firstItem="wVE-cu-Fen" firstAttribute="centerY" secondItem="jji-Jo-Mb6" secondAttribute="centerY" id="cof-dv-sVU"/>
+                                    <constraint firstItem="wVE-cu-Fen" firstAttribute="centerY" secondItem="jji-Jo-Mb6" secondAttribute="centerY" constant="4" id="cof-dv-sVU"/>
                                     <constraint firstItem="jji-Jo-Mb6" firstAttribute="centerX" secondItem="pNe-yF-mLY" secondAttribute="centerX" id="vZe-zm-pPA"/>
                                 </constraints>
                             </view>
