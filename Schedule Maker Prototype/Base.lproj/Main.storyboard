@@ -10,6 +10,9 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
+        <array key="AlNile.ttc">
+            <string>AlNile-Bold</string>
+        </array>
         <array key="Menlo.ttc">
             <string>Menlo-Regular</string>
         </array>
@@ -152,8 +155,8 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nws-Cy-H1T">
-                                        <rect key="frame" x="274" y="66" width="30" height="30"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <rect key="frame" x="275" y="51.5" width="30" height="64"/>
+                                        <fontDescription key="fontDescription" name="AlNile-Bold" family="Al Nile" pointSize="38"/>
                                         <state key="normal" title="&gt;">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
@@ -162,7 +165,8 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IVK-sZ-5AT">
-                                        <rect key="frame" x="79" y="65.5" width="30" height="30"/>
+                                        <rect key="frame" x="77" y="51.5" width="30" height="64"/>
+                                        <fontDescription key="fontDescription" name="AlNile-Bold" family="Al Nile" pointSize="38"/>
                                         <state key="normal" title="&lt;">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
@@ -270,21 +274,21 @@
                             <constraint firstItem="Je9-4Q-GfF" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" id="5yN-FO-7iQ"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="trailing" secondItem="Je9-4Q-GfF" secondAttribute="trailing" id="6Qb-0k-ccC"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="bottom" id="9MZ-gI-Dh3"/>
-                            <constraint firstItem="Nws-Cy-H1T" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="-1" id="D6T-qc-dcR"/>
-                            <constraint firstItem="IVK-sZ-5AT" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="-1" id="HNO-mk-y7A"/>
+                            <constraint firstItem="Nws-Cy-H1T" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="3" id="D6T-qc-dcR"/>
+                            <constraint firstItem="IVK-sZ-5AT" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="3" id="HNO-mk-y7A"/>
                             <constraint firstItem="seG-dg-VIZ" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" constant="27" id="JwP-bc-tWi"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="centerX" secondItem="SKS-Gt-Yfv" secondAttribute="centerX" id="Kay-hM-6pB"/>
                             <constraint firstItem="S1F-bE-qaP" firstAttribute="top" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="-100" id="OUk-RJ-kXJ"/>
                             <constraint firstItem="S1F-bE-qaP" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="QLY-cz-ebC"/>
                             <constraint firstItem="7V9-x7-620" firstAttribute="leading" secondItem="zRD-x9-WHF" secondAttribute="trailing" constant="-79" id="SfX-rM-mpz"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="top" constant="60" id="V9q-3A-cQa"/>
-                            <constraint firstItem="Ljn-hE-dG9" firstAttribute="leading" secondItem="IVK-sZ-5AT" secondAttribute="trailing" id="VPq-lh-ju5"/>
+                            <constraint firstItem="Ljn-hE-dG9" firstAttribute="leading" secondItem="IVK-sZ-5AT" secondAttribute="trailing" constant="2" id="VPq-lh-ju5"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" id="cd2-7F-5b1"/>
                             <constraint firstItem="Y8o-P1-EhR" firstAttribute="width" secondItem="Ljn-hE-dG9" secondAttribute="width" id="fCW-0B-ebV"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="6UZ-1E-uIs" secondAttribute="top" constant="6" id="fwd-Cw-yDn"/>
                             <constraint firstItem="6UZ-1E-uIs" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="1" id="gZx-fb-c7s"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="bottom" secondItem="zRD-x9-WHF" secondAttribute="bottom" id="muh-IT-yDc"/>
-                            <constraint firstItem="Nws-Cy-H1T" firstAttribute="leading" secondItem="Ljn-hE-dG9" secondAttribute="trailing" constant="-2" id="rog-XZ-boM"/>
+                            <constraint firstItem="Nws-Cy-H1T" firstAttribute="leading" secondItem="Ljn-hE-dG9" secondAttribute="trailing" constant="-1" id="rog-XZ-boM"/>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="centerX" secondItem="Y8o-P1-EhR" secondAttribute="centerX" constant="-3" id="s3e-dq-bkd"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="SKS-Gt-Yfv"/>
@@ -340,10 +344,10 @@
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wVE-cu-Fen">
-                                        <rect key="frame" x="8" y="23" width="46" height="30"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <state key="normal" title="&lt;-">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wVE-cu-Fen" userLabel="&lt; (custom symbol)">
+                                        <rect key="frame" x="20" y="52.5" width="30" height="64"/>
+                                        <fontDescription key="fontDescription" name="AlNile-Bold" family="Al Nile" pointSize="38"/>
+                                        <state key="normal" title="&lt;">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
@@ -355,8 +359,8 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="101" id="1gm-zp-4U8"/>
                                     <constraint firstAttribute="bottom" secondItem="jji-Jo-Mb6" secondAttribute="bottom" constant="10" id="ICn-1H-2BV"/>
-                                    <constraint firstItem="wVE-cu-Fen" firstAttribute="leading" secondItem="pNe-yF-mLY" secondAttribute="leading" constant="14" id="Mqo-0q-CGI"/>
-                                    <constraint firstItem="wVE-cu-Fen" firstAttribute="centerY" secondItem="jji-Jo-Mb6" secondAttribute="centerY" id="cof-dv-sVU"/>
+                                    <constraint firstItem="wVE-cu-Fen" firstAttribute="leading" secondItem="pNe-yF-mLY" secondAttribute="leading" constant="20" id="Mqo-0q-CGI"/>
+                                    <constraint firstItem="wVE-cu-Fen" firstAttribute="centerY" secondItem="jji-Jo-Mb6" secondAttribute="centerY" constant="4" id="cof-dv-sVU"/>
                                     <constraint firstItem="jji-Jo-Mb6" firstAttribute="centerX" secondItem="pNe-yF-mLY" secondAttribute="centerX" id="vZe-zm-pPA"/>
                                 </constraints>
                             </view>
