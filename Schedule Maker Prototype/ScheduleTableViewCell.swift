@@ -347,7 +347,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             date = Date(timeInterval: Double(scheduleItem.duration), since: startOfToday)
         }
         datePickerView.setDate(date, animated: true)
-        durationTFCustomButton.setTitle(" \(ScheduleTableViewCell.durationDescription(duration: Int(date.timeIntervalSince(startOfToday)))) ", for: .normal)
+        durationTFCustomButton.setTitle(ScheduleTableViewCell.durationDescription(duration: Int(date.timeIntervalSince(startOfToday))), for: .normal)
         durationTFCustomButton.sizeToFit()
         datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChanged), for: UIControlEvents.valueChanged)
         
