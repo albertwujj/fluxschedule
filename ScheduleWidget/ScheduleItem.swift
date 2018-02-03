@@ -23,7 +23,13 @@ public class ScheduleItem: NSObject, NSCoding {
     public var locked:Bool = false
     public var recurDays:Set<Int>? = Set<Int>()
     public var oldRow: Int?
-    
+
+    //duration represented in seconds
+    public var previous_duration: Int?
+    //startTime represented in seconds since midnight
+    public var previous_startTime: Int?
+
+
     public struct PropertyKey {
         static let taskName = "taskName"
         static let duration = "duration"

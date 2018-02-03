@@ -109,7 +109,7 @@ class ScheduleTableViewController: UITableViewController {
             self.tableView.reloadData()
         }
     }
-    func flashItems(itemsToFlash: [ScheduleItem], for tfID: Int, color: UIColor) {
+    func flashItems(itemsToFlash: [ScheduleItem], for tfID: Int, color: UIColor, timeToFullColor: TimeInterval = 0.7) {
         for i in 0..<self.scheduleItems.count {
             for j in itemsToFlash {
                 if j === scheduleItems[i] {
@@ -125,7 +125,7 @@ class ScheduleTableViewController: UITableViewController {
                         }
                         
                         
-                        UIView.animate(withDuration: 0.7, animations: { () -> Void in
+                        UIView.animate(withDuration: timeToFullColor, animations: { () -> Void in
                             tf.backgroundColor = color.withAlphaComponent(0.3)
                             
                         }, completion: { (finished) -> Void in
@@ -278,6 +278,11 @@ class ScheduleTableViewController: UITableViewController {
             let scheduleItem = scheduleItems[row]
             if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
                 cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+                if scheduleItem.startTime != scheduleItem.previous_startTime {
+                    flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+                    scheduleItem.previous_startTime = scheduleItem.startTime
+                }
+
                 cell.durationTF.text = ScheduleTableViewCell.durationDescription(duration: scheduleItem.duration)
                 cell.row = row
             }
@@ -412,7 +417,7 @@ class ScheduleTableViewController: UITableViewController {
             scheduleViewController.schedulesEdited.insert(currDateInt)
             self.cellSnapshot?.removeFromSuperview()
             if firstTouch != nil && currPath != nil && firstTouch!.row != currPath!.row && item != nil  {
-                flashItems(itemsToFlash: [item!], for: 0, color: .purple)
+                flashItems(itemsToFlash: [item!], for: 0, color: .purple, timeToFullColor: 0)
                 print("pls")
             }
             firstTouch = nil
@@ -576,6 +581,14 @@ class ScheduleTableViewController: UITableViewController {
             currStartTime = st
         }
         for i in scheduleItems {
+            if i.previous_startTime == nil {
+                i.previous_startTime = i.startTime
+            }
+
+            if i.previous_duration == nil {
+                i.previous_duration = i.duration
+            }
+
             i.startTime = currStartTime
             currStartTime += i.duration
         }
