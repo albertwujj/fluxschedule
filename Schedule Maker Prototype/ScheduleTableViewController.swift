@@ -17,6 +17,7 @@ class ScheduleTableViewController: UITableViewController {
     var sharedDefaults: UserDefaults!
     var cellSnapshot: UIView?
     var initialIndexPath: IndexPath? = nil
+    var gapIndexPath: IndexPath? = nil
     var firstTouch: IndexPath?
     var isAnyLockedItems: Bool = false
     var didDragLockedItem = false
@@ -276,11 +277,17 @@ class ScheduleTableViewController: UITableViewController {
         for path in tableView.indexPathsForVisibleRows! {
             let row = path.row
             let scheduleItem = scheduleItems[row]
+            scheduleItem.inFlash = false
             if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
-                cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
-                if scheduleItem.startTime != scheduleItem.previous_startTime {
-                    flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
-                    scheduleItem.previous_startTime = scheduleItem.startTime
+                if scheduleItem.locked {
+                    cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.previousStartTime!)
+                } else {
+                    cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
+                    if scheduleItem.startTime != scheduleItem.previousStartTime {
+                        scheduleItem.inFlash = true
+                        flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+                        scheduleItem.previousStartTime = scheduleItem.startTime
+                    }
                 }
 
                 cell.durationTF.text = ScheduleTableViewCell.durationDescription(duration: scheduleItem.duration)
@@ -312,6 +319,8 @@ class ScheduleTableViewController: UITableViewController {
         var indexPath = tableView.indexPathForRow(at: locationInView)
         
         if sender.state == .began && indexPath != nil {
+            capturePrevious()
+            gapIndexPath = nil
             didDragLockedItem = false
             if let path = indexPath  {
                 let cell = scheduleItems[path.row]
@@ -353,6 +362,12 @@ class ScheduleTableViewController: UITableViewController {
             var center = cellSnapshot!.center
             center.y = locationInView.y
             cellSnapshot?.center = center
+
+            if (gapIndexPath == nil){
+                if indexPath != nil && scheduleItems[indexPath!.row].locked{
+                    gapIndexPath = initialIndexPath
+                }
+            }
             
             if ((indexPath != nil) && (indexPath != initialIndexPath)) {
                 
@@ -361,7 +376,17 @@ class ScheduleTableViewController: UITableViewController {
                 scheduleItems[indexPath!.row] = scheduleItems[initialIndexPath!.row]
                 scheduleItems[initialIndexPath!.row] = temp
                 tableView.moveRow(at: initialIndexPath!, to: indexPath!)
-                
+
+                // Use the current task to fill the previous gap
+                if (!scheduleItems[initialIndexPath!.row].locked && gapIndexPath != nil && gapIndexPath != initialIndexPath && gapIndexPath != indexPath) {
+                    let temp = scheduleItems[gapIndexPath!.row]
+                    scheduleItems[gapIndexPath!.row] = scheduleItems[initialIndexPath!.row]
+                    scheduleItems[initialIndexPath!.row] = temp
+
+                    tableView.moveRow(at: initialIndexPath!, to: gapIndexPath!)
+                    gapIndexPath = nil
+                }
+
                 if indexPath?.row == 0 && scheduleItems.count > 1 && scheduleItems[0].startTime != nil{
                     scheduleItems[0].startTime! = scheduleItems[1].startTime! - scheduleItems[0].duration
                 }
@@ -416,7 +441,7 @@ class ScheduleTableViewController: UITableViewController {
             scheduleViewController.step3Complete()
             scheduleViewController.schedulesEdited.insert(currDateInt)
             self.cellSnapshot?.removeFromSuperview()
-            if firstTouch != nil && currPath != nil && firstTouch!.row != currPath!.row && item != nil  {
+            if firstTouch != nil && currPath != nil && firstTouch!.row != currPath!.row && item != nil && item!.inFlash {
                 flashItems(itemsToFlash: [item!], for: 0, color: .purple, timeToFullColor: 0)
                 print("pls")
             }
@@ -575,20 +600,18 @@ class ScheduleTableViewController: UITableViewController {
         }
         return scheduleItemsP
     }
+    func capturePrevious() {
+        for i in scheduleItems {
+            i.previousStartTime = i.startTime
+            i.previousDuration = i.duration
+        }
+    }
     func recalculateTimesBasic() {
         var currStartTime = 0
         if scheduleItems.count > 0, let st = scheduleItems[0].startTime {
             currStartTime = st
         }
         for i in scheduleItems {
-            if i.previous_startTime == nil {
-                i.previous_startTime = i.startTime
-            }
-
-            if i.previous_duration == nil {
-                i.previous_duration = i.duration
-            }
-
             i.startTime = currStartTime
             currStartTime += i.duration
         }

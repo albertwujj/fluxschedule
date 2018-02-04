@@ -25,10 +25,11 @@ public class ScheduleItem: NSObject, NSCoding {
     public var oldRow: Int?
 
     //duration represented in seconds
-    public var previous_duration: Int?
+    public var previousDuration: Int?
     //startTime represented in seconds since midnight
-    public var previous_startTime: Int?
+    public var previousStartTime: Int?
 
+    public var inFlash:Bool = false
 
     public struct PropertyKey {
         static let taskName = "taskName"
@@ -85,6 +86,7 @@ public class ScheduleItem: NSObject, NSCoding {
         let deepCopy = ScheduleItem(name: self.taskName, duration: self.duration, locked: self.locked)
         deepCopy.startTime = self.startTime
         deepCopy.recurDays = self.recurDays
+        deepCopy.previousStartTime = self.previousStartTime
         return deepCopy
     }
 }
