@@ -726,7 +726,7 @@ class ScheduleTableViewController: UITableViewController {
         while i < scheduleItems.count {
             let curr = scheduleItems[i]
             if let prev = p {
-                if curr.taskName.range(of: "New Item \\d*", options: .regularExpression, range: nil, locale: nil) == nil && curr.taskName == prev.taskName {
+                if curr.taskName == prev.taskName {
                     if (curr.locked && prev.locked) || (!curr.locked && !prev.locked) {
                         for k in 0..<itemsToFullGreen.count {
                             if itemsToFullGreen[k] === curr || itemsToFullGreen[k] === prev {
