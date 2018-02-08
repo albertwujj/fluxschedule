@@ -282,13 +282,13 @@ class ScheduleTableViewController: UITableViewController {
             scheduleItem.inFlash = false
             if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
                 if scheduleItem.locked {
-                    cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.previousStartTime!)
+                    cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.initialStartTime!)
                 } else {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
-                    if scheduleItem.startTime != scheduleItem.previousStartTime {
+                    if scheduleItem.startTime != scheduleItem.initialStartTime {
                         scheduleItem.inFlash = true
                         flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
-                        scheduleItem.previousStartTime = scheduleItem.startTime
+                        scheduleItem.initialStartTime = scheduleItem.startTime
                     }
                 }
 
@@ -321,7 +321,7 @@ class ScheduleTableViewController: UITableViewController {
         var indexPath = tableView.indexPathForRow(at: locationInView)
         
         if sender.state == .began && indexPath != nil {
-            capturePrevious()
+            captureInitial()
             didDragLockedItem = false
             if let path = indexPath  {
                 let cell = scheduleItems[path.row]
@@ -364,59 +364,12 @@ class ScheduleTableViewController: UITableViewController {
             center.y = locationInView.y
             cellSnapshot?.center = center
 
-            if ((indexPath != nil) && (indexPath != initialIndexPath)) {
-                
-               
-                let temp = scheduleItems[indexPath!.row]
-                scheduleItems[indexPath!.row] = scheduleItems[initialIndexPath!.row]
-                scheduleItems[initialIndexPath!.row] = temp
-                tableView.moveRow(at: initialIndexPath!, to: indexPath!)
+            if indexPath != nil && indexPath != initialIndexPath && !scheduleItems[indexPath!.row].locked {
 
-                if indexPath?.row == 0 {
-                    recalculateFirstStartTime()
-                }
+                adjustScheduleItems(initialIndex: initialIndexPath!.row, index: indexPath!.row)
+
                 recalculateTimesBasic()
                 quickReloadCellTimes()
-
-
-                if (gapSize <= 0){
-                    gapSize =  scheduleItems[initialIndexPath!.row].previousStartTime! - scheduleItems[initialIndexPath!.row].startTime!
-                    if initialIndexPath! > indexPath! {
-                        gapSize = -gapSize
-                    }
-
-                    if gapSize < 0 {
-                        //raise(SIGINT)
-                        print("BUGBUG", "gap size negtive in if")
-                    }
-
-                    if gapSize > 0 {
-                        gapIndexPath = initialIndexPath
-                    }
-                }
-
-                // Use the current task to fill the previous gap
-                if (!scheduleItems[initialIndexPath!.row].locked &&
-                        gapSize > 0 &&
-                        gapIndexPath != initialIndexPath &&
-                        gapIndexPath != indexPath) {
-                    let temp = scheduleItems[gapIndexPath!.row]
-                    scheduleItems[gapIndexPath!.row] = scheduleItems[initialIndexPath!.row]
-                    scheduleItems[initialIndexPath!.row] = temp
-
-                    tableView.moveRow(at: initialIndexPath!, to: gapIndexPath!)
-
-                    if gapIndexPath?.row == 0 {
-                        recalculateFirstStartTime()
-                    }
-                    recalculateTimesBasic()
-                    quickReloadCellTimes()
-
-                    gapSize -= scheduleItems[gapIndexPath!.row].duration
-
-                    var nextOffset = initialIndexPath! < indexPath! ? 1 : -1
-                    gapIndexPath = IndexPath(gapIndexPath!.row + nextOffset)
-                }
 
                 if let cell = tableView.cellForRow(at: indexPath!) {
                     cell.isHidden = false
@@ -431,15 +384,11 @@ class ScheduleTableViewController: UITableViewController {
                     tableView.addSubview(cellSnapshot!)
                     initialIndexPath = indexPath
                 }
-                
             }
         } else if initialIndexPath != nil && !didDragLockedItem && sender.state == .ended {
             var currPath: IndexPath?
             var item: ScheduleItem?
             let cell = tableView.cellForRow(at: initialIndexPath!) as? ScheduleTableViewCell
-            if initialIndexPath?.row == 0 {
-                recalculateFirstStartTime()
-            }
             cell?.isHidden = false
             cell?.alpha = 0.0
             if cell != nil {
@@ -627,15 +576,10 @@ class ScheduleTableViewController: UITableViewController {
         }
         return scheduleItemsP
     }
-    func capturePrevious() {
+    func captureInitial() {
         for i in scheduleItems {
-            i.previousStartTime = i.startTime
-            i.previousDuration = i.duration
-        }
-    }
-    func recalculateFirstStartTime() {
-        if scheduleItems.count > 1 && !scheduleItems[0].locked && scheduleItems[0].startTime != nil {
-            scheduleItems[0].startTime! = scheduleItems[1].startTime! - scheduleItems[0].duration
+            i.initialStartTime = i.startTime
+            i.initialDuration = i.duration
         }
     }
     func recalculateTimesBasic() {
@@ -648,6 +592,101 @@ class ScheduleTableViewController: UITableViewController {
             currStartTime += i.duration
         }
     }
+    func findGapUp() -> Int? {
+        for (index, element) in scheduleItems.enumerated() {
+            if  element.initialStartTime! > element.startTime! {
+                return index
+            }
+        }
+        return nil
+    }
+    func findGapDown() -> Int? {
+        for (index, element) in (scheduleItems.enumerated().reversed()) {
+            if  element.initialStartTime! < element.startTime! {
+                return index
+            }
+        }
+        return nil
+    }
+
+    func adjustScheduleItems(initialIndex: Int, index: Int) -> Bool {
+        let movingDown = initialIndex < index
+        let movingUp = !movingDown
+
+        var firstStartTime = scheduleItems[0].startTime!
+        var initialDuration = scheduleItems[initialIndex].duration
+
+        var initialIndex = initialIndex
+        var index = index
+
+        if movingUp {
+            scheduleItems.reverse()
+            initialIndex = scheduleItems.count - 1 - initialIndex
+            index = scheduleItems.count - 1 - index
+        }
+
+        var hasLockedTaskTop = false
+
+        for element in scheduleItems[0 ..< initialIndex] {
+            if element.locked {
+                hasLockedTaskTop = true
+            }
+        }
+
+        var hasLockedTaskMiddle = false
+
+        for element in scheduleItems[initialIndex + 1 ..< index] {
+            if element.locked {
+                hasLockedTaskMiddle = true
+            }
+        }
+
+        var hasLockedTaskBottom = false
+
+        for element in scheduleItems[(index + 1)...] {
+            if element.locked {
+                hasLockedTaskBottom = true
+            }
+        }
+
+        var firstStartTimeDelta = !hasLockedTaskTop && hasLockedTaskMiddle && !hasLockedTaskBottom ?
+            scheduleItems[initialIndex].duration - scheduleItems[index].duration : 0
+
+        var targetIndex = initialIndex
+
+        for (i, element) in scheduleItems[0 ..< initialIndex].enumerated() {
+            if element.initialStartTime! != element.startTime! &&
+                       (element.initialStartTime! > element.startTime!) == movingDown {
+                targetIndex = i
+            }
+        }
+
+        let beforeTarget = scheduleItems[0 ..< targetIndex]
+        let targetToInitial = [scheduleItems[index]] + scheduleItems[targetIndex ..< initialIndex]
+        let initialToCurrent = scheduleItems[initialIndex + 1 ..< index] + [scheduleItems[initialIndex]]
+        let afterCurrent = scheduleItems[(index + 1)...]
+
+        scheduleItems = beforeTarget + targetToInitial + initialToCurrent + afterCurrent
+
+
+        if movingUp {
+            scheduleItems.reverse()
+            targetIndex = scheduleItems.count - 1 - targetIndex
+            initialIndex = scheduleItems.count - 1 - initialIndex
+            index = scheduleItems.count - 1 - index
+            firstStartTimeDelta = -firstStartTimeDelta
+        }
+
+        tableView.beginUpdates()
+        tableView.moveRow(at: IndexPath(initialIndex), to: IndexPath(index))
+        tableView.moveRow(at: IndexPath(index), to: IndexPath(targetIndex))
+        tableView.endUpdates()
+
+        scheduleItems[0].startTime! = firstStartTime + firstStartTimeDelta
+
+        return true
+    }
+
     func snapshotOfCell(inputView: UIView) -> UIView {
         UIGraphicsBeginImageContextWithOptions(inputView.bounds.size, false, 0.0)
         inputView.layer.render(in: UIGraphicsGetCurrentContext()!)
@@ -894,7 +933,7 @@ class ScheduleTableViewController: UITableViewController {
      override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             scheduleItems.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            tableView.deleteRows(at: [indexPath], with: .right)
             update()
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
