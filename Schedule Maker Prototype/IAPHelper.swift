@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+/*
 import StoreKit
 fileprivate let productIdentifiers = Set<ProductIdentifier>()
 fileprivate var purchasedProductIdentifiers = Set<ProductIdentifier>()
@@ -91,4 +92,5 @@ extension IAPHelper: SKProductsRequestDelegate {
         productsRequestCompletionHandler = nil
     }
 }
+*/
  
