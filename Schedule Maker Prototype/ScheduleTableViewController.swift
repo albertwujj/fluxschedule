@@ -277,6 +277,8 @@ class ScheduleTableViewController: UITableViewController {
             let row = path.row
             let scheduleItem = scheduleItems[row]
             if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
+                cell.startTimeTF.backgroundColor = UIColor.white
+                scheduleItem.inColor = false
                 if scheduleItem.locked {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.initialStartTime!)
                 } else {
