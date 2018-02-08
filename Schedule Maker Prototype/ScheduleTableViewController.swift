@@ -27,9 +27,6 @@ class ScheduleTableViewController: UITableViewController {
     var itemsToFullGreen: [ScheduleItem] = []
     var itemsToRed: [ScheduleItem] = []
 
-    var gapIndexPath: IndexPath?
-    var gapSize: Int = 0
-
     @IBOutlet weak var header: UIView!
     @IBOutlet weak var deleteButton: UIButton!
     
@@ -423,7 +420,6 @@ class ScheduleTableViewController: UITableViewController {
             firstTouch = nil
             currPath = nil
             item = nil
-            gapSize = 0
         }
         
     }
@@ -592,23 +588,6 @@ class ScheduleTableViewController: UITableViewController {
             currStartTime += i.duration
         }
     }
-    func findGapUp() -> Int? {
-        for (index, element) in scheduleItems.enumerated() {
-            if  element.initialStartTime! > element.startTime! {
-                return index
-            }
-        }
-        return nil
-    }
-    func findGapDown() -> Int? {
-        for (index, element) in (scheduleItems.enumerated().reversed()) {
-            if  element.initialStartTime! < element.startTime! {
-                return index
-            }
-        }
-        return nil
-    }
-
     func adjustScheduleItems(initialIndex: Int, index: Int) -> Bool {
         let movingDown = initialIndex < index
         let movingUp = !movingDown
@@ -933,7 +912,7 @@ class ScheduleTableViewController: UITableViewController {
      override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             scheduleItems.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .right)
+            tableView.deleteRows(at: [indexPath], with: .fade)
             update()
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
