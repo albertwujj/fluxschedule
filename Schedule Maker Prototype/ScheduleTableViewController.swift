@@ -588,7 +588,7 @@ class ScheduleTableViewController: UITableViewController {
             currStartTime += i.duration
         }
     }
-    func adjustScheduleItems(initialIndex: Int, index: Int) -> Bool {
+    func adjustScheduleItems(initialIndex: Int, index: Int) {
         let movingDown = initialIndex < index
         let movingUp = !movingDown
 
@@ -647,7 +647,6 @@ class ScheduleTableViewController: UITableViewController {
 
         scheduleItems = beforeTarget + targetToInitial + initialToCurrent + afterCurrent
 
-
         if movingUp {
             scheduleItems.reverse()
             targetIndex = scheduleItems.count - 1 - targetIndex
@@ -662,8 +661,6 @@ class ScheduleTableViewController: UITableViewController {
         tableView.endUpdates()
 
         scheduleItems[0].startTime! = firstStartTime + firstStartTimeDelta
-
-        return true
     }
 
     func snapshotOfCell(inputView: UIView) -> UIView {
