@@ -704,6 +704,7 @@ class ScheduleTableViewController: UITableViewController {
     */
     }
     func updateFromSVC() {
+        recalculateTimesBasic()
         tableView.reloadData()
         currDateInt = scheduleViewController.selectedDateInt ?? currDateInt
         if currDateInt == scheduleViewController.dateToHashableInt(date: Date()), let scrollPosition = loadScrollPosition() {
