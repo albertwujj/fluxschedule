@@ -29,7 +29,7 @@ public class ScheduleItem: NSObject, NSCoding {
     //startTime represented in seconds since midnight
     public var initialStartTime: Int?
 
-    public var inFlash:Bool = false
+    public var inColor:Bool = false
 
     public struct PropertyKey {
         static let taskName = "taskName"

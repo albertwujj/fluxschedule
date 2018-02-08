@@ -272,19 +272,22 @@ class ScheduleTableViewController: UITableViewController {
         tableView.addGestureRecognizer(longpress)
         
     }
-    func quickReloadCellTimes() {
+    func quickReloadCellTimes(index: Int) {
         for path in tableView.indexPathsForVisibleRows! {
             let row = path.row
             let scheduleItem = scheduleItems[row]
-            scheduleItem.inFlash = false
             if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
                 if scheduleItem.locked {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.initialStartTime!)
                 } else {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
                     if scheduleItem.startTime != scheduleItem.initialStartTime {
-                        scheduleItem.inFlash = true
-                        flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+                        if row == index {
+                            scheduleItem.inColor = true
+                            cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
+                        } else {
+                            flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+                        }
                         scheduleItem.initialStartTime = scheduleItem.startTime
                     }
                 }
@@ -363,10 +366,10 @@ class ScheduleTableViewController: UITableViewController {
 
             if indexPath != nil && indexPath != initialIndexPath && !scheduleItems[indexPath!.row].locked {
 
-                adjustScheduleItems(initialIndex: initialIndexPath!.row, index: indexPath!.row)
+                adjustScheduleItems(index: indexPath!.row)
 
                 recalculateTimesBasic()
-                quickReloadCellTimes()
+                quickReloadCellTimes(index: indexPath!.row)
 
                 if let cell = tableView.cellForRow(at: indexPath!) {
                     cell.isHidden = false
@@ -413,8 +416,9 @@ class ScheduleTableViewController: UITableViewController {
             scheduleViewController.step3Complete()
             scheduleViewController.schedulesEdited.insert(currDateInt)
             self.cellSnapshot?.removeFromSuperview()
-            if firstTouch != nil && currPath != nil && firstTouch!.row != currPath!.row && item != nil && item!.inFlash {
+            if firstTouch != nil && currPath != nil && firstTouch!.row != currPath!.row && item != nil && item!.inColor {
                 flashItems(itemsToFlash: [item!], for: 0, color: .purple, timeToFullColor: 0)
+                item!.inColor = false
                 print("pls")
             }
             firstTouch = nil
@@ -588,15 +592,15 @@ class ScheduleTableViewController: UITableViewController {
             currStartTime += i.duration
         }
     }
-    func adjustScheduleItems(initialIndex: Int, index: Int) {
+    func adjustScheduleItems(index: Int) {
+        var initialIndex = initialIndexPath!.row
+        var index = index
+
         let movingDown = initialIndex < index
         let movingUp = !movingDown
 
         var firstStartTime = scheduleItems[0].startTime!
         var initialDuration = scheduleItems[initialIndex].duration
-
-        var initialIndex = initialIndex
-        var index = index
 
         if movingUp {
             scheduleItems.reverse()
