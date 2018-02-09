@@ -109,7 +109,7 @@ class ScheduleTableViewController: UITableViewController {
             self.tableView.reloadData()
         }
     }
-    func flashItems(itemsToFlash: [ScheduleItem], for tfID: Int, color: UIColor, timeToFullColor: TimeInterval = 0.7) {
+    func flashItems(itemsToFlash: [ScheduleItem], for tfID: Int, color: UIColor) {
         for i in 0..<self.scheduleItems.count {
             for j in itemsToFlash {
                 if j === scheduleItems[i] {
@@ -125,9 +125,12 @@ class ScheduleTableViewController: UITableViewController {
                         }
                         
                         
-                        UIView.animate(withDuration: timeToFullColor, animations: { () -> Void in
+                        UIView.animate(
+                                withDuration: 0.7,
+                                delay: 0,
+                                options: [UIViewAnimationOptions.beginFromCurrentState],
+                                animations: { () -> Void in
                             tf.backgroundColor = color.withAlphaComponent(0.3)
-                            
                         }, completion: { (finished) -> Void in
                             DispatchQueue.main.async {
                                 UIView.animate(withDuration: 1.5, animations: { () -> Void in
@@ -284,10 +287,12 @@ class ScheduleTableViewController: UITableViewController {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
                     if scheduleItem.startTime != scheduleItem.initialStartTime {
                         if row == index {
+                            print("set purple", row, scheduleItem.inColor)
                             scheduleItem.inColor = true
                             cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
                         } else {
                             flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+                            print("flash purple", row, scheduleItem.inColor)
                         }
                         scheduleItem.initialStartTime = scheduleItem.startTime
                     }
@@ -417,7 +422,7 @@ class ScheduleTableViewController: UITableViewController {
             scheduleViewController.schedulesEdited.insert(currDateInt)
             self.cellSnapshot?.removeFromSuperview()
             if currPath != nil && item != nil && item!.inColor {
-                flashItems(itemsToFlash: [item!], for: 0, color: .purple, timeToFullColor: 0)
+                flashItems(itemsToFlash: [item!], for: 0, color: .purple)
                 item!.inColor = false
                 print("pls")
             }
