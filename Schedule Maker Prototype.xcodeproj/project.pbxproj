@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1D5170AA43F149DB5FF3C52E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 1D517AAF0910F67C193D66B8 /* .gitignore */; };
 		752693E4201F8AC100BC5D31 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 752693E3201F8AC100BC5D31 /* StoreKit.framework */; };
+		752704AC20292077005FF9B6 /* IAPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752704AB20292077005FF9B6 /* IAPViewController.swift */; };
+		752704AE20292346005FF9B6 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752704AD20292346005FF9B6 /* IAPHelper.swift */; };
 		7544C5231FCA735F001CC0A6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7544C5221FCA735E001CC0A6 /* Extensions.swift */; };
 		7591A31B1FB26518002DA737 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A31A1FB26518002DA737 /* AppDelegate.swift */; };
 		7591A3201FB26518002DA737 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7591A31E1FB26518002DA737 /* Main.storyboard */; };
@@ -75,8 +76,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1D517AAF0910F67C193D66B8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = file.gitignore; path = .gitignore; sourceTree = "<group>"; };
 		752693E3201F8AC100BC5D31 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		752704AB20292077005FF9B6 /* IAPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPViewController.swift; sourceTree = "<group>"; };
+		752704AD20292346005FF9B6 /* IAPHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
 		7544C5211FC8FBD0001CC0A6 /* Schedule Maker Prototype.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Schedule Maker Prototype.entitlements"; sourceTree = "<group>"; };
 		7544C5221FCA735E001CC0A6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		7591A3171FB26518002DA737 /* Schedule Maker Prototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Schedule Maker Prototype.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -153,6 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				7544C5211FC8FBD0001CC0A6 /* Schedule Maker Prototype.entitlements */,
+				752704AB20292077005FF9B6 /* IAPViewController.swift */,
 				7591A31A1FB26518002DA737 /* AppDelegate.swift */,
 				7591A3331FB27B29002DA737 /* ScheduleTableViewController.swift */,
 				7591A32F1FB26769002DA737 /* ScheduleTableViewCell.swift */,
@@ -175,7 +178,7 @@
 				75F88A9F1FF98D77005316DB /* WeekdayButton.swift */,
 				75F88AC320030B5F005316DB /* TextFieldToolbarExtension.swift */,
 				75F88AC520042AE4005316DB /* AccessoryTextField.swift */,
-				1D517AAF0910F67C193D66B8 /* .gitignore */,
+				752704AD20292346005FF9B6 /* IAPHelper.swift */,
 			);
 			path = "Schedule Maker Prototype";
 			sourceTree = "<group>";
@@ -304,7 +307,6 @@
 				7591A3281FB26518002DA737 /* LaunchScreen.storyboard in Resources */,
 				7591A3251FB26518002DA737 /* Assets.xcassets in Resources */,
 				7591A3201FB26518002DA737 /* Main.storyboard in Resources */,
-				1D5170AA43F149DB5FF3C52E /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +332,7 @@
 				75F88A981FF86400005316DB /* RecurringTasksViewController.swift in Sources */,
 				75F88A9E1FF975C6005316DB /* RecurringTaskTableViewCell.swift in Sources */,
 				7591A3341FB27B29002DA737 /* ScheduleTableViewController.swift in Sources */,
+				752704AC20292077005FF9B6 /* IAPViewController.swift in Sources */,
 				75A332EB1FC7E7A1001050B8 /* SettingsViewController.swift in Sources */,
 				7591A3231FB26518002DA737 /* Schedule_Maker_Prototype.xcdatamodeld in Sources */,
 				7591A3301FB26769002DA737 /* ScheduleTableViewCell.swift in Sources */,
@@ -341,6 +344,7 @@
 				75F88AA01FF98D77005316DB /* WeekdayButton.swift in Sources */,
 				75A31CF71FE5EAB9004C6404 /* ScheduleItem.swift in Sources */,
 				75A332ED1FC8D2D6001050B8 /* Settings.swift in Sources */,
+				752704AE20292346005FF9B6 /* IAPHelper.swift in Sources */,
 				7591A31B1FB26518002DA737 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
