@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D5170AA43F149DB5FF3C52E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 1D517AAF0910F67C193D66B8 /* .gitignore */; };
 		752693E4201F8AC100BC5D31 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 752693E3201F8AC100BC5D31 /* StoreKit.framework */; };
 		7544C5231FCA735F001CC0A6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7544C5221FCA735E001CC0A6 /* Extensions.swift */; };
 		7591A31B1FB26518002DA737 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A31A1FB26518002DA737 /* AppDelegate.swift */; };
@@ -74,6 +75,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1D517AAF0910F67C193D66B8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = file.gitignore; path = .gitignore; sourceTree = "<group>"; };
 		752693E3201F8AC100BC5D31 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		7544C5211FC8FBD0001CC0A6 /* Schedule Maker Prototype.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Schedule Maker Prototype.entitlements"; sourceTree = "<group>"; };
 		7544C5221FCA735E001CC0A6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				75F88A9F1FF98D77005316DB /* WeekdayButton.swift */,
 				75F88AC320030B5F005316DB /* TextFieldToolbarExtension.swift */,
 				75F88AC520042AE4005316DB /* AccessoryTextField.swift */,
+				1D517AAF0910F67C193D66B8 /* .gitignore */,
 			);
 			path = "Schedule Maker Prototype";
 			sourceTree = "<group>";
@@ -301,6 +304,7 @@
 				7591A3281FB26518002DA737 /* LaunchScreen.storyboard in Resources */,
 				7591A3251FB26518002DA737 /* Assets.xcassets in Resources */,
 				7591A3201FB26518002DA737 /* Main.storyboard in Resources */,
+				1D5170AA43F149DB5FF3C52E /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

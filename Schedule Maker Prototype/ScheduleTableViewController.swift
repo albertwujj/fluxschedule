@@ -278,7 +278,6 @@ class ScheduleTableViewController: UITableViewController {
             let scheduleItem = scheduleItems[row]
             if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
                 cell.startTimeTF.backgroundColor = UIColor.white
-                scheduleItem.inColor = false
                 if scheduleItem.locked {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.initialStartTime!)
                 } else {
@@ -330,7 +329,6 @@ class ScheduleTableViewController: UITableViewController {
                 if cell.locked {
                     didDragLockedItem = true
                 }
-                firstTouch = path
             }
             origLockedItems = []
             for scheduleItem in scheduleItems {
@@ -418,12 +416,11 @@ class ScheduleTableViewController: UITableViewController {
             scheduleViewController.step3Complete()
             scheduleViewController.schedulesEdited.insert(currDateInt)
             self.cellSnapshot?.removeFromSuperview()
-            if firstTouch != nil && currPath != nil && firstTouch!.row != currPath!.row && item != nil && item!.inColor {
+            if currPath != nil && item != nil && item!.inColor {
                 flashItems(itemsToFlash: [item!], for: 0, color: .purple, timeToFullColor: 0)
                 item!.inColor = false
                 print("pls")
             }
-            firstTouch = nil
             currPath = nil
             item = nil
         }
