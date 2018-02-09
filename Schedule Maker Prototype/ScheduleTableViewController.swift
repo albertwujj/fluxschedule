@@ -663,7 +663,7 @@ class ScheduleTableViewController: UITableViewController {
         tableView.moveRow(at: IndexPath(index), to: IndexPath(targetIndex))
         tableView.endUpdates()
 
-        scheduleItems[0].startTime! = firstStartTime + firstStartTimeDelta
+        //scheduleItems[0].startTime! = firstStartTime + firstStartTimeDelta
     }
 
     func snapshotOfCell(inputView: UIView) -> UIView {
