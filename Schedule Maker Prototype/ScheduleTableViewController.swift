@@ -155,6 +155,73 @@ class ScheduleTableViewController: UITableViewController {
         }
         highlightCurrCell()
     }
+    func flashOnItems(itemsToFlash: [ScheduleItem], for tfID: Int, color: UIColor, timeToFullColor: TimeInterval = 0.7) {
+        for i in 0..<self.scheduleItems.count {
+            for j in itemsToFlash {
+                if j === scheduleItems[i] {
+                    if let cell = self.tableView.cellForRow(at: IndexPath(i)) as? ScheduleTableViewCell {
+                        var tf: UIView!
+                        if tfID == 0 {
+                            tf = cell.startTimeTF
+                        } else if tfID == 1 {
+                            tf = cell.durationTF
+                        } else if tfID == 2{
+                            tf = cell.subviews[0]
+                            print("YEAH")
+                        }
+                        
+                        
+                        
+      
+                        UIView.animate(withDuration: timeToFullColor, animations: { () -> Void in
+                            tf.backgroundColor = color.withAlphaComponent(0.3)
+                            
+                        }, completion: { (finished) -> Void in
+                            
+                        })
+                        
+                        
+                    }
+                    break
+                }
+            }
+        }
+        highlightCurrCell()
+    }
+    func deFlashItems(itemsToFlash: [ScheduleItem], for tfID: Int, timeToFullColor: TimeInterval = 0.7) {
+        for i in 0..<self.scheduleItems.count {
+            for j in itemsToFlash {
+                if j === scheduleItems[i] {
+                    if let cell = self.tableView.cellForRow(at: IndexPath(i)) as? ScheduleTableViewCell {
+                        var tf: UIView!
+                        if tfID == 0 {
+                            tf = cell.startTimeTF
+                        } else if tfID == 1 {
+                            tf = cell.durationTF
+                        } else if tfID == 2{
+                            tf = cell.subviews[0]
+                            print("YEAH")
+                        }
+                        
+                        
+                      
+                        DispatchQueue.main.async {
+                            UIView.animate(withDuration: 0.9, animations: { () -> Void in
+                                tf.backgroundColor = .white
+                                
+                            }, completion: { (finished) -> Void in
+                                
+                            })
+                        }
+                               
+                    }
+                    break
+                }
+            }
+        }
+        highlightCurrCell()
+    }
+    
     func flashScheduleItem(_ time: Int, for tfID: Int, color: UIColor) {
         /*
         var j = 99
@@ -286,13 +353,18 @@ class ScheduleTableViewController: UITableViewController {
                 } else {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
                     if scheduleItem.startTime != scheduleItem.initialStartTime {
+                        
                         if row == index {
                             print("set purple", row, scheduleItem.inColor)
                             scheduleItem.inColor = true
-                            cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
+                            flashOnItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+                            
+                                
+                     
                         } else {
-                            flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
-                            print("flash purple", row, scheduleItem.inColor)
+
+                            //flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+
                         }
                         scheduleItem.initialStartTime = scheduleItem.startTime
                     }
@@ -421,17 +493,94 @@ class ScheduleTableViewController: UITableViewController {
             scheduleViewController.step3Complete()
             scheduleViewController.schedulesEdited.insert(currDateInt)
             self.cellSnapshot?.removeFromSuperview()
+            /*
             if currPath != nil && item != nil && item!.inColor {
                 flashItems(itemsToFlash: [item!], for: 0, color: .purple)
                 item!.inColor = false
-                print("pls")
-            }
+            } */
+            deFlashItems(itemsToFlash: scheduleItems, for: 0)
             currPath = nil
             item = nil
         }
         
     }
-    
+    func adjustScheduleItems(index: Int) {
+        
+        
+        var initialIndex = initialIndexPath!.row
+        var index = index
+        
+        let movingDown = initialIndex < index
+        let movingUp = !movingDown
+        
+        var initialStartTime = scheduleItems[0].startTime!
+        var initialDuration = scheduleItems[initialIndex].duration
+        
+        if movingUp {
+            scheduleItems.reverse()
+            initialIndex = scheduleItems.count - 1 - initialIndex
+            index = scheduleItems.count - 1 - index
+        }
+        
+        var hasLockedTaskTop = false
+        
+        for element in scheduleItems[0 ..< initialIndex] {
+            if element.locked {
+                hasLockedTaskTop = true
+            }
+        }
+        
+        var hasLockedTaskMiddle = false
+        
+        for element in scheduleItems[initialIndex + 1 ..< index] {
+            if element.locked {
+                hasLockedTaskMiddle = true
+            }
+        }
+        
+        var hasLockedTaskBottom = false
+        
+        for element in scheduleItems[(index + 1)...] {
+            if element.locked {
+                hasLockedTaskBottom = true
+            }
+        }
+        
+        var firstStartTimeDelta = !hasLockedTaskTop && hasLockedTaskMiddle && !hasLockedTaskBottom ?
+            scheduleItems[initialIndex].duration - scheduleItems[index].duration : 0
+        
+        var targetIndex = initialIndex
+        
+        for (i, element) in scheduleItems[0 ..< initialIndex].enumerated() {
+            if element.initialStartTime! != element.startTime! &&
+                (element.initialStartTime! > element.startTime!) == movingDown {
+                targetIndex = i
+            }
+        }
+        
+        let beforeTarget = scheduleItems[0 ..< targetIndex]
+        let targetToInitial = [scheduleItems[index]] + scheduleItems[targetIndex ..< initialIndex]
+        let initialToCurrent = scheduleItems[initialIndex + 1 ..< index] + [scheduleItems[initialIndex]]
+        let afterCurrent = scheduleItems[(index + 1)...]
+        
+        
+        scheduleItems = beforeTarget + targetToInitial + initialToCurrent + afterCurrent
+        
+        if movingUp {
+            scheduleItems.reverse()
+            targetIndex = scheduleItems.count - 1 - targetIndex
+            initialIndex = scheduleItems.count - 1 - initialIndex
+            index = scheduleItems.count - 1 - index
+            firstStartTimeDelta = -firstStartTimeDelta
+        }
+        
+        tableView.beginUpdates()
+        tableView.moveRow(at: IndexPath(initialIndex), to: IndexPath(index))
+        tableView.moveRow(at: IndexPath(index), to: IndexPath(targetIndex))
+        tableView.endUpdates()
+        
+        scheduleItems[0].startTime! = initialStartTime
+    }
     /*
     func recalculateTimesWith(origLockedItems: [ScheduleItem]) {
         if scheduleItems.count != 0 {
@@ -596,80 +745,7 @@ class ScheduleTableViewController: UITableViewController {
             currStartTime += i.duration
         }
     }
-    func adjustScheduleItems(index: Int) {
-        var initialIndex = initialIndexPath!.row
-        var index = index
-
-        let movingDown = initialIndex < index
-        let movingUp = !movingDown
-
-        var firstStartTime = scheduleItems[0].startTime!
-        var initialDuration = scheduleItems[initialIndex].duration
-
-        if movingUp {
-            scheduleItems.reverse()
-            initialIndex = scheduleItems.count - 1 - initialIndex
-            index = scheduleItems.count - 1 - index
-        }
-
-        var hasLockedTaskTop = false
-
-        for element in scheduleItems[0 ..< initialIndex] {
-            if element.locked {
-                hasLockedTaskTop = true
-            }
-        }
-
-        var hasLockedTaskMiddle = false
-
-        for element in scheduleItems[initialIndex + 1 ..< index] {
-            if element.locked {
-                hasLockedTaskMiddle = true
-            }
-        }
-
-        var hasLockedTaskBottom = false
-
-        for element in scheduleItems[(index + 1)...] {
-            if element.locked {
-                hasLockedTaskBottom = true
-            }
-        }
-
-        var firstStartTimeDelta = !hasLockedTaskTop && hasLockedTaskMiddle && !hasLockedTaskBottom ?
-            scheduleItems[initialIndex].duration - scheduleItems[index].duration : 0
-
-        var targetIndex = initialIndex
-
-        for (i, element) in scheduleItems[0 ..< initialIndex].enumerated() {
-            if element.initialStartTime! != element.startTime! &&
-                       (element.initialStartTime! > element.startTime!) == movingDown {
-                targetIndex = i
-            }
-        }
-
-        let beforeTarget = scheduleItems[0 ..< targetIndex]
-        let targetToInitial = [scheduleItems[index]] + scheduleItems[targetIndex ..< initialIndex]
-        let initialToCurrent = scheduleItems[initialIndex + 1 ..< index] + [scheduleItems[initialIndex]]
-        let afterCurrent = scheduleItems[(index + 1)...]
-
-        scheduleItems = beforeTarget + targetToInitial + initialToCurrent + afterCurrent
-
-        if movingUp {
-            scheduleItems.reverse()
-            targetIndex = scheduleItems.count - 1 - targetIndex
-            initialIndex = scheduleItems.count - 1 - initialIndex
-            index = scheduleItems.count - 1 - index
-            firstStartTimeDelta = -firstStartTimeDelta
-        }
-
-        tableView.beginUpdates()
-        tableView.moveRow(at: IndexPath(initialIndex), to: IndexPath(index))
-        tableView.moveRow(at: IndexPath(index), to: IndexPath(targetIndex))
-        tableView.endUpdates()
-
-        scheduleItems[0].startTime! = firstStartTime + firstStartTimeDelta
-    }
+   
 
     func snapshotOfCell(inputView: UIView) -> UIView {
         UIGraphicsBeginImageContextWithOptions(inputView.bounds.size, false, 0.0)
