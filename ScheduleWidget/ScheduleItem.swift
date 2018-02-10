@@ -28,6 +28,8 @@ public class ScheduleItem: NSObject, NSCoding {
     public var initialDuration: Int?
     //startTime represented in seconds since midnight
     public var initialStartTime: Int?
+    public var previousStartTime: Int?
+
 
     public var inColor:Bool = false
 

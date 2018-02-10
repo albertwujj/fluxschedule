@@ -347,28 +347,34 @@ class ScheduleTableViewController: UITableViewController {
             let row = path.row
             let scheduleItem = scheduleItems[row]
             if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
-                cell.startTimeTF.backgroundColor = UIColor.white
                 if scheduleItem.locked {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.initialStartTime!)
                 } else {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
                     if scheduleItem.startTime != scheduleItem.initialStartTime {
                         
-                        if row == index {
+                        //if row == index {
                             print("set purple", row, scheduleItem.inColor)
                             scheduleItem.inColor = true
-                            flashOnItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+                          //  flashOnItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+
+                        cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
+                        //UIView.animate(withDuration: 0.4, animations: { () -> Void in
+                          //  accessoryTF.backgroundColor = orig.withAlphaComponent(0.3)
                             
                                 
                      
-                        } else {
+                        //} else {
 
                             //flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
 
-                        }
-                        scheduleItem.initialStartTime = scheduleItem.startTime
+                        //}
+                     }
+                    else {
+                        cell.startTimeTF.backgroundColor = UIColor.white
                     }
                 }
+                scheduleItem.previousStartTime = scheduleItem.startTime
 
                 cell.durationTF.text = ScheduleTableViewCell.durationDescription(duration: scheduleItem.duration)
                 cell.row = row
@@ -513,7 +519,7 @@ class ScheduleTableViewController: UITableViewController {
         let movingDown = initialIndex < index
         let movingUp = !movingDown
         
-        var initialStartTime = scheduleItems[0].startTime!
+        var previousFirstStartTime = scheduleItems[0].startTime!
         var initialDuration = scheduleItems[initialIndex].duration
         
         if movingUp {
@@ -552,8 +558,8 @@ class ScheduleTableViewController: UITableViewController {
         var targetIndex = initialIndex
         
         for (i, element) in scheduleItems[0 ..< initialIndex].enumerated() {
-            if element.initialStartTime! != element.startTime! &&
-                (element.initialStartTime! > element.startTime!) == movingDown {
+            if element.previousStartTime! != element.startTime! &&
+                (element.previousStartTime! > element.startTime!) == movingDown {
                 targetIndex = i
             }
         }
@@ -579,7 +585,7 @@ class ScheduleTableViewController: UITableViewController {
         tableView.moveRow(at: IndexPath(index), to: IndexPath(targetIndex))
         tableView.endUpdates()
         
-        scheduleItems[0].startTime! = initialStartTime
+        scheduleItems[0].startTime! = previousFirstStartTime
     }
     /*
     func recalculateTimesWith(origLockedItems: [ScheduleItem]) {
@@ -732,6 +738,7 @@ class ScheduleTableViewController: UITableViewController {
     func captureInitial() {
         for i in scheduleItems {
             i.initialStartTime = i.startTime
+            i.previousStartTime = i.startTime
             i.initialDuration = i.duration
         }
     }
