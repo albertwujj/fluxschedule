@@ -373,8 +373,8 @@ class ScheduleTableViewController: UITableViewController {
                     else {
                         cell.startTimeTF.backgroundColor = UIColor.white
                     }
+                    scheduleItem.previousStartTime = scheduleItem.startTime
                 }
-                scheduleItem.previousStartTime = scheduleItem.startTime
 
                 cell.durationTF.text = ScheduleTableViewCell.durationDescription(duration: scheduleItem.duration)
                 cell.row = row
