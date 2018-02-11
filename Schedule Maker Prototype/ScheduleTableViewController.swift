@@ -20,7 +20,7 @@ class ScheduleTableViewController: UITableViewController {
     var firstTouch: IndexPath?
     var isAnyLockedItems: Bool = false
     var didDragLockedItem = false
-    
+    var darkPurple = UIColor.blue
     var testingMode = false
     var rowHeight = 0
     var itemsToGreen: [ScheduleItem] = []
@@ -42,7 +42,7 @@ class ScheduleTableViewController: UITableViewController {
     override func viewDidLoad() {
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: 240, right: 0)
         self.tableView.contentInset = insets
-        let darkPurple = UIColor(displayP3Red: 52/255, green: 8/255, blue: 107/255, alpha: 0.35)
+        darkPurple = UIColor(displayP3Red: 52/255, green: 8/255, blue: 107/255, alpha: 0.35)
         //tableView.separatorColor = darkPurple
         
         userSettings = appDelegate.userSettings
@@ -172,7 +172,9 @@ class ScheduleTableViewController: UITableViewController {
                         
                         
                         
-      
+                       
+                            
+                        
                         UIView.animate(withDuration: timeToFullColor, animations: { () -> Void in
                             tf.backgroundColor = color.withAlphaComponent(0.3)
                             
@@ -363,7 +365,7 @@ class ScheduleTableViewController: UITableViewController {
                      
                         } else {
 
-                            //flashItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
+                            flashOnItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
 
                         }
                         scheduleItem.initialStartTime = scheduleItem.startTime
@@ -407,6 +409,7 @@ class ScheduleTableViewController: UITableViewController {
                     didDragLockedItem = true
                 }
             }
+            
             origLockedItems = []
             for scheduleItem in scheduleItems {
                 if scheduleItem.locked {
@@ -416,8 +419,15 @@ class ScheduleTableViewController: UITableViewController {
                 }
             }
             if !didDragLockedItem {
+                
                 initialIndexPath = indexPath!
-                let cell = tableView.cellForRow(at: indexPath!)
+                let cell = tableView.cellForRow(at: indexPath!) as? ScheduleTableViewCell
+                UIView.animate(withDuration: 0.7, animations: { () -> Void in
+                    cell?.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
+                    
+                }, completion: { (finished) -> Void in
+                    
+                })
                 self.cellSnapshot = snapshotOfCell(inputView: cell!)
                 var center = cell?.center
                 cellSnapshot?.center = center!
@@ -440,6 +450,7 @@ class ScheduleTableViewController: UITableViewController {
             var center = cellSnapshot!.center
             center.y = locationInView.y
             cellSnapshot?.center = center
+            
 
             if indexPath != nil && indexPath != initialIndexPath && !scheduleItems[indexPath!.row].locked {
 
@@ -448,7 +459,8 @@ class ScheduleTableViewController: UITableViewController {
                 recalculateTimesBasic()
                 quickReloadCellTimes(index: indexPath!.row)
 
-                if let cell = tableView.cellForRow(at: indexPath!) {
+                if let cell = tableView.cellForRow(at: indexPath!) as? ScheduleTableViewCell {
+                    cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
                     cell.isHidden = false
                     cell.alpha = 1
                     self.cellSnapshot?.removeFromSuperview()
@@ -854,6 +866,7 @@ class ScheduleTableViewController: UITableViewController {
         itemsToGreen = []
         flashItems(itemsToFlash: itemsToRed, for: 1, color: .red)
         itemsToRed = []
+        
     }
     func normalizeTFLengths() {
         /*
@@ -895,7 +908,7 @@ class ScheduleTableViewController: UITableViewController {
             let curr = scheduleItems[i]
             if let prev = p {
                 if curr.taskName == prev.taskName {
-                    if (curr.locked && prev.locked) || (!curr.locked && !prev.locked) {
+                    if !(curr.taskName.range(of: "New Item \\d*", options: .regularExpression, range: nil, locale: nil) != nil && i == scheduleItems.count - 1)  && ((curr.locked && prev.locked) || (!curr.locked && !prev.locked)) {
                         for k in 0..<itemsToFullGreen.count {
                             if itemsToFullGreen[k] === curr || itemsToFullGreen[k] === prev {
                                 itemsToFullGreen.remove(at: k)
@@ -1025,6 +1038,10 @@ class ScheduleTableViewController: UITableViewController {
         newTask.startTime = userSettings.defaultStartTime
         scheduleItems.append(newTask)
         tableView.insertRows(at: [IndexPath(scheduleItems.count - 1)], with: .none)
+        let tf = tableView.cellForRow(at: IndexPath(scheduleItems.count - 1)) as! ScheduleTableViewCell
+        tf.startTimeTF.backgroundColor = UIColor.white
+        tf.durationTF.backgroundColor = UIColor.white
+        tf.backgroundColor = UIColor.white
         update()
         scrollToBottom(indexPath: IndexPath(scheduleItems.count - 1))
         scheduleViewController.schedulesEdited.insert(currDateInt)
