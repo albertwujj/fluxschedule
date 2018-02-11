@@ -155,7 +155,6 @@
 			isa = PBXGroup;
 			children = (
 				7544C5211FC8FBD0001CC0A6 /* Schedule Maker Prototype.entitlements */,
-				752704AB20292077005FF9B6 /* IAPViewController.swift */,
 				7591A31A1FB26518002DA737 /* AppDelegate.swift */,
 				7591A3331FB27B29002DA737 /* ScheduleTableViewController.swift */,
 				7591A32F1FB26769002DA737 /* ScheduleTableViewCell.swift */,
@@ -178,6 +177,7 @@
 				75F88A9F1FF98D77005316DB /* WeekdayButton.swift */,
 				75F88AC320030B5F005316DB /* TextFieldToolbarExtension.swift */,
 				75F88AC520042AE4005316DB /* AccessoryTextField.swift */,
+				752704AB20292077005FF9B6 /* IAPViewController.swift */,
 				752704AD20292346005FF9B6 /* IAPHelper.swift */,
 			);
 			path = "Schedule Maker Prototype";

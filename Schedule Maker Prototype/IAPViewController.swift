@@ -14,7 +14,18 @@ class IAPViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        IAPHandler.shared.fetchAvailableProducts()
+        IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
+            guard let strongSelf = self else{ return }
+            if type == .purchased {
+                let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+                let action = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
+                    
+                })
+                alertView.addAction(action)
+                strongSelf.present(alertView, animated: true, completion: nil)
+            }
+        }
         // Do any additional setup after loading the view.
     }
 
@@ -34,4 +45,16 @@ class IAPViewController: UIViewController {
     }
     */
 
+    @IBAction func fluxPlusPurchased(_ sender: UIButton) {
+        let alertView = UIAlertController(title: "Confirm Your In-App Purchase", message: "Do you want to buy Flux Plus for $2.99?", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Buy", style: .default, handler: { (alert) in
+            print("purchased")
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: { (alert) in
+             print("canceled")
+        })
+        alertView.addAction(okAction)
+        alertView.addAction(cancelAction)
+        self.present(alertView, animated: true, completion: nil)
+    }
 }
