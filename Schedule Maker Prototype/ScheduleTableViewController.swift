@@ -354,23 +354,8 @@ class ScheduleTableViewController: UITableViewController {
                 } else {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
                     if scheduleItem.startTime != scheduleItem.initialStartTime {
-                        
-                        //if row == index {
-                            print("set purple", row, scheduleItem.inColor)
-                            scheduleItem.inColor = true
-                          //  flashOnItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
-
+                        print("set purple", row)
                         cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
-                        //UIView.animate(withDuration: 0.4, animations: { () -> Void in
-                          //  accessoryTF.backgroundColor = orig.withAlphaComponent(0.3)
-                            
-                                
-                     
-                        //} else {
-
-                            flashOnItems(itemsToFlash: [scheduleItem], for: 0, color: .purple)
-
-                        //}
                      }
                     else {
                         cell.startTimeTF.backgroundColor = UIColor.white

@@ -30,9 +30,6 @@ public class ScheduleItem: NSObject, NSCoding {
     public var initialStartTime: Int?
     public var previousStartTime: Int?
 
-
-    public var inColor:Bool = false
-
     public struct PropertyKey {
         static let taskName = "taskName"
         static let duration = "duration"
