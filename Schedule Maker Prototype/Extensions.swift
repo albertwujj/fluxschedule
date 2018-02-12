@@ -72,4 +72,12 @@ extension UIView {
     }
     
 }
+extension UIButton {
+    func setSquareBorder(color: UIColor) {
+        self.layer.cornerRadius = 2
+        self.layer.borderWidth = 0.7
+        self.layer.borderColor = color.cgColor
+        self.contentEdgeInsets = UIEdgeInsets(top: 2, left: 3, bottom: 2, right: 3)
+    }
+}
 

@@ -17,6 +17,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     @IBOutlet weak var tutorialNextButton: UIButton!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var userSettings: Settings!
+    @IBOutlet weak var iapButton: UIButton!
     @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var weekdayLabel: UILabel!
     @IBOutlet weak var dateTextField: AccessoryTextField!
@@ -39,12 +40,19 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var tutorialStep3: [ScheduleItem]!
     var tutorialStep4: [ScheduleItem]!
     var tutorialStep5: [ScheduleItem]!
+    var defaultSchedule: [ScheduleItem]!
     var lockedTasksEnabled = true
     
     var tutorialStep = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         userSettings = appDelegate.userSettings
+        
+        
+        
+        defaultSchedule = [ScheduleItem(name: "\(userSettings.defaultName) 1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
         sharedDefaults = UserDefaults.init(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")
         topStripe.backgroundColor = appDelegate.userSettings.themeColor
         AppDelegate.changeStatusBarColor(color: appDelegate.userSettings.themeColor)
@@ -91,6 +99,12 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         weekdayLabel.textAlignment = .center
         
         // Do any additional setup after loading the view.
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if(userSettings.fluxPlus) {
+            iapButton.isHidden = true
+        }
     }
     func addTutorial() {
         if tutorialStep >= 1 {
@@ -304,7 +318,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
         else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil {
 
-            schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "\(userSettings.defaultName) 1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "\(userSettings.defaultName) 2", duration: userSettings.defaultDuration), ScheduleItem(name: "\(userSettings.defaultName) 3", duration: userSettings.defaultDuration)]
+            schedules[selectedDateInt ?? currDateInt] = defaultSchedule
              //schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
         }
         
@@ -493,25 +507,28 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             inactiveContent.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
             inactiveContent.sound = UNNotificationSound.default()
             
+            
             let inactiveRequest = UNNotificationRequest(identifier: UUID().uuidString, content: inactiveContent, trigger: inactiveTrigger)
             center.add(inactiveRequest)
-            for i in schedules[currDateInt] ?? [] {
-                if let startDate = i.startTime {
-                    if startDate > tableViewController.getCurrentDurationFromMidnight() {
-                        let content = UNMutableNotificationContent()
-                        content.title = "Time for: \(i.taskName)"
-                        content.body = "Leggo!"
-                        content.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
-                        content.userInfo = ["notifDate": startDate]
-                        content.sound = UNNotificationSound.default()
-                        
-                        var dateComponents = DateComponents()
-                        dateComponents.hour = startDate / 3600
-                        dateComponents.minute = (startDate % 3600) / 60
-                        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-                        
-                        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-                        center.add(request)
+            if(userSettings.fluxPlus) {
+                for i in schedules[currDateInt] ?? [] {
+                    if let startDate = i.startTime {
+                        if startDate > tableViewController.getCurrentDurationFromMidnight() {
+                            let content = UNMutableNotificationContent()
+                            content.title = "Time for: \(i.taskName)"
+                            content.body = "Leggo!"
+                            content.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
+                            content.userInfo = ["notifDate": startDate]
+                            content.sound = UNNotificationSound.default()
+                            
+                            var dateComponents = DateComponents()
+                            dateComponents.hour = startDate / 3600
+                            dateComponents.minute = (startDate % 3600) / 60
+                            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+                            
+                            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                            center.add(request)
+                        }
                     }
                 }
             }

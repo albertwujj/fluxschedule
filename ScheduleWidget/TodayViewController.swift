@@ -38,8 +38,11 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         if let savedSchedules = loadSchedules() {
             schedules = savedSchedules
         }
+        
+        if(!userSettings.fluxPlus) {
+            extendButton.isHidden = true
+        }
         updateDisplay()
-        // Do any additional setup after loading the view from its nib.
         Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateDisplay), userInfo: nil, repeats: true)
     }
     @objc func updateDisplay() {
@@ -72,6 +75,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         }
         currentTaskLockButton.isHidden = currScheduleItem == nil ? true : false
         nextTaskLockButton.isHidden = nextScheduleItem == nil ? true : false
+        if(userSettings.fluxPlus) {
+            extendButton.isHidden = false
+        }
     }
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
         

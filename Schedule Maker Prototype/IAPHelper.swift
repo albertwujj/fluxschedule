@@ -10,7 +10,7 @@ enum IAPHandlerAlertType{
     
     func message() -> String{
         switch self {
-        case .disabled: return "Purchases are disabled in your device!"
+        case .disabled: return "Purchases are disabled in your device! The purchase did not go through."
         case .restored: return "You've successfully restored your purchase!"
         case .purchased: return "You've successfully bought this purchase!"
         }
@@ -105,6 +105,7 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
                     break
                 case .restored:
                     print("restored")
+                    purchaseStatusBlock?(.restored)
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
                     break
                     

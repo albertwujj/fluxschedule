@@ -591,9 +591,11 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     //MARK: Actions
     
     @IBAction func lockButtonPressed(_ sender: UIButton) {
-        if (scheduleItem.startTime != nil) {
-            scheduleItem.locked = !scheduleItem.locked
-            lockButtonUpdated()
+        if(userSettings.fluxPlus) {
+            if (scheduleItem.startTime != nil) {
+                scheduleItem.locked = !scheduleItem.locked
+                lockButtonUpdated()
+            }
         }
     }
     func lockButtonUpdated() {

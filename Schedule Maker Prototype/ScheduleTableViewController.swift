@@ -1037,7 +1037,7 @@ class ScheduleTableViewController: UITableViewController {
         update()
         scrollToBottom(indexPath: IndexPath(scheduleItems.count - 1))
         scheduleViewController.schedulesEdited.insert(currDateInt)
-       
+        
     }
     func scrollToBottom(indexPath: IndexPath){
         DispatchQueue.main.async {
