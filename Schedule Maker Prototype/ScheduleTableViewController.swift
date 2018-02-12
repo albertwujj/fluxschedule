@@ -429,7 +429,7 @@ class ScheduleTableViewController: UITableViewController {
                 initialIndexPath = indexPath!
                 let cell = tableView.cellForRow(at: indexPath!) as? ScheduleTableViewCell
                 UIView.animate(withDuration: 0.7, animations: { () -> Void in
-                    cell?.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
+                    //cell?.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
                     
                 }, completion: { (finished) -> Void in
                     
@@ -466,7 +466,7 @@ class ScheduleTableViewController: UITableViewController {
                 quickReloadCellTimes(index: indexPath!.row)
 
                 if let cell = tableView.cellForRow(at: indexPath!) as? ScheduleTableViewCell {
-                    cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
+                    //cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
                     cell.isHidden = false
                     cell.alpha = 1
                     self.cellSnapshot?.removeFromSuperview()
