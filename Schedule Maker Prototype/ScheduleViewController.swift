@@ -105,16 +105,25 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         if(userSettings.fluxPlus) {
             iapButton.isHidden = true
         }
+        if(tutorialStep == 4) {
+            tableViewController.scheduleItems = tutorialStep4
+            tableViewController.updateFromSVC()
+            tutorialNextButton.setTitle("Done! Now give me an example.", for: .normal)
+            tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
+            tutorialNextButton.isEnabled = false
+        }
     }
     func addTutorial() {
-        tutorialNextButton.isEnabled = true
+        
         tutorialNextButton.isHidden = false
-        tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
         if tutorialStep == 1 {
-            
+            tutorialNextButton.isEnabled = true
+            tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
             tutorialNextButton.setTitle("Next", for: .normal)
         }
-        if tutorialStep == 6 {
+        else if tutorialStep == 6 {
+            tutorialNextButton.isEnabled = false
+            tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
             tutorialNextButton.setTitle("Done!", for: .normal)
         }
         update()
@@ -263,7 +272,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
                 tableViewController.scheduleItems = tutorialStep4
                 tableViewController.updateFromSVC()
                 sender.setTitle("Done! Now give me an example.", for: .normal)
-                tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
+                sender.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
                 sender.isEnabled = false
             }
             else {

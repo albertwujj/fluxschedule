@@ -23,12 +23,15 @@ class IAPViewController: UIViewController {
         IAPHandler.shared.fetchAvailableProducts()
         IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
             guard let strongSelf = self else{ return }
-            let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
-            let action = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
-                
-            })
-            alertView.addAction(action)
-            strongSelf.present(alertView, animated: true, completion: nil)
+            if type == .disabled {
+                let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+                let action = UIAlertAction(title: "OK", style: .default, handler: { (alert) in
+                    
+                })
+                alertView.addAction(action)
+                strongSelf.present(alertView, animated: true, completion: nil)
+            }
+            
             if type == .purchased || type == .restored {
                 strongSelf.userSettings.fluxPlus = true
                 
@@ -38,8 +41,12 @@ class IAPViewController: UIViewController {
                     svc.appDelegate.scheduleViewController.addTutorial()
                 }
                 if(svc.tutorialStep == 5) {
-                    svc.tutorialStep = 3
-                    svc.tutorialNextButtonPressed(UIButton())
+                    svc.tutorialStep = 4
+                    svc.tableViewController.scheduleItems = svc.tutorialStep4
+                    svc.tableViewController.updateFromSVC()
+                    svc.tutorialNextButton.setTitle("Done! Now give me an example.", for: .normal)
+                    svc.tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
+                    svc.tutorialNextButton.isEnabled = false
                 }
                 svc.appDelegate.scheduleViewController.saveTutorialStep()
                 svc.appDelegate.saveUserSettings()
