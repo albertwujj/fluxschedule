@@ -48,6 +48,7 @@ class IAPViewController: UIViewController {
                     svc.tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
                     svc.tutorialNextButton.isEnabled = false
                 }
+                svc.tutorialStep5 = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600, locked: true), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60, locked: true), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: 30 * 60)]
                 svc.appDelegate.scheduleViewController.saveTutorialStep()
                 svc.appDelegate.saveUserSettings()
             }

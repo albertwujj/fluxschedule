@@ -62,6 +62,11 @@ public class ScheduleItem: NSObject, NSCoding {
         self.init(name: name, duration: duration)
         self.startTime = startTime
     }
+    public convenience init(name: String, duration: Int, startTime: Int, locked: Bool) {
+        self.init(name: name, duration: duration)
+        self.startTime = startTime
+        self.locked = locked
+    }
     
    
     public required convenience init?(coder aDecoder: NSCoder) {
