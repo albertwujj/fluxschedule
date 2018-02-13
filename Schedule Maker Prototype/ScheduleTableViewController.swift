@@ -17,6 +17,7 @@ class ScheduleTableViewController: UITableViewController {
     var sharedDefaults: UserDefaults!
     var cellSnapshot: UIView?
     var initialIndexPath: IndexPath? = nil
+    var veryInitialIndexPath : IndexPath? = nil
     var firstTouch: IndexPath?
     var isAnyLockedItems: Bool = false
     var didDragLockedItem = false
@@ -410,7 +411,7 @@ class ScheduleTableViewController: UITableViewController {
                 }
             }
             if !didDragLockedItem {
-                
+                veryInitialIndexPath = indexPath!
                 initialIndexPath = indexPath!
                 let cell = tableView.cellForRow(at: indexPath!) as? ScheduleTableViewCell
                 UIView.animate(withDuration: 0.7, animations: { () -> Void in
@@ -474,6 +475,9 @@ class ScheduleTableViewController: UITableViewController {
             if cell != nil {
                 currPath = initialIndexPath
                 item = scheduleItems[currPath!.row]
+                if(veryInitialIndexPath!.row != initialIndexPath!.row) {
+                    scheduleViewController.step3Complete()
+                }
             }
             UIView.animate(withDuration: 0.25, animations: { () -> Void in
                 self.cellSnapshot?.center = (cell?.center)!
@@ -488,12 +492,13 @@ class ScheduleTableViewController: UITableViewController {
                 }
             })
             
+            
             isAnyLockedItems = false
             didDragLockedItem = false
+            veryInitialIndexPath = nil
             
             recalculateTimes(with: origLockedItems)
             updateNoRecalculate()
-            scheduleViewController.step3Complete()
             scheduleViewController.schedulesEdited.insert(currDateInt)
             self.cellSnapshot?.removeFromSuperview()
             /*

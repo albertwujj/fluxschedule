@@ -676,9 +676,6 @@
                                                 <constraint firstAttribute="height" constant="30" id="wzM-Gp-vdQ"/>
                                             </constraints>
                                             <state key="normal" title="🌀"/>
-                                            <connections>
-                                                <action selector="lockButtonPressed:" destination="ylS-ly-fyL" eventType="touchUpInside" id="wnH-b6-GtO"/>
-                                            </connections>
                                         </button>
                                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX:XX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZW9-gU-Ybk">
                                             <rect key="frame" x="302" y="11" width="63" height="30"/>

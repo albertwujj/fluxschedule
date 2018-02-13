@@ -109,6 +109,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             tableViewController.scheduleItems = tutorialStep4
             tableViewController.updateFromSVC()
             tutorialNextButton.setTitle("Done! Now give me an example.", for: .normal)
+            
             tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
             tutorialNextButton.isEnabled = false
         }
@@ -133,10 +134,12 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         if tutorialStep == 3 {
             tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
             tutorialNextButton.isEnabled = true
+           
         }
     }
     func stepLockedComplete() {
         if tutorialStep == 4 || tutorialStep == 6 {
+            
             tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
             tutorialNextButton.isEnabled = true
         }
