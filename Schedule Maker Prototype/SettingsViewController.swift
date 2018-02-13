@@ -36,7 +36,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         defaultStartTimeTF.delegate = self
         defaultDurationTF.delegate = self
         defaultStartTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: userSettings.defaultStartTime)
-        print("wll settings \(ScheduleTableViewCell.timeDescription(durationSinceMidnight: userSettings.defaultStartTime))")
+       
         defaultDurationTF.text = ScheduleTableViewCell.durationDescription(duration: userSettings.defaultDuration)
         startTimeTFCustomButton = UIButton()
         startTimeTFCustomButton.setTitle(" 88:88 AM  ", for: .normal)

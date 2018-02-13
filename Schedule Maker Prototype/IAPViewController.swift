@@ -31,7 +31,18 @@ class IAPViewController: UIViewController {
             strongSelf.present(alertView, animated: true, completion: nil)
             if type == .purchased || type == .restored {
                 strongSelf.userSettings.fluxPlus = true
-                strongSelf.appDelegate.saveUserSettings()
+                
+                let svc = strongSelf.appDelegate.scheduleViewController!
+                if(svc.tutorialStep == 0) {
+                    svc.tutorialStep = 6
+                    svc.appDelegate.scheduleViewController.addTutorial()
+                }
+                if(svc.tutorialStep == 5) {
+                    svc.tutorialStep = 3
+                    svc.tutorialNextButtonPressed(UIButton())
+                }
+                svc.appDelegate.scheduleViewController.saveTutorialStep()
+                svc.appDelegate.saveUserSettings()
             }
         }
         // Do any additional setup after loading the view.
@@ -69,4 +80,7 @@ class IAPViewController: UIViewController {
         IAPHandler.shared.purchaseMyProduct(index: 0)
     }
     
+    @IBAction func backButtonPressed(_ sender: UIButton) {
+        dismiss(animated: true, completion: nil)
+    }
 }

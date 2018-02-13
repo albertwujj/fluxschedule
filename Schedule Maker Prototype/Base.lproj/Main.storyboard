@@ -171,6 +171,9 @@
                                         <state key="normal" title="&lt;-">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="backButtonPressed:" destination="mwv-JB-7UF" eventType="touchUpInside" id="6fb-Fv-6tp"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -273,8 +276,8 @@
                                             <action selector="leftDateButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="X96-Nu-jBT"/>
                                         </connections>
                                     </button>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tck-CV-ptU">
-                                        <rect key="frame" x="308" y="70" width="54" height="22"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tck-CV-ptU">
+                                        <rect key="frame" x="308" y="52.5" width="54" height="22"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                         <state key="normal" title="Testing Mode">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -283,8 +286,8 @@
                                             <action selector="testingModeButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="CBc-2z-UEN"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gxe-LF-NkH">
-                                        <rect key="frame" x="309" y="66" width="46" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gxe-LF-NkH">
+                                        <rect key="frame" x="325" y="67" width="30" height="30"/>
                                         <state key="normal" title="💸">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -295,7 +298,7 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstItem="Tck-CV-ptU" firstAttribute="centerY" secondItem="Nws-Cy-H1T" secondAttribute="centerY" id="D6d-3J-9hk"/>
+                                    <constraint firstItem="Tck-CV-ptU" firstAttribute="centerY" secondItem="Nws-Cy-H1T" secondAttribute="centerY" constant="-20" id="D6d-3J-9hk"/>
                                     <constraint firstAttribute="trailing" secondItem="Tck-CV-ptU" secondAttribute="trailing" constant="13" id="bjk-4c-328"/>
                                     <constraint firstAttribute="height" constant="101" id="d4f-bE-gtF"/>
                                     <constraint firstAttribute="trailing" secondItem="Gxe-LF-NkH" secondAttribute="trailing" constant="20" id="gGW-Wq-59a"/>
