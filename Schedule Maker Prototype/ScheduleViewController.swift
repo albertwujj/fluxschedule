@@ -118,13 +118,15 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
     func addTutorial() {
         
-        tutorialNextButton.isHidden = false
+        
         if tutorialStep == 1 {
+            tutorialNextButton.isHidden = false
             tutorialNextButton.isEnabled = true
             tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
             tutorialNextButton.setTitle("Next", for: .normal)
         }
         else if tutorialStep == 6 {
+            tutorialNextButton.isHidden = false
             tutorialNextButton.isEnabled = false
             tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
             tutorialNextButton.setTitle("Done!", for: .normal)
