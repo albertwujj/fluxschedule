@@ -474,7 +474,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             }
             loadedSchedules = true
         }
-        print("save \(schedules[selectedDateInt ?? currDateInt]!.count)")
+  
         if sharedDefaults != nil {
             NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
             sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedules), forKey: Paths.schedules)
@@ -489,7 +489,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             if let data = sharedDefaults.object(forKey: Paths.schedules) as? Data {
                 NSKeyedUnarchiver.setClass(ScheduleItem.self, forClassName: "ScheduleItem")
                 let unarcher = NSKeyedUnarchiver(forReadingWith: data)
-                print("schedulesLoaded")
+             
                 return unarcher.decodeObject(forKey: "root") as? [Int:[ScheduleItem]]
             }
         }
