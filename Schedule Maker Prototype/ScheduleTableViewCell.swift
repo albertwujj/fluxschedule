@@ -149,15 +149,20 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                     scheduleItem.startTime = intDate
                     tvc.update()
                     return
-                } 
+                }
+                //shrinks prev task
                 if row > 0 && intDate > tableViewController.scheduleItems[row - 1].startTime! && intDate < scheduleItem.startTime! {
                     tvc.scheduleItems[row-1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
+                    tvc.itemsToRed.append(tvc.scheduleItems[row-1])
                     tvc.update()
+                    
                     return
                 }
+                //increases prev task
                 if row < tvc.scheduleItems.count - 1 && intDate < tvc.scheduleItems[row + 1].startTime! && intDate > scheduleItem.startTime! {
                     if(row > 0) {
                         tvc.scheduleItems[row - 1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
+                        tvc.itemsToGreen.append(tvc.scheduleItems[row-1])
                     }
                     else {
                         scheduleItem.startTime = intDate
@@ -183,7 +188,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                     }
                 }
                 if scheduleItem.locked {
-                    let alertController = UIAlertController(title: "Item is locked!", message: "Cannot change the start time of a locked time.", preferredStyle: UIAlertControllerStyle.alert)
+                    let alertController = UIAlertController(title: "Item is locked!", message: "Cannot change the start time of a locked tasks.", preferredStyle: UIAlertControllerStyle.alert)
                     
                     let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
                     {
@@ -270,8 +275,6 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             textField.selectedTextRange = nil
             textField.isHighlighted = true
         }
-        
-        
     }
     @objc func checkEnableDoneButton(timer: Timer) {
         let accessoryTF = timer.userInfo as! AccessoryTextField
@@ -315,7 +318,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             if(userSettings.is5MinIncrement) {
                 date = Date(timeInterval: Double(roundTo5(integer: (scheduleItem.startTime ?? 7 * 3600))), since: startOfToday)
                 datePickerView.minuteInterval = 5
-                print(roundTo5(integer: scheduleItem.startTime!))
+           
             }
             else {
                 date = Date(timeInterval: Double(scheduleItem.startTime ?? 7 * 3600), since: startOfToday)

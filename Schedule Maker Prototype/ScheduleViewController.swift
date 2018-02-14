@@ -85,11 +85,11 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             tutorialStep = 1
         }
         
-       print("Tutorial: \(tutorialStep)")
+
         
         if let savedSchedules = loadSchedules() {
             schedules = savedSchedules
-            print("Huh")
+    
         }
         if let savedSchedulesEdited = loadSchedulesEdited() {
             schedulesEdited = savedSchedulesEdited
@@ -271,7 +271,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             
         }
         else if tutorialStep == 2 {
-            print("WAT")
+           
             tutorialStep += 1
             tableViewController.scheduleItems = tutorialStep3
             tableViewController.updateFromSVC()
@@ -602,17 +602,15 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             
             switch response.actionIdentifier {
             case UNNotificationDefaultActionIdentifier:
-                
-                print("Default identifier")
+                print("default action notification")
             
             case "delay":
-                print("pls")
                 // the user tapped our "show more info…" button
                 print("delay task")
                 
                 
                 for i in 0..<(schedules[currDateInt] ?? []).count {
-                    print("Hey: \(i)")
+       
                     if schedules[currDateInt]![i].startTime != nil && schedules[currDateInt]![i].startTime! == notifDate {
                         
                         if(i > 0) {

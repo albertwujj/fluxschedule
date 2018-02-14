@@ -98,14 +98,14 @@ class ScheduleTableViewController: UITableViewController {
             
         
             if UIDevice.current.orientation.isLandscape {
-                print("Landscape")
+    
                 if (UIScreen.main.bounds.height < 600) {
                     self.rowHeight = 43
                 } else {
                     self.rowHeight = 45
                 }
             } else {
-                print("Portrait")
+ 
                 if (UIScreen.main.bounds.height < 600) {
                     self.rowHeight = 45
                 } else {
@@ -127,7 +127,6 @@ class ScheduleTableViewController: UITableViewController {
                             tf = cell.durationTF
                         } else if tfID == 2{
                             tf = cell.subviews[0]
-                            print("YEAH")
                         }
                         
                         
@@ -173,7 +172,7 @@ class ScheduleTableViewController: UITableViewController {
                             tf = cell.durationTF
                         } else if tfID == 2{
                             tf = cell.subviews[0]
-                            print("YEAH")
+                    
                         }
                         
                         
@@ -208,7 +207,7 @@ class ScheduleTableViewController: UITableViewController {
                             tf = cell.durationTF
                         } else if tfID == 2{
                             tf = cell.subviews[0]
-                            print("YEAH")
+                    
                         }
                         
                         
@@ -282,7 +281,7 @@ class ScheduleTableViewController: UITableViewController {
                         } else {
                             tf = cell.durationTF
                         }
-                        print("Huh")
+   
                         
                         
                         UIView.animate(withDuration: 0.7, animations: { () -> Void in
@@ -360,7 +359,7 @@ class ScheduleTableViewController: UITableViewController {
                 } else {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
                     if scheduleItem.startTime != scheduleItem.initialStartTime {
-                        print("set purple", row)
+        
                         cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
                      }
                     else {
@@ -1091,7 +1090,7 @@ class ScheduleTableViewController: UITableViewController {
                             let orig = appDelegate.userSettings.themeColor
                             //bgColorView.backgroundColor = tintOf(color: orig, tintFactor: 1/3)
                             //bgColorView.backgroundColor = orig.lighter(by: 10.0)
-                            bgColorView.backgroundColor = orig.withAlphaComponent(0.3)
+                            bgColorView.backgroundColor = orig.withAlphaComponent(0.15)
                             bgColorView.layer.masksToBounds = true
                             sCell.backgroundView = bgColorView
                             /*
