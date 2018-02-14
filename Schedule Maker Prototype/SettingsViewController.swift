@@ -37,7 +37,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         defaultDurationTF.delegate = self
         defaultStartTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: userSettings.defaultStartTime)
        
-        defaultDurationTF.text = ScheduleTableViewCell.durationDescription(duration: userSettings.defaultDuration)
+        defaultDurationTF.text = "\(ScheduleTableViewCell.durationDescription(duration: userSettings.defaultDuration)) min"
         startTimeTFCustomButton = UIButton()
         startTimeTFCustomButton.setTitle(" 88:88 AM  ", for: .normal)
         startTimeTFCustomButton.setTitleColor(.black, for: .normal)
@@ -70,7 +70,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }
         else if sender == defaultDurationTF {
             appDelegate.userSettings.defaultDuration = Int((sender.inputView as! UIDatePicker).countDownDuration)
-            sender.text = ScheduleTableViewCell.durationDescription(duration: appDelegate.userSettings.defaultDuration)
+            sender.text = "\(ScheduleTableViewCell.durationDescription(duration: userSettings.defaultDuration)) min"
             appDelegate.saveUserSettings()
             svc.update()
         }

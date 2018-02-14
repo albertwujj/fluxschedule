@@ -41,6 +41,11 @@ class ScheduleTableViewController: UITableViewController {
     
     //MARK: Initialization
     override func viewDidLoad() {
+        if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
+            sharedDefaults = loadedDefaults
+        } else {
+            print("UserDefaults BUG")
+        }
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: 240, right: 0)
         self.tableView.contentInset = insets
         darkPurple = UIColor(displayP3Red: 52/255, green: 8/255, blue: 107/255, alpha: 0.35)
@@ -48,7 +53,7 @@ class ScheduleTableViewController: UITableViewController {
         
         userSettings = appDelegate.userSettings
         super.viewDidLoad()
-        sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
+        
         //update()
         //Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(highlightCurrCell), userInfo: nil, repeats: true)
         // Uncomment the following line to preserve selection between presentations

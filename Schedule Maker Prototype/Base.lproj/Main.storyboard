@@ -485,7 +485,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="00:30" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dKL-Y2-qjm" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
-                                <rect key="frame" x="193" y="272" width="60" height="30"/>
+                                <rect key="frame" x="193" y="272" width="76" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -530,6 +530,7 @@
                             <constraint firstItem="P6G-C6-k4p" firstAttribute="top" secondItem="pNe-yF-mLY" secondAttribute="bottom" constant="40" id="KUG-zE-py4"/>
                             <constraint firstItem="dKL-Y2-qjm" firstAttribute="leading" secondItem="DyB-5m-9Sp" secondAttribute="leading" id="Our-lX-E6a"/>
                             <constraint firstItem="U7I-YE-JK3" firstAttribute="leading" secondItem="ClR-u3-Spj" secondAttribute="leading" constant="29" id="QrB-j6-y9D"/>
+                            <constraint firstItem="dKL-Y2-qjm" firstAttribute="width" secondItem="DyB-5m-9Sp" secondAttribute="width" id="XMg-it-n2z"/>
                             <constraint firstItem="DyB-5m-9Sp" firstAttribute="leading" secondItem="U7I-YE-JK3" secondAttribute="trailing" constant="20" id="Yee-61-14K"/>
                             <constraint firstItem="qvq-3e-xSR" firstAttribute="centerY" secondItem="bU3-zs-53c" secondAttribute="centerY" id="aQK-UT-TqG"/>
                             <constraint firstItem="bU3-zs-53c" firstAttribute="leading" secondItem="P6G-C6-k4p" secondAttribute="leading" id="b9N-fd-Wq6"/>

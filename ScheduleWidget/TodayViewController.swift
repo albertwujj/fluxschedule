@@ -30,13 +30,18 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     var startOfToday = Calendar.current.startOfDay(for: Date())
     override func viewDidLoad() {
         super.viewDidLoad()
-        sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
+        if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
+            sharedDefaults = loadedDefaults
+        } else {
+            print("UserDefaults BUG")
+        }
         changeCurrDate()
         if let savedSettings = loadUserSettings() {
             userSettings = savedSettings
         }
         if let savedSchedules = loadSchedules() {
             schedules = savedSchedules
+        
         }
         
         if(!userSettings.fluxPlus) {

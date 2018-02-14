@@ -43,9 +43,17 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var defaultSchedule: [ScheduleItem]!
     var lockedTasksEnabled = true
     
+    var loadedTutorialStep = false
+    var loadedSchedules = false
+    
     var tutorialStep = 0
     
     override func viewDidLoad() {
+        if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
+            sharedDefaults = loadedDefaults
+        } else {
+            print("UserDefaults BUG")
+        }
         super.viewDidLoad()
         
         userSettings = appDelegate.userSettings
@@ -53,7 +61,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
         
         defaultSchedule = [ScheduleItem(name: "\(userSettings.defaultName) 1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
-        sharedDefaults = UserDefaults.init(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")
+        
         topStripe.backgroundColor = appDelegate.userSettings.themeColor
         AppDelegate.changeStatusBarColor(color: appDelegate.userSettings.themeColor)
         recurringTasksButton.setTitle("\u{2630}", for: .normal)
@@ -76,11 +84,12 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         else {
             tutorialStep = 1
         }
-        addTutorial()
+        
        print("Tutorial: \(tutorialStep)")
         
-        if let savedSchedules = loadSchedules(), !testingMode {
+        if let savedSchedules = loadSchedules() {
             schedules = savedSchedules
+            print("Huh")
         }
         if let savedSchedulesEdited = loadSchedulesEdited() {
             schedulesEdited = savedSchedulesEdited
@@ -99,7 +108,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         weekdayLabel.addGestureRecognizer(tapGesture)
         weekdayLabel.isUserInteractionEnabled = true
         weekdayLabel.textAlignment = .center
-        
+        addTutorial()
         // Do any additional setup after loading the view.
     }
     override func viewDidAppear(_ animated: Bool) {
@@ -262,6 +271,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             
         }
         else if tutorialStep == 2 {
+            print("WAT")
             tutorialStep += 1
             tableViewController.scheduleItems = tutorialStep3
             tableViewController.updateFromSVC()
@@ -340,7 +350,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }
         
         else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil {
-
+            
             schedules[selectedDateInt ?? currDateInt] = defaultSchedule
              //schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
         }
@@ -426,6 +436,9 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         return "\(month)/\(day)/\(year)"
     }
     func saveTutorialStep() {
+        
+
+        
         if sharedDefaults != nil {
             sharedDefaults.set(tutorialStep + 1, forKey: Paths.tutorialStep)
         }
@@ -452,16 +465,26 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
   
     func saveSchedules() {
+        if(!loadedSchedules) {
+            if let savedSchedules = loadSchedules() {
+                schedules = savedSchedules
+            }
+            if let savedSchedulesEdited = loadSchedulesEdited() {
+                schedulesEdited = savedSchedulesEdited
+            }
+            loadedSchedules = true
+        }
+        print("save \(schedules[selectedDateInt ?? currDateInt]!.count)")
         if sharedDefaults != nil {
             NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
             sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedules), forKey: Paths.schedules)
             sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedulesEdited), forKey: Paths.schedulesEdited)
-            print("schedulesSaved")
         }
     }
     
     func loadSchedules() -> [Int:[ScheduleItem]]? {
-        
+    
+     
         if sharedDefaults != nil {
             if let data = sharedDefaults.object(forKey: Paths.schedules) as? Data {
                 NSKeyedUnarchiver.setClass(ScheduleItem.self, forClassName: "ScheduleItem")
@@ -471,7 +494,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             }
         }
         else {
-            print("defaults BROKEN")
+            print("tried to access default EARLY")
         }
         return nil
     }
@@ -565,7 +588,12 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // pull out the buried userInfo dictionary
+        if let savedSchedules = loadSchedules() {
+            schedules = savedSchedules
+        }
+        if let savedSchedulesEdited = loadSchedulesEdited() {
+            schedulesEdited = savedSchedulesEdited
+        }
         self.currDateInt = dateToHashableInt(date: Date())
         let userInfo = response.notification.request.content.userInfo
         
@@ -582,7 +610,6 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
                 // the user tapped our "show more info…" button
                 print("delay task")
                 
-                saveSchedules()
                 
                 for i in 0..<(schedules[currDateInt] ?? []).count {
                     print("Hey: \(i)")
@@ -606,6 +633,9 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
                         }
                     }
                 }
+                schedulesEdited.insert(selectedDateInt ?? currDateInt)
+                saveSchedules()
+                
             default:
                 break
             }
