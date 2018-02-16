@@ -126,7 +126,7 @@
                         </connections>
                     </tableView>
                     <connections>
-                        <outlet property="tableView" destination="jG1-6o-cg5" id="gcO-fd-a1o"/>
+                        <outlet property="tableView" destination="jG1-6o-cg5" id="Xel-ON-pdf"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cvJ-L1-NBA" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -334,9 +334,10 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7V9-x7-620">
-                                <rect key="frame" x="296" y="546" width="54" height="54"/>
+                                <rect key="frame" x="296" y="550" width="45" height="45"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="54" id="Z2a-kU-zdo"/>
+                                    <constraint firstAttribute="height" constant="45" id="6Iz-Sm-fPM"/>
+                                    <constraint firstAttribute="width" constant="45" id="Ko2-sf-7oj"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="35"/>
                                 <state key="normal" title="+">
@@ -374,7 +375,7 @@
                         <constraints>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="centerX" secondItem="SKS-Gt-Yfv" secondAttribute="centerX" constant="5" id="0rJ-k3-pm2"/>
                             <constraint firstItem="seG-dg-VIZ" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" id="3Ql-EK-n6K"/>
-                            <constraint firstItem="7V9-x7-620" firstAttribute="top" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="-77" id="3TX-gy-FYT"/>
+                            <constraint firstItem="7V9-x7-620" firstAttribute="top" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="-73" id="3TX-gy-FYT"/>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="bottom" secondItem="Je9-4Q-GfF" secondAttribute="bottom" constant="-9.5" id="3zQ-zs-fXG"/>
                             <constraint firstItem="Gxe-LF-NkH" firstAttribute="centerY" secondItem="Y8o-P1-EhR" secondAttribute="centerY" id="4ec-cK-1V6"/>
                             <constraint firstItem="Y8o-P1-EhR" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" id="5MN-dX-ueM"/>
@@ -408,6 +409,7 @@
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="addButton" destination="7V9-x7-620" id="QUX-j8-CSj"/>
                         <outlet property="containerView" destination="zRD-x9-WHF" id="HbQ-J9-iZi"/>
                         <outlet property="dateTextField" destination="Y8o-P1-EhR" id="qZk-kV-P2Q"/>
                         <outlet property="iapButton" destination="Gxe-LF-NkH" id="Y6y-8a-qTR"/>
@@ -642,43 +644,28 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="rTaskCell" rowHeight="90" id="ylS-ly-fyL" customClass="RecurringTaskTableViewCell" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="375" height="90"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="rTaskCell" rowHeight="50" id="ylS-ly-fyL" customClass="RecurringTaskTableViewCell" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="375" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ylS-ly-fyL" id="HyA-lA-tvR">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="89.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Task Name" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tim-o0-BOG">
-                                            <rect key="frame" x="119" y="11" width="170" height="30"/>
+                                            <rect key="frame" x="197" y="11" width="92" height="30"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <textInputTraits key="textInputTraits"/>
                                         </textField>
-                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX:XX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="F8i-v8-8kq">
-                                            <rect key="frame" x="10" y="11" width="63" height="30"/>
-                                            <nil key="textColor"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <textInputTraits key="textInputTraits"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="doneAccessory" value="YES"/>
-                                            </userDefinedRuntimeAttributes>
-                                            <connections>
-                                                <action selector="startTimeEditing:" destination="ylS-ly-fyL" eventType="editingDidBegin" id="26d-kh-lQp"/>
-                                            </connections>
-                                        </textField>
-                                        <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="oPS-eI-PkU" customClass="WeekdaySelection" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
-                                            <rect key="frame" x="10" y="49" width="200" height="30"/>
-                                        </stackView>
-                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mLQ-7J-bcl">
-                                            <rect key="frame" x="81" y="11" width="30" height="30"/>
+                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" ambiguous="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mLQ-7J-bcl">
+                                            <rect key="frame" x="159" y="11" width="30" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="30" id="ciQ-Fl-kXP"/>
                                                 <constraint firstAttribute="height" constant="30" id="wzM-Gp-vdQ"/>
                                             </constraints>
                                             <state key="normal" title="🌀"/>
                                         </button>
-                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX:XX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZW9-gU-Ybk">
+                                        <textField opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX:XX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZW9-gU-Ybk">
                                             <rect key="frame" x="302" y="11" width="63" height="30"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -692,26 +679,16 @@
                                         </textField>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="mLQ-7J-bcl" firstAttribute="leading" secondItem="F8i-v8-8kq" secondAttribute="trailing" constant="8" id="2Zt-B5-yA3"/>
-                                        <constraint firstItem="ZW9-gU-Ybk" firstAttribute="centerY" secondItem="F8i-v8-8kq" secondAttribute="centerY" id="3tt-UK-ABM"/>
-                                        <constraint firstItem="F8i-v8-8kq" firstAttribute="top" secondItem="HyA-lA-tvR" secondAttribute="top" constant="11" id="5NJ-jD-iRk"/>
                                         <constraint firstItem="ZW9-gU-Ybk" firstAttribute="leading" secondItem="tim-o0-BOG" secondAttribute="trailing" constant="13" id="5hw-Rw-BSb"/>
                                         <constraint firstItem="tim-o0-BOG" firstAttribute="top" secondItem="HyA-lA-tvR" secondAttribute="top" constant="11" id="Ex2-Gr-KDe"/>
-                                        <constraint firstItem="oPS-eI-PkU" firstAttribute="top" secondItem="F8i-v8-8kq" secondAttribute="bottom" constant="8" id="KEZ-3L-WFh"/>
                                         <constraint firstItem="tim-o0-BOG" firstAttribute="leading" secondItem="mLQ-7J-bcl" secondAttribute="trailing" constant="8" id="LEX-CZ-mTH"/>
-                                        <constraint firstItem="oPS-eI-PkU" firstAttribute="leading" secondItem="F8i-v8-8kq" secondAttribute="leading" id="Ous-F5-qCY"/>
-                                        <constraint firstItem="mLQ-7J-bcl" firstAttribute="centerY" secondItem="F8i-v8-8kq" secondAttribute="centerY" id="S8w-mw-MM9"/>
                                         <constraint firstAttribute="trailing" secondItem="ZW9-gU-Ybk" secondAttribute="trailing" constant="10" id="oTA-ve-6Mv"/>
-                                        <constraint firstItem="F8i-v8-8kq" firstAttribute="leading" secondItem="HyA-lA-tvR" secondAttribute="leading" constant="10" id="suJ-g8-CRi"/>
-                                        <constraint firstItem="tim-o0-BOG" firstAttribute="centerY" secondItem="F8i-v8-8kq" secondAttribute="centerY" id="uoq-9J-iQj"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="durationTF" destination="ZW9-gU-Ybk" id="Oqa-ef-fAR"/>
                                     <outlet property="lockButton" destination="mLQ-7J-bcl" id="PDX-TM-kQm"/>
-                                    <outlet property="startTimeTF" destination="F8i-v8-8kq" id="ndZ-In-ESN"/>
                                     <outlet property="taskNameTF" destination="tim-o0-BOG" id="J3v-zO-GOs"/>
-                                    <outlet property="weekdaySelection" destination="oPS-eI-PkU" id="dm3-Fi-tLG"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

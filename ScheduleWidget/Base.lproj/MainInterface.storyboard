@@ -78,7 +78,7 @@
                                     <constraint firstItem="NSj-cG-zJ4" firstAttribute="width" secondItem="6w7-Kv-JxJ" secondAttribute="width" id="b5J-D1-GEe"/>
                                 </constraints>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X1h-5Y-sfh">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X1h-5Y-sfh">
                                 <rect key="frame" x="172" y="32.5" width="30" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="+5"/>
@@ -114,10 +114,13 @@
                                 <rect key="frame" x="136.5" y="6" width="25" height="25"/>
                                 <state key="normal" title="🌀"/>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YVP-pL-Ijl">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YVP-pL-Ijl">
                                 <rect key="frame" x="172" y="2" width="30" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="+5"/>
+                                <connections>
+                                    <action selector="extendTaskButtonPressed:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="Q65-sz-VSo"/>
+                                </connections>
                             </button>
                         </subviews>
                         <constraints>
@@ -144,14 +147,17 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="100"/>
                     <connections>
+                        <outlet property="currTaskTimeLabel" destination="NSj-cG-zJ4" id="cIg-h5-T82"/>
                         <outlet property="currentTaskLabel" destination="Yse-A3-TaP" id="iSQ-sE-QBe"/>
                         <outlet property="currentTaskLockButton" destination="bsb-jj-wX0" id="HMc-0d-YFW"/>
                         <outlet property="extendCurrButton" destination="X1h-5Y-sfh" id="oiU-Eb-Dnf"/>
+                        <outlet property="extendPrevButton" destination="YVP-pL-Ijl" id="OUm-TJ-Jki"/>
                         <outlet property="nextTaskLabel" destination="bbw-dy-DYt" id="HUC-j0-4Yp"/>
                         <outlet property="nextTaskLockButton" destination="nBW-9J-Abm" id="orW-pZ-sdD"/>
                         <outlet property="nextTaskTimeLabel" destination="6w7-Kv-JxJ" id="ldF-SC-hlJ"/>
                         <outlet property="prevTaskLabel" destination="oJ2-MQ-RHH" id="FUJ-qA-c8F"/>
                         <outlet property="prevTaskLockButton" destination="prg-78-2V4" id="IFa-9A-MvH"/>
+                        <outlet property="prevTaskTimeLabel" destination="oeC-Fz-A6h" id="t3e-rW-qdJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vXp-U4-Rya" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -13,7 +13,10 @@ import UserNotifications
 
 class TodayViewController: UIViewController, NCWidgetProviding {
     
+    @IBOutlet weak var extendPrevButton: UIButton!
     
+    @IBOutlet weak var currTaskTimeLabel: UILabel!
+    @IBOutlet weak var prevTaskTimeLabel: UILabel!
     @IBOutlet weak var extendCurrButton: UIButton!
     @IBOutlet weak var prevTaskLabel: UILabel!
     @IBOutlet weak var currentTaskLabel: UILabel!
@@ -55,6 +58,14 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateDisplay), userInfo: nil, repeats: true)
     }
     @objc func updateDisplay() {
+        prevScheduleItem = nil
+        currScheduleItem = nil
+        nextScheduleItem = nil
+        prevTaskLabel.text = ""
+        currentTaskLabel.text = ""
+        nextTaskLabel.text = ""
+        nextTaskTimeLabel.text = ""
+        
         if let currSchedule = schedules[currDateInt] {
             scheduleItems = currSchedule
             var prevWasCurr = false
@@ -74,11 +85,13 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                     if startTime <= currentTime && startTime + scheduleItem.duration > currentTime  {
                         currScheduleItem = scheduleItem
                         currentTaskLabel.text = currScheduleItem!.taskName
+                        currTaskTimeLabel.text = timeDescription(durationSinceMidnight: currScheduleItem!.startTime!)
                         currentTaskLockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀", for: .normal)
                         prevWasCurr = true
                         if i > 0 {
                             prevScheduleItem = currSchedule[i-1];
                             prevTaskLabel.text = prevScheduleItem!.taskName
+                            prevTaskTimeLabel.text = timeDescription(durationSinceMidnight: prevScheduleItem!.startTime!)
                             prevTaskLockButton.setTitle(prevScheduleItem!.locked ? "🔒" : "🌀", for: .normal)
                         }
                     }
@@ -89,7 +102,8 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         currentTaskLockButton.isHidden = currScheduleItem == nil ? true : false
         nextTaskLockButton.isHidden = nextScheduleItem == nil ? true : false
         if(userSettings.fluxPlus) {
-            extendCurrButton.isHidden = false
+            extendPrevButton.isHidden = prevScheduleItem == nil ? true : false
+            extendCurrButton.isHidden = currScheduleItem == nil ? true : false
         }
     }
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
@@ -106,9 +120,15 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     }
 
     @IBAction func extendTaskButtonPressed(_ sender: UIButton) {
-        print("extended")
-        if let currItem = currScheduleItem {
-            currItem.duration += 5 * 60
+        if(sender === extendPrevButton) {
+            if let prevItem = prevScheduleItem {
+                prevItem.duration += 5 * 60
+            }
+        }
+        else if (sender === extendCurrButton) {
+            if let currItem = currScheduleItem {
+                currItem.duration += 5 * 60
+            }
         }
         recalculateTimes()
         updateDisplay()
@@ -283,6 +303,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         if (scheduleItem.startTime != nil) {
             scheduleItem.locked = !scheduleItem.locked
             sender.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+            extendPrevButton.isEnabled = prevScheduleItem != nil && !scheduleItem.locked
             saveSchedules()
         }
     }
@@ -293,7 +314,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         if (scheduleItem.startTime != nil) {
             scheduleItem.locked = !scheduleItem.locked
             sender.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
-            extendCurrButton.isEnabled = !scheduleItem.locked
+            extendCurrButton.isEnabled = currScheduleItem != nil && !scheduleItem.locked
             saveSchedules()
         }
     }

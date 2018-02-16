@@ -14,6 +14,7 @@ import UserNotifications
 
 class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate {
     
+    @IBOutlet weak var addButton: UIButton!
     @IBOutlet weak var tutorialNextButton: UIButton!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var userSettings: Settings!
@@ -55,12 +56,13 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             print("UserDefaults BUG")
         }
         super.viewDidLoad()
-        
         userSettings = appDelegate.userSettings
         
         
         
-        defaultSchedule = [ScheduleItem(name: "\(userSettings.defaultName) 1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
+        styleAddButton()
+        
+        defaultSchedule = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: userSettings.defaultStartTime)]
         
         topStripe.backgroundColor = appDelegate.userSettings.themeColor
         AppDelegate.changeStatusBarColor(color: appDelegate.userSettings.themeColor)
@@ -111,6 +113,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         addTutorial()
         // Do any additional setup after loading the view.
     }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if(userSettings.fluxPlus) {
@@ -124,6 +127,15 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
             tutorialNextButton.isEnabled = false
         }
+    }
+    func styleAddButton() {
+        addButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
+        addButton.layer.cornerRadius = 0.5 * addButton.bounds.size.width
+        addButton.titleLabel?.baselineAdjustment = .alignBaselines
+        let separatorColor = tableViewController.tableView.separatorColor
+        addButton.layer.borderColor = separatorColor?.cgColor
+        addButton.layer.borderWidth = 0.5
+        addButton.backgroundColor = .white
     }
     func addTutorial() {
         
@@ -346,7 +358,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
          */
         
         if testingMode {
-             schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "1", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
+             schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: userSettings.defaultStartTime)]
         }
         
         else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil {

@@ -262,7 +262,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             
         }
         if textField === taskNameTF {
-            if taskNameTF.text?.range(of: "New Item \\d*", options: .regularExpression, range: nil, locale: nil) != nil {
+            if taskNameTF.text?.range(of: "New Item *\\d*", options: .regularExpression, range: nil, locale: nil) != nil {
                 taskNameTF.selectAll(nil)
             }
         }
@@ -287,7 +287,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == taskNameTF {
             scheduleItem.taskName = textField.text ?? ""
-            if textField.text?.range(of: "New Item \\d", options: .regularExpression, range: nil, locale: nil) != nil {
+            if textField.text?.range(of: "New Item *\\d*", options: .regularExpression, range: nil, locale: nil) == nil {
                 tableViewController.scheduleViewController.schedulesEdited.insert(tableViewController.currDateInt)
             }
         }
