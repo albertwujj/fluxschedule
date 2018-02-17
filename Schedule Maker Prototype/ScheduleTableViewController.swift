@@ -28,6 +28,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     var itemsToFullGreen: [ScheduleItem] = []
     var itemsToRed: [ScheduleItem] = []
     var shouldSelectLast = false
+    var prevScrollPos: IndexPath?
 
     @IBOutlet weak var header: UIView!
     @IBOutlet weak var deleteButton: UIButton!
@@ -80,7 +81,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.delegate = self
         tableView.dataSource = self
     }
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return CGFloat(rowHeight)
     }
     override func viewDidAppear(_ animated: Bool) {
@@ -352,7 +353,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         
     }
     func quickReloadCellTimes(index: Int) {
-        for path in tableView.indexPathsForVisibleRows! {
+        for path in tableView.indexPathsForVisibleRows! where path.row < scheduleItems.count {
             let row = path.row
             let scheduleItem = scheduleItems[row]
             if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
@@ -399,6 +400,9 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         var indexPath = tableView.indexPathForRow(at: locationInView)
         
         if sender.state == .began && indexPath != nil {
+            if indexPath!.row >= scheduleItems.count {
+                return
+            }
             captureInitial()
             didDragLockedItem = false
             if let path = indexPath  {
@@ -450,7 +454,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             cellSnapshot?.center = center
             
 
-            if indexPath != nil && indexPath != initialIndexPath && !scheduleItems[indexPath!.row].locked {
+            if indexPath != nil && indexPath!.row < scheduleItems.count && indexPath != initialIndexPath && !scheduleItems[indexPath!.row].locked {
 
                 adjustScheduleItems(index: indexPath!.row)
 
@@ -515,6 +519,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             deFlashItems(itemsToFlash: scheduleItems, for: 0)
             currPath = nil
             item = nil
+           
         }
         
     }
@@ -802,28 +807,37 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     }
   
     // MARK: - Table view data source
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if(indexPath.row < scheduleItems.count) {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! ScheduleTableViewCell
+            cell.changeFontForScreenSize(tvc: self)
+            cell.tableViewController = self
+            cell.row = indexPath.row
+            cell.scheduleItem = scheduleItems[indexPath.row]
+            cell.selectionStyle = .none
+            cell.layer.borderColor = appDelegate.userSettings.themeColor.cgColor
+            cell.layer.borderWidth = 0.1
+            return cell
+        }
+        else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "emptyCell", for: indexPath)
+            cell.selectionStyle = .none
+            return cell
+        }
+        
+        
+    }
+    func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return scheduleItems.count
+        return scheduleItems.count + 2
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! ScheduleTableViewCell
-        cell.changeFontForScreenSize(tvc: self)
-        cell.tableViewController = self
-        cell.row = indexPath.row
-        cell.scheduleItem = scheduleItems[indexPath.row]
-        cell.selectionStyle = .none
-        cell.layer.borderColor = appDelegate.userSettings.themeColor.cgColor
-        cell.layer.borderWidth = 0.1
-        
-        return cell
-    }
+   
     /*
      */
     /*
@@ -1007,7 +1021,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
      // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             scheduleItems.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
@@ -1018,7 +1032,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
      }
      
      // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+     func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
      
      }
     //MARK: Helper functions
@@ -1044,23 +1058,42 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.insertRows(at: [IndexPath(scheduleItems.count - 1)], with: .none)
        
         update()
-        
+        let indexPath = IndexPath(self.scheduleItems.count - 1)
         self.scrollToBottom(indexPath: IndexPath(self.scheduleItems.count - 1))
+        tableView.reloadData()
         self.scheduleViewController.schedulesEdited.insert(self.currDateInt)
-        if let tf = self.tableView.cellForRow(at: IndexPath(self.scheduleItems.count - 1)) as? ScheduleTableViewCell {
+        if let tf = self.tableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
             tf.taskNameTF.becomeFirstResponder()
+            /*
+            var scrollPoint = CGPoint(x: 0.0, y: tf.startTimeTF.frame.origin.y)
+            scrollPoint = tableView.convert(scrollPoint, from: tf)
+            tableView.setContentOffset(CGPoint(x: 0.0, y: tableView.contentOffset.y), animated: true)
+            */
+          
+
             tf.startTimeTF.backgroundColor = UIColor.white
             tf.durationTF.backgroundColor = UIColor.white
             tf.backgroundColor = UIColor.white
+        } else {
             
         }
         self.shouldSelectLast = true
+    }
+  
     
+    
+    
+    func scrollToRowAfter(at row: Int) {
+        
+        //tableView.scrollToRow(at: IndexPath(row + 1), at: .none, animated: true)
         
     }
     func scrollToBottom(indexPath: IndexPath){
+        if let ip = tableView.indexPathsForVisibleRows {
+            prevScrollPos = ip[0]
+        }
         DispatchQueue.main.async {
-            self.tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+            self.tableView.scrollToRow(at: IndexPath(indexPath.row + 1), at: .bottom, animated: true)
         }
     }
     func scrollToTop(indexPath: IndexPath){
@@ -1089,7 +1122,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         unhighlightAllCells()
         if scheduleViewController.tutorialStep == 0 {
             if scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.dateToHashableInt(date: Date()) {
-                for cell in tableView.visibleCells  {
+                for cell in tableView.visibleCells where cell is ScheduleTableViewCell  {
                     let sCell = (cell as! ScheduleTableViewCell)
                     let scheduleItem = sCell.scheduleItem!
                     if let startTime = scheduleItem.startTime {
@@ -1136,7 +1169,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         }
     }
     func unhighlightAllCells() {
-        for cell in tableView.visibleCells  {
+        for cell in tableView.visibleCells where cell is ScheduleTableViewCell {
             let whiteColorView = UIView()
             whiteColorView.backgroundColor = .white
             whiteColorView.layer.masksToBounds = true
@@ -1145,27 +1178,25 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     //MARK: UIScrollViewDelegate
-    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         unhighlightAllCells()
     }
-    override func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
         scrollingStopped()
     }
-    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if (!decelerate) {
             scrollingStopped()
         }
         normalizeTFLengths()
     }
 
-    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         scrollingStopped()
     }
     func scrollingStopped() {
         if let tf = self.tableView.cellForRow(at: IndexPath(self.scheduleItems.count - 1)) as? ScheduleTableViewCell {
             
-            if shouldSelectLast { tf.taskNameTF.becomeFirstResponder() }
-            shouldSelectLast = false
             tf.startTimeTF.backgroundColor = UIColor.white
             tf.durationTF.backgroundColor = UIColor.white
             tf.backgroundColor = UIColor.white

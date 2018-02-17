@@ -119,6 +119,14 @@
                                     <outlet property="taskNameTF" destination="3RJ-X4-MO2" id="SEK-4p-wHE"/>
                                 </connections>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="emptyCell" rowHeight="50" id="ub1-57-3Py">
+                                <rect key="frame" x="0.0" y="78" width="375" height="50"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ub1-57-3Py" id="6Be-9H-IBC">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="Di3-sW-qHo" id="kqA-Kv-jQl"/>
@@ -370,6 +378,11 @@
                                     <action selector="tutorialNextButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="Lj5-Id-Hx6"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xi6-IP-eJI" customClass="FSCalendar">
+                                <rect key="frame" x="55" y="69" width="264" height="144"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -412,6 +425,7 @@
                         <outlet property="addButton" destination="7V9-x7-620" id="QUX-j8-CSj"/>
                         <outlet property="containerView" destination="zRD-x9-WHF" id="HbQ-J9-iZi"/>
                         <outlet property="dateTextField" destination="Y8o-P1-EhR" id="qZk-kV-P2Q"/>
+                        <outlet property="fsCalendar" destination="Xi6-IP-eJI" id="4Zw-IR-Vjd"/>
                         <outlet property="iapButton" destination="Gxe-LF-NkH" id="Y6y-8a-qTR"/>
                         <outlet property="leftDateButton" destination="IVK-sZ-5AT" id="UiI-gm-sAK"/>
                         <outlet property="recurringTasksButton" destination="6UZ-1E-uIs" id="ycd-jU-i1m"/>

@@ -247,6 +247,15 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     }
     //MARK: UITextFieldDelegateFunctions
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        for (i, p) in (tableViewController.tableView.indexPathsForVisibleRows?.enumerated()) ?? [].enumerated() {
+            if p.row == row {
+                if i > 5 {
+                    tableViewController.scrollToBottom(indexPath: IndexPath(row))
+                }
+            }
+        }
+        
+    
         if textField is AccessoryTextField {
             let accessoryTF = textField as! AccessoryTextField
             let bgColorView = UIView()
@@ -305,7 +314,11 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                 
             })
         }
+        
         tableViewController.update()
+        if let pos = tableViewController.prevScrollPos {
+            tableViewController.tableView.scrollToRow(at: pos, at: .top, animated: false)
+        }
     }
     
     //MARK: Input handling

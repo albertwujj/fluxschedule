@@ -81,3 +81,21 @@ extension UIButton {
     }
 }
 
+extension UIScrollView {
+    
+    var pendingContentSize: CGSize {
+        var tallSize = contentSize
+        tallSize.height = .greatestFiniteMagnitude
+        return sizeThatFits(tallSize)
+    }
+    
+    func scrollToBottom(animated: Bool) {
+        contentSize = pendingContentSize
+        let contentRect = CGRect(origin: .zero, size: contentSize)
+        let (bottomSlice, _) = contentRect.divided(atDistance: 1, from: .maxYEdge)
+        guard !bottomSlice.isEmpty else { return }
+        scrollRectToVisible(bottomSlice, animated: animated)
+    }
+    
+}
+

@@ -14,6 +14,9 @@ import UserNotifications
 
 class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate {
     
+    
+    @IBOutlet weak var fsCalendar: FSCalendar!
+    
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet weak var tutorialNextButton: UIButton!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -50,6 +53,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var tutorialStep = 0
     
     override func viewDidLoad() {
+    
         if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
             sharedDefaults = loadedDefaults
         } else {
@@ -362,8 +366,10 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }
         
         else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil {
-            
-            schedules[selectedDateInt ?? currDateInt] = defaultSchedule
+            if selectedDateInt ?? currDateInt == currDateInt {
+                schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: tableViewController.getCurrentDurationFromMidnight())]
+            }
+            else { schedules[selectedDateInt ?? currDateInt] = defaultSchedule }
              //schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
         }
         
