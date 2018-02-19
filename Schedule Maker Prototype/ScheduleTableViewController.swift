@@ -400,7 +400,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     }
 
     @objc func onLongPressGesture(sender: UILongPressGestureRecognizer) {
-        UIApplication.shared.sendAction(#selector(UIApplication.resignFirstResponder), to: nil, from: nil, for: nil);
+     
         duringKeyboardScroll = false
         let locationInView = sender.location(in: tableView)
         var indexPath = tableView.indexPathForRow(at: locationInView)
