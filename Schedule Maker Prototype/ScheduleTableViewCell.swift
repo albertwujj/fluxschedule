@@ -18,7 +18,9 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     let userSettings = (UIApplication.shared.delegate as! AppDelegate).userSettings
     var tableViewController: ScheduleTableViewController!
     var startOfToday: Date!
+    var origScheduleItem:ScheduleItem?
     var row: Int!
+    var origRow: Int?
     var scheduleItem: ScheduleItem! {
         //Have cell display proper TextField content based on ScheduleItem data
         didSet {
@@ -130,7 +132,11 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     func textFieldDoneButtonPressed(_ sender: AccessoryTextField) {
         //if !sender.inputView!.isScrolling() {
             sender.resignFirstResponder()
-        let origScheduleItem = self.scheduleItem!
+        
+        let scheduleItem = self.origScheduleItem ?? self.scheduleItem!
+        let origScheduleItem = scheduleItem
+        let row = origRow ?? self.row!
+        
         let tvc = tableViewController!
             if sender === startTimeTF{
                 
@@ -218,7 +224,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
                     tableViewController.update()
                 }
                 else {
-                    ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row!, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
+                    ScheduleTableViewCell.moveItem(tvc: tableViewController, origRow: row, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
                 }
      
                 tableViewController.flashScheduleItem(intDate, for: 0, color: UIColor.purple)
@@ -247,10 +253,17 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     }
     //MARK: UITextFieldDelegateFunctions
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        tableViewController.duringKeyboardScroll = false
+        tableViewController.quickReloadCells()
+        tableViewController.duringKeyboardScroll = true
+        origScheduleItem = scheduleItem!
+        origRow = origRow!
+        origScheduleItem = scheduleItem
         for (i, p) in (tableViewController.tableView.indexPathsForVisibleRows?.enumerated()) ?? [].enumerated() {
             if p.row == row {
                 if i > 5 {
                     tableViewController.scrollToBottom(indexPath: IndexPath(row))
+                    
                 }
             }
         }
@@ -315,10 +328,15 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             })
         }
         
-        tableViewController.update()
+       
+        
         if let pos = tableViewController.prevScrollPos {
             tableViewController.tableView.scrollToRow(at: pos, at: .top, animated: false)
+            tableViewController.prevScrollPos = nil
+          
         }
+       
+        tableViewController.update()
     }
     
     //MARK: Input handling
@@ -344,7 +362,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
  
     }
     @objc func datePickerValueChangedStartTime(sender:UIDatePicker) {
-        
+        print("START TIME CHANED VLAUE FUCKERS")
         startTimeTFCustomButton.setTitle(ScheduleTableViewCell.timeDescription(durationSinceMidnight: Int(sender.date.timeIntervalSince(startOfToday))), for: .normal)
         startTimeTFCustomButton.sizeToFit()
         

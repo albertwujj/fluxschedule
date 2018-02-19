@@ -243,7 +243,7 @@
             </objects>
             <point key="canvasLocation" x="-1039.2" y="-205.54722638680661"/>
         </scene>
-        <!--Schedule View Controller-->
+        <!--Data Source-->
         <scene sceneID="B3p-dl-mT2">
             <objects>
                 <viewController automaticallyAdjustsScrollViewInsets="NO" id="MWw-Go-rfF" customClass="ScheduleViewController" customModule="Schedule_Maker_Prototype" customModuleProvider="target" sceneMemberID="viewController">
@@ -355,7 +355,7 @@
                                     <action selector="addButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="kIf-O0-wHX"/>
                                 </connections>
                             </button>
-                            <textField hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX/XX/XXXX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Y8o-P1-EhR" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
+                            <textField hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX/XX/XXXX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Y8o-P1-EhR" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
                                 <rect key="frame" x="112" y="22" width="167" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="7Q2-dT-qaB"/>
@@ -378,11 +378,29 @@
                                     <action selector="tutorialNextButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="Lj5-Id-Hx6"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xi6-IP-eJI" customClass="FSCalendar">
-                                <rect key="frame" x="55" y="69" width="264" height="144"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xi6-IP-eJI" customClass="FSCalendar">
+                                <rect key="frame" x="0.0" y="61" width="375" height="200"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="jRT-ae-qfm"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="dataSource" destination="MWw-Go-rfF" id="KVl-p8-eIt"/>
+                                    <outlet property="delegate" destination="MWw-Go-rfF" id="m9V-3l-dSz"/>
+                                </connections>
                             </view>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q4s-Iq-lv9">
+                                <rect key="frame" x="109" y="7.5" width="167" height="50.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="Y8p-Gd-sIy"/>
+                                </constraints>
+                                <state key="normal" title="Button">
+                                    <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="fsCalendarButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="WD7-vH-juF"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -395,22 +413,28 @@
                             <constraint firstItem="Je9-4Q-GfF" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" id="5yN-FO-7iQ"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="trailing" secondItem="Je9-4Q-GfF" secondAttribute="trailing" id="6Qb-0k-ccC"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="bottom" id="9MZ-gI-Dh3"/>
+                            <constraint firstItem="Q4s-Iq-lv9" firstAttribute="width" secondItem="Ljn-hE-dG9" secondAttribute="width" id="9nL-Zn-zmh"/>
                             <constraint firstItem="Nws-Cy-H1T" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="3" id="D6T-qc-dcR"/>
                             <constraint firstItem="IVK-sZ-5AT" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="3" id="HNO-mk-y7A"/>
                             <constraint firstItem="seG-dg-VIZ" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" constant="27" id="JwP-bc-tWi"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="centerX" secondItem="SKS-Gt-Yfv" secondAttribute="centerX" id="Kay-hM-6pB"/>
+                            <constraint firstItem="Q4s-Iq-lv9" firstAttribute="centerX" secondItem="Ljn-hE-dG9" secondAttribute="centerX" id="NVj-BA-WGO"/>
                             <constraint firstItem="S1F-bE-qaP" firstAttribute="top" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="-100" id="OUk-RJ-kXJ"/>
                             <constraint firstItem="S1F-bE-qaP" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="QLY-cz-ebC"/>
                             <constraint firstItem="7V9-x7-620" firstAttribute="leading" secondItem="zRD-x9-WHF" secondAttribute="trailing" constant="-79" id="SfX-rM-mpz"/>
+                            <constraint firstItem="Q4s-Iq-lv9" firstAttribute="bottom" secondItem="Je9-4Q-GfF" secondAttribute="bottom" constant="-3" id="TGb-Hi-6DS"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="top" constant="60" id="V9q-3A-cQa"/>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="leading" secondItem="IVK-sZ-5AT" secondAttribute="trailing" constant="2" id="VPq-lh-ju5"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" id="cd2-7F-5b1"/>
                             <constraint firstItem="Y8o-P1-EhR" firstAttribute="width" secondItem="Ljn-hE-dG9" secondAttribute="width" id="fCW-0B-ebV"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="6UZ-1E-uIs" secondAttribute="top" constant="6" id="fwd-Cw-yDn"/>
                             <constraint firstItem="6UZ-1E-uIs" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="1" id="gZx-fb-c7s"/>
+                            <constraint firstItem="Xi6-IP-eJI" firstAttribute="width" secondItem="zRD-x9-WHF" secondAttribute="width" id="lIy-ZK-ezc"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="bottom" secondItem="zRD-x9-WHF" secondAttribute="bottom" id="muh-IT-yDc"/>
                             <constraint firstItem="Nws-Cy-H1T" firstAttribute="leading" secondItem="Ljn-hE-dG9" secondAttribute="trailing" constant="-1" id="rog-XZ-boM"/>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="centerX" secondItem="Y8o-P1-EhR" secondAttribute="centerX" constant="-3" id="s3e-dq-bkd"/>
+                            <constraint firstItem="Xi6-IP-eJI" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="bottom" id="umq-Lf-L22"/>
+                            <constraint firstItem="Xi6-IP-eJI" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="x02-EB-uyN"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="SKS-Gt-Yfv"/>
                     </view>
@@ -423,9 +447,10 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="addButton" destination="7V9-x7-620" id="QUX-j8-CSj"/>
+                        <outlet property="calendar" destination="Xi6-IP-eJI" id="cV5-zt-TL2"/>
                         <outlet property="containerView" destination="zRD-x9-WHF" id="HbQ-J9-iZi"/>
                         <outlet property="dateTextField" destination="Y8o-P1-EhR" id="qZk-kV-P2Q"/>
-                        <outlet property="fsCalendar" destination="Xi6-IP-eJI" id="4Zw-IR-Vjd"/>
+                        <outlet property="fsCalendarButton" destination="Q4s-Iq-lv9" id="gIg-n7-QO2"/>
                         <outlet property="iapButton" destination="Gxe-LF-NkH" id="Y6y-8a-qTR"/>
                         <outlet property="leftDateButton" destination="IVK-sZ-5AT" id="UiI-gm-sAK"/>
                         <outlet property="recurringTasksButton" destination="6UZ-1E-uIs" id="ycd-jU-i1m"/>

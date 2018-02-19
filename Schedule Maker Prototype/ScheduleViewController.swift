@@ -12,10 +12,15 @@ import Foundation
 import UserNotifications
 
 
-class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate {
-    
-    
-    @IBOutlet weak var fsCalendar: FSCalendar!
+class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate, FSCalendarDelegate, FSCalendarDataSource {
+    fileprivate let gregorian = Calendar(identifier: .gregorian)
+    fileprivate let formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+    @IBOutlet weak var fsCalendarButton: UIButton!
+    @IBOutlet weak var calendar: FSCalendar!
     
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet weak var tutorialNextButton: UIButton!
@@ -53,7 +58,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var tutorialStep = 0
     
     override func viewDidLoad() {
-    
+        
         if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
             sharedDefaults = loadedDefaults
         } else {
@@ -173,23 +178,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             tutorialNextButton.isEnabled = true
         }
     }
-    //MARK: AccessoryTextFieldDelegate functions
-    func textFieldContainerButtonPressed(_ sender: AccessoryTextField) {
-        sender.resignFirstResponder()
-        if sender === dateTextField {
-            changeDate(dateInt: currDateInt)
-        }
-    }
-    func textFieldCancelButtonPressed(_ sender: AccessoryTextField) {
-        sender.resignFirstResponder()
-    }
-    func textFieldDoneButtonPressed(_ sender: AccessoryTextField) {
-        if sender === dateTextField {
-            sender.resignFirstResponder()
-            selectedDateInt = dateToHashableInt(date: (sender.inputView as! UIDatePicker).date)
-            update()
-        }
-    }
+   
     
     /*
     private func loadSavedData() {
@@ -264,6 +253,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
    
     //MARK: Input handling
     @IBAction func startTimeEditing(_ sender: UITextField) {
+        calendar.isHidden = false
         let datePickerView:UIDatePicker = UIDatePicker()
         datePickerView.datePickerMode = UIDatePickerMode.date
         sender.inputView = datePickerView
@@ -275,7 +265,23 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         selectedDateInt = dateToHashableInt(date: sender.date)
         textFieldShouldReturn(dateTextField)
     }
-    
+    //MARK: AccessoryTextFieldDelegate functions
+    func textFieldContainerButtonPressed(_ sender: AccessoryTextField) {
+        sender.resignFirstResponder()
+        if sender === dateTextField {
+            changeDate(dateInt: currDateInt)
+        }
+    }
+    func textFieldCancelButtonPressed(_ sender: AccessoryTextField) {
+        sender.resignFirstResponder()
+    }
+    func textFieldDoneButtonPressed(_ sender: AccessoryTextField) {
+        if sender === dateTextField {
+            sender.resignFirstResponder()
+            selectedDateInt = dateToHashableInt(date: (sender.inputView as! UIDatePicker).date)
+            update()
+        }
+    }
     
     @IBAction func tutorialNextButtonPressed(_ sender: UIButton) {
         if tutorialStep == 1 {
@@ -408,7 +414,6 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
     func currentScheduleUpdated() {
         
-        print(intDateDescription(int: selectedDateInt ?? currDateInt))
     }
     
     func weekday(date: Date) -> String  {
@@ -694,5 +699,62 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             sender.backgroundColor = .blue
         }
         
+    }
+    @IBAction func fsCalendarButtonPressed(_ sender: UIButton) {
+        calendar.isHidden = false
+        
+    }
+    /*
+    func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
+        let cell = calendar.dequeueReusableCell(withIdentifier: "cell", for: date, at: position)
+        return cell
+    }
+    
+    func calendar(_ calendar: FSCalendar, willDisplay cell: FSCalendarCell, for date: Date, at position: FSCalendarMonthPosition) {
+        
+    } */
+    
+    func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
+        if self.gregorian.isDateInToday(date) {
+            return "今"
+        }
+        return nil
+    }
+    
+    func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
+        return 0
+    }
+    
+    // MARK:- FSCalendarDelegate
+    
+    func calendar(_ calendar: FSCalendar, boundingRectWillChange bounds: CGRect, animated: Bool) {
+        self.calendar.frame.size.height = bounds.height
+        //self.eventLabel.frame.origin.y = calendar.frame.maxY + 10
+    }
+    /*
+    func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition)   -> Bool {
+        return monthPosition == .current
+    }
+    
+    func calendar(_ calendar: FSCalendar, shouldDeselect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
+        return monthPosition == .current
+    } */
+    
+    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+       
+        selectedDateInt = dateToHashableInt(date: date)
+        update()
+    }
+    
+    func calendar(_ calendar: FSCalendar, didDeselect date: Date) {
+        selectedDateInt = dateToHashableInt(date: date)
+        update()
+    }
+    
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, eventDefaultColorsFor date: Date) -> [UIColor]? {
+        if self.gregorian.isDateInToday(date) {
+            return [UIColor.orange]
+        }
+        return [appearance.eventDefaultColor]
     }
 }

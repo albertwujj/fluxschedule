@@ -29,6 +29,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     var itemsToRed: [ScheduleItem] = []
     var shouldSelectLast = false
     var prevScrollPos: IndexPath?
+    var duringKeyboardScroll = false
 
     @IBOutlet weak var header: UIView!
     @IBOutlet weak var deleteButton: UIButton!
@@ -388,6 +389,10 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                         cell.lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
                         cell.taskNameTF.text = scheduleItem.taskName
                         cell.row = row
+                        if(!duringKeyboardScroll){
+                            cell.origRow = row
+                            cell.origScheduleItem = scheduleItem
+                        }
                     }
                 }
             }
@@ -395,7 +400,8 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     }
 
     @objc func onLongPressGesture(sender: UILongPressGestureRecognizer) {
-    
+        UIApplication.shared.sendAction(#selector(UIApplication.resignFirstResponder), to: nil, from: nil, for: nil);
+        duringKeyboardScroll = false
         let locationInView = sender.location(in: tableView)
         var indexPath = tableView.indexPathForRow(at: locationInView)
         
@@ -817,6 +823,10 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             cell.selectionStyle = .none
             cell.layer.borderColor = appDelegate.userSettings.themeColor.cgColor
             cell.layer.borderWidth = 0.1
+            if(!duringKeyboardScroll) {
+                cell.origScheduleItem = scheduleItems[indexPath.row]
+                cell.origRow = indexPath.row
+            }
             return cell
         }
         else {
@@ -883,7 +893,9 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         itemsToGreen = []
         flashItems(itemsToFlash: itemsToRed, for: 1, color: .red)
         itemsToRed = []
-        
+        deFlashItems(itemsToFlash: scheduleItems, for: 0)
+        deFlashItems(itemsToFlash: scheduleItems, for: 1)
+        deFlashItems(itemsToFlash: scheduleItems, for: 2)
     }
     func normalizeTFLengths() {
         /*
@@ -1063,7 +1075,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.reloadData()
         self.scheduleViewController.schedulesEdited.insert(self.currDateInt)
         if let tf = self.tableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
-            tf.taskNameTF.becomeFirstResponder()
+            //tf.taskNameTF.becomeFirstResponder()
             /*
             var scrollPoint = CGPoint(x: 0.0, y: tf.startTimeTF.frame.origin.y)
             scrollPoint = tableView.convert(scrollPoint, from: tf)
