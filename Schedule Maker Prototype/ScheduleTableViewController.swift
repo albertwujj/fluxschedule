@@ -30,6 +30,10 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     var shouldSelectLast = false
     var prevScrollPos: IndexPath?
     var duringKeyboardScroll = false
+    var isPlanned = false
+    
+    
+    var streakStats = StreakStats()
 
     @IBOutlet weak var header: UIView!
     @IBOutlet weak var deleteButton: UIButton!
@@ -58,6 +62,9 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         userSettings = appDelegate.userSettings
         super.viewDidLoad()
         
+        
+        
+       
         //update()
         //Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(highlightCurrCell), userInfo: nil, repeats: true)
         // Uncomment the following line to preserve selection between presentations
@@ -93,7 +100,8 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             scrollToTop(indexPath: scrollPosition)
         }
     }
-   
+    
+    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         changeRowHeight()
     }
@@ -190,6 +198,30 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                         }, completion: { (finished) -> Void in
                             
                         })
+                        
+                        
+                    }
+                    break
+                }
+            }
+        }
+        highlightCurrCell()
+    }
+    func deFlashInstant(itemsToFlash: [ScheduleItem], timeToFullColor: TimeInterval = 0.7) {
+        for i in 0..<self.scheduleItems.count {
+            for j in itemsToFlash {
+                if j === scheduleItems[i] {
+                    if let cell = self.tableView.cellForRow(at: IndexPath(i)) as? ScheduleTableViewCell {
+                 
+                     
+                        cell.startTimeTF.backgroundColor = .white
+                 
+                        cell.durationTF.backgroundColor = .white
+                        cell.subviews[0].backgroundColor = .white
+                        
+                        
+               
+                                
                         
                         
                     }
@@ -788,6 +820,17 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         return cellSnapshot
     }
     
+    //MARK: Persist Data
+    func saveStreakStats(streakStats:StreakStats) {
+        sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: streakStats), forKey: Paths.streakStats)
+    }
+    func loadStreakStats() -> StreakStats? {
+        if let data = sharedDefaults.object(forKey: Paths.scrollPosition) as? Data {
+            let unarcher = NSKeyedUnarchiver(forReadingWith: data)
+            return unarcher.decodeObject(forKey: "root") as? StreakStats
+        }
+        return nil
+    }
     @objc func saveScrollPosition() {
         
         if let visRows = tableView.indexPathsForVisibleRows{
@@ -811,6 +854,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         }
         return nil
     }
+    
   
     // MARK: - Table view data source
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -830,12 +874,21 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             return cell
         }
         else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "emptyCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "checkOffCell", for: indexPath)
+            (cell.subviews[0].subviews[0] as! UIButton).addTarget(self, action: #selector(markAsPlanned), for: .touchUpInside)
             cell.selectionStyle = .none
             return cell
         }
         
         
+    }
+    func getWeekday() -> Int {
+        let svc = scheduleViewController!
+        return Calendar.current.component(.weekday, from: svc.intToDate(int: svc.currDateInt))
+    }
+    @objc func markAsPlanned() {
+        streakStats.markedDays.insert(getCurrDateInt())
+        tableView.reloadData()
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -844,7 +897,11 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return scheduleItems.count + 2
+        if(isPlanned && !streakStats.markedDays.contains(getCurrDateInt()) && scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.currDateInt) {
+            return scheduleItems.count + 1
+        } else {
+            return scheduleItems.count
+        }
     }
 
    
@@ -876,26 +933,40 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.reloadData()
         mergeSameName()
         tableView.reloadData()
-        //tableView.reloadData()
         
-        //scheduleViewController.saveSchedule(date: currDateInt, scheduleItems: scheduleItems)
+        checkForPlanned()
+        
         highlightCurrCell()
-        
         normalizeTFLengths()
         if scheduleViewController.tutorialStep == 0 {
             scheduleViewController.schedules[currDateInt] = scheduleItems
             scheduleViewController.currentScheduleUpdated()
             scheduleViewController.saveSchedules()
         }
+        flashItemsForUpdate()
+        saveStreakStats(streakStats: streakStats)
+    }
+    func flashItemsForUpdate() {
         flashItems(itemsToFlash: itemsToFullGreen, for: 2, color: .green)
         itemsToFullGreen = []
         flashItems(itemsToFlash: itemsToGreen, for: 1, color: .green)
         itemsToGreen = []
         flashItems(itemsToFlash: itemsToRed, for: 1, color: .red)
         itemsToRed = []
-        deFlashItems(itemsToFlash: scheduleItems, for: 0)
-        deFlashItems(itemsToFlash: scheduleItems, for: 1)
-        deFlashItems(itemsToFlash: scheduleItems, for: 2)
+    }
+    func checkForPlanned() {
+        isPlanned = planned()
+    }
+    func planned() -> Bool{
+        for i in scheduleItems {
+            if i.taskName == userSettings.defaultName {
+                return false
+            }
+        }
+        if scheduleItems.count < 5 {
+            return false
+        }
+        return true
     }
     func normalizeTFLengths() {
         /*
@@ -1008,7 +1079,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         return scheduleItems
     }
     /*
-    //MARK: Persist Data
+    
     func loadScheduleData() -> [ScheduleItem]?{
         return NSKeyedUnarchiver.unarchiveObject(withFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.currentSchedule).path) as? [ScheduleItem]
     }
@@ -1047,15 +1118,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
      func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
      
      }
-    //MARK: Helper functions
-    func getCurrentDurationFromMidnight() -> Int {
-        let date = Date()
-        let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: date)
-        let minutes = calendar.component(.minute, from: date)
-        let seconds = calendar.component(.second, from: date)
-        return hour * 3600 + minutes * 60 + seconds
-    }
+    
     //MARK: Outer functions
     func addButtonPressed() {
         var newTask: ScheduleItem!
@@ -1105,7 +1168,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             prevScrollPos = ip[0]
         }
         DispatchQueue.main.async {
-            self.tableView.scrollToRow(at: IndexPath(indexPath.row + 1), at: .bottom, animated: true)
+            self.tableView.scrollToRow(at: IndexPath(indexPath.row), at: .bottom, animated: true)
         }
     }
     func scrollToTop(indexPath: IndexPath){
@@ -1192,6 +1255,8 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     //MARK: UIScrollViewDelegate
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         unhighlightAllCells()
+        deFlashInstant(itemsToFlash: scheduleItems)
+       
     }
     func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
         scrollingStopped()
@@ -1207,17 +1272,14 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         scrollingStopped()
     }
     func scrollingStopped() {
-        if let tf = self.tableView.cellForRow(at: IndexPath(self.scheduleItems.count - 1)) as? ScheduleTableViewCell {
-            
-            tf.startTimeTF.backgroundColor = UIColor.white
-            tf.durationTF.backgroundColor = UIColor.white
-            tf.backgroundColor = UIColor.white
-        }
+        deFlashInstant(itemsToFlash: scheduleItems)
+        
         if currDateInt == scheduleViewController.dateToHashableInt(date: Date()) {
             saveScrollPosition()
         }
         highlightCurrCell()
         normalizeTFLengths()
+        
     }
     
     func tintOf(color: UIColor, tintFactor: Double) -> UIColor {

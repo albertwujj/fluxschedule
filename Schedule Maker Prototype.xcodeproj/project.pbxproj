@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		751672E2203F5DC000B2CFCB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7544C5221FCA735E001CC0A6 /* Extensions.swift */; };
+		751672E4203F641E00B2CFCB /* StreakViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751672E3203F641E00B2CFCB /* StreakViewController.swift */; };
 		752693E4201F8AC100BC5D31 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 752693E3201F8AC100BC5D31 /* StoreKit.framework */; };
 		752704AC20292077005FF9B6 /* IAPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752704AB20292077005FF9B6 /* IAPViewController.swift */; };
 		752704AE20292346005FF9B6 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752704AD20292346005FF9B6 /* IAPHelper.swift */; };
 		7544C5231FCA735F001CC0A6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7544C5221FCA735E001CC0A6 /* Extensions.swift */; };
-		75782EEA2038FD6200DCC039 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 75782EE92038FD6200DCC039 /* Info.plist */; };
 		75782EEB2038FD6200DCC039 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 75782EE92038FD6200DCC039 /* Info.plist */; };
 		7591A31B1FB26518002DA737 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7591A31A1FB26518002DA737 /* AppDelegate.swift */; };
 		7591A3201FB26518002DA737 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7591A31E1FB26518002DA737 /* Main.storyboard */; };
@@ -69,8 +70,9 @@
 		75F6A3BA2038FDAE00E76AFE /* FSCalendarTransitionCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F6A3992038FDAD00E76AFE /* FSCalendarTransitionCoordinator.m */; };
 		75F6A3BB2038FDAE00E76AFE /* FSCalendarWeekdayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F6A39B2038FDAD00E76AFE /* FSCalendarWeekdayView.m */; };
 		75F6A3BC2038FDAE00E76AFE /* FSCalendarWeekdayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F6A39B2038FDAD00E76AFE /* FSCalendarWeekdayView.m */; };
-		75F6A3BD2038FDAE00E76AFE /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 75F6A39C2038FDAD00E76AFE /* Info.plist */; };
 		75F6A3BE2038FDAE00E76AFE /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 75F6A39C2038FDAD00E76AFE /* Info.plist */; };
+		75F6A3C3203E414600E76AFE /* StreakStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F6A3C2203E414600E76AFE /* StreakStats.swift */; };
+		75F6A3C4203E414600E76AFE /* StreakStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F6A3C2203E414600E76AFE /* StreakStats.swift */; };
 		75F88A961FF5EA4F005316DB /* WeekdaySelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A951FF5EA4F005316DB /* WeekdaySelection.swift */; };
 		75F88A981FF86400005316DB /* RecurringTasksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A971FF86400005316DB /* RecurringTasksViewController.swift */; };
 		75F88A9A1FF8BE7E005316DB /* RecurringTasksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */; };
@@ -115,6 +117,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		751672E3203F641E00B2CFCB /* StreakViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakViewController.swift; sourceTree = "<group>"; };
 		752693E3201F8AC100BC5D31 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		752704AB20292077005FF9B6 /* IAPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPViewController.swift; sourceTree = "<group>"; };
 		752704AD20292346005FF9B6 /* IAPHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
@@ -182,6 +185,7 @@
 		75F6A39A2038FDAD00E76AFE /* FSCalendarWeekdayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSCalendarWeekdayView.h; sourceTree = "<group>"; };
 		75F6A39B2038FDAD00E76AFE /* FSCalendarWeekdayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSCalendarWeekdayView.m; sourceTree = "<group>"; };
 		75F6A39C2038FDAD00E76AFE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		75F6A3C2203E414600E76AFE /* StreakStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakStats.swift; sourceTree = "<group>"; };
 		75F88A951FF5EA4F005316DB /* WeekdaySelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySelection.swift; sourceTree = "<group>"; };
 		75F88A971FF86400005316DB /* RecurringTasksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTasksViewController.swift; sourceTree = "<group>"; };
 		75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTasksTableViewController.swift; sourceTree = "<group>"; };
@@ -250,6 +254,7 @@
 				7591A33F1FBBDB2B002DA737 /* UITextFieldSI.swift */,
 				7591A31E1FB26518002DA737 /* Main.storyboard */,
 				75A332EC1FC8D2D5001050B8 /* Settings.swift */,
+				75F6A3C2203E414600E76AFE /* StreakStats.swift */,
 				75EF86DF2038F02200916706 /* Objc-Bridge-Header.h */,
 				75F88A971FF86400005316DB /* RecurringTasksViewController.swift */,
 				75F88A991FF8BE7E005316DB /* RecurringTasksTableViewController.swift */,
@@ -266,6 +271,7 @@
 				75EF86502037E12200916706 /* UIScrollView+TPKeyboardAvoidingAdditions.m */,
 				75EF86522037E15000916706 /* TPKeyboardAvoidingScrollView.h */,
 				75EF86532037E1E300916706 /* TPKeyboardAvoidingScrollView.m */,
+				751672E3203F641E00B2CFCB /* StreakViewController.swift */,
 			);
 			path = "Schedule Maker Prototype";
 			sourceTree = "<group>";
@@ -433,8 +439,6 @@
 			files = (
 				7591A3281FB26518002DA737 /* LaunchScreen.storyboard in Resources */,
 				7591A3251FB26518002DA737 /* Assets.xcassets in Resources */,
-				75782EEA2038FD6200DCC039 /* Info.plist in Resources */,
-				75F6A3BD2038FDAE00E76AFE /* Info.plist in Resources */,
 				7591A3201FB26518002DA737 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -468,6 +472,7 @@
 				75F88AC420030B5F005316DB /* TextFieldToolbarExtension.swift in Sources */,
 				75F6A3A72038FDAE00E76AFE /* FSCalendarCollectionView.m in Sources */,
 				75F6A3A32038FDAE00E76AFE /* FSCalendarCalculator.m in Sources */,
+				75F6A3C3203E414600E76AFE /* StreakStats.swift in Sources */,
 				75F88A981FF86400005316DB /* RecurringTasksViewController.swift in Sources */,
 				75F88A9E1FF975C6005316DB /* RecurringTaskTableViewCell.swift in Sources */,
 				75EF86512037E12200916706 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
@@ -483,6 +488,7 @@
 				7591A3231FB26518002DA737 /* Schedule_Maker_Prototype.xcdatamodeld in Sources */,
 				7591A3301FB26769002DA737 /* ScheduleTableViewCell.swift in Sources */,
 				7544C5231FCA735F001CC0A6 /* Extensions.swift in Sources */,
+				751672E4203F641E00B2CFCB /* StreakViewController.swift in Sources */,
 				75F88AC620042AE4005316DB /* AccessoryTextField.swift in Sources */,
 				7591A33C1FB683AF002DA737 /* ScheduleViewController.swift in Sources */,
 				75F6A3B12038FDAE00E76AFE /* FSCalendarExtensions.m in Sources */,
@@ -512,7 +518,9 @@
 				75F6A3AC2038FDAE00E76AFE /* FSCalendarConstants.m in Sources */,
 				75A31CF51FE5E248004C6404 /* PersistData.swift in Sources */,
 				75A31CF91FE6458F004C6404 /* Settings.swift in Sources */,
+				751672E2203F5DC000B2CFCB /* Extensions.swift in Sources */,
 				75F6A3B42038FDAE00E76AFE /* FSCalendarHeaderView.m in Sources */,
+				75F6A3C4203E414600E76AFE /* StreakStats.swift in Sources */,
 				75A31C751FE5BE34004C6404 /* TodayViewController.swift in Sources */,
 				75F6A3B82038FDAE00E76AFE /* FSCalendarStickyHeader.m in Sources */,
 				75F6A3B22038FDAE00E76AFE /* FSCalendarExtensions.m in Sources */,

@@ -98,4 +98,96 @@ extension UIScrollView {
     }
     
 }
-
+extension UIViewController {
+    func weekday(date: Date) -> String  {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE"
+        return dateFormatter.string(from: date).uppercased()
+    }
+    
+    func dateDescription(date: Date) -> String {
+        let formatter = DateFormatter()
+        
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        
+        return formatter.string(from: date)
+    }
+    func dateToHashableInt(date: Date) -> Int {
+        let calendar = Calendar.current
+        let month = calendar.component(.month, from: date)
+        let day = calendar.component(.day, from: date)
+        let year = calendar.component(.year, from: date)
+        //mathematically this will allow consistent conversion from date to int
+        return year * 372 + month * 31 + day
+    }
+    func intToDate(int: Int) -> Date {
+        var intMutable = int
+        var dC = DateComponents()
+        dC.year = intMutable / 372
+        intMutable = intMutable % 372
+        dC.month = intMutable / 31
+        intMutable = intMutable % 31
+        dC.day = intMutable
+        return Calendar.current.date(from: dC)!
+    }
+    
+    func intDateDescription(int: Int) -> String {
+        var intMutable = int
+        let year = intMutable / 372
+        intMutable = intMutable % 372
+        let month = intMutable / 31
+        intMutable = intMutable % 31
+        let day = intMutable
+        return "\(month)/\(day)/\(year)"
+    }
+    func getCurrDateInt() -> Int {
+        return dateToHashableInt(date: Date())
+    }
+    func hideKeyboardWhenTappedAround() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    func calculateDailyStreak(_ streakStats: StreakStats) -> Int{
+        var j = 0
+        for i in ((streakStats.markedDays.min() ?? getCurrDateInt()) ..< getCurrDateInt()).reversed() {
+            if !streakStats.markedDays.contains(i) {
+                break
+            }
+            j += 1
+        }
+        return j
+    }
+    func getCurrentDurationFromMidnight() -> Int {
+        let date = Date()
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minutes = calendar.component(.minute, from: date)
+        let seconds = calendar.component(.second, from: date)
+        return hour * 3600 + minutes * 60 + seconds
+    }
+    func timeDescription(durationSinceMidnight: Int) -> String {
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        let date = Calendar.current.startOfDay(for: Date()).addingTimeInterval(Double(durationSinceMidnight))
+        var text = formatter.string(from: date)
+        if durationSinceMidnight >= 13 * 3600 {
+            text = text + " "
+        }
+        
+        if durationSinceMidnight < 10 * 3600 {
+            text = text + " "
+        }
+        
+        return text
+        
+    }
+}

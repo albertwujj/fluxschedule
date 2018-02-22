@@ -13,7 +13,7 @@ import UserNotifications
 
 
 class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate, FSCalendarDelegate, FSCalendarDataSource {
-    fileprivate let gregorian = Calendar(identifier: .gregorian)
+    fileprivate let gregorian = Calendar.current
     fileprivate let formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -57,6 +57,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
     var tutorialStep = 0
     
+    @IBOutlet weak var calendarHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var calendarBottomSpaceConstraint: NSLayoutConstraint!
     override func viewDidLoad() {
         
         if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
@@ -65,6 +67,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             print("UserDefaults BUG")
         }
         super.viewDidLoad()
+        calendar.allowsMultipleSelection = false
+        calendar.isHidden = true
         userSettings = appDelegate.userSettings
         
         
@@ -269,7 +273,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     func textFieldContainerButtonPressed(_ sender: AccessoryTextField) {
         sender.resignFirstResponder()
         if sender === dateTextField {
-            changeDate(dateInt: currDateInt)
+            changeDate(intDate: currDateInt)
         }
     }
     func textFieldCancelButtonPressed(_ sender: AccessoryTextField) {
@@ -343,6 +347,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     //updates self
    // FICI SFOUSDFHFDS
     func update() {
+        
         /*
          var oneRTask = false
          if !schedulesEdited.contains(selectedDateInt ?? currDateInt) {
@@ -366,7 +371,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
          }
          }
          */
-        
+       
         if testingMode {
              schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: userSettings.defaultStartTime)]
         }
@@ -403,6 +408,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
   
         
         let date = intToDate(int: selectedDateInt ?? currDateInt)
+        
         dateTextField.text = dateDescription(date: intToDate(int: selectedDateInt ?? currDateInt))
         weekdayLabel.text = "\(date.format(format: "EEEE")), \(date.format(format: "MMM")) \(date.format(format: "d"))"
         //dateTextField.text = intDateDescription(int: selectedDateInt ?? currDateInt)
@@ -416,48 +422,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
     }
     
-    func weekday(date: Date) -> String  {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE"
-        return dateFormatter.string(from: date).uppercased()
-    }
     
-    func dateDescription(date: Date) -> String {
-        let formatter = DateFormatter()
-
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-     
-        return formatter.string(from: date)
-    }
-    func dateToHashableInt(date: Date) -> Int {
-        let calendar = Calendar.current
-        let month = calendar.component(.month, from: date)
-        let day = calendar.component(.day, from: date)
-        let year = calendar.component(.year, from: date)
-        //mathematically this will allow consistent conversion from date to int
-        return year * 372 + month * 31 + day
-    }
-    func intToDate(int: Int) -> Date {
-        var intMutable = int
-        var dC = DateComponents()
-        dC.year = intMutable / 372
-        intMutable = intMutable % 372
-        dC.month = intMutable / 31
-        intMutable = intMutable % 31
-        dC.day = intMutable
-        return Calendar.current.date(from: dC)!
-    }
-
-    func intDateDescription(int: Int) -> String {
-        var intMutable = int
-        let year = intMutable / 372
-        intMutable = intMutable % 372
-        let month = intMutable / 31
-        intMutable = intMutable % 31
-        let day = intMutable
-        return "\(month)/\(day)/\(year)"
-    }
     func saveTutorialStep() {
         
 
@@ -673,16 +638,11 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         changeDate(change: 1)
     }
     func changeDate(change: Int) {
-        if selectedDateInt != nil {
-            selectedDateInt! += change
-        } else {
-            selectedDateInt = currDateInt + change
-        }
-        update()
-        
+        changeDate(intDate: (selectedDateInt ?? currDateInt) + change)
     }
-    func changeDate(dateInt: Int) {
-        selectedDateInt = dateInt
+    func changeDate(intDate: Int) {
+        selectedDateInt = intDate
+        calendar.select(intToDate(int: selectedDateInt ?? currDateInt))
         update()
     }
     
@@ -701,7 +661,37 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
     }
     @IBAction func fsCalendarButtonPressed(_ sender: UIButton) {
+        
+        if calendar.isHidden {
+            showCalendar()
+        } else {
+            hideCalendar()
+        }
+        calendar.select(intToDate(int: selectedDateInt ?? currDateInt))
+    }
+    func showCalendar() {
+        
+        
         calendar.isHidden = false
+        calendarBottomSpaceConstraint.constant = calendar.frame.height
+        
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: { () -> Void in
+            self.view.layoutIfNeeded()
+            
+        }, completion: { (finished) -> Void in
+            
+        })
+        
+    }
+    func hideCalendar() {
+        
+        calendarBottomSpaceConstraint.constant = 0
+        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations: { () -> Void in
+            self.view.layoutIfNeeded()
+            
+        }, completion: { (finished) -> Void in
+            self.calendar.isHidden = true
+        })
         
     }
     /*
@@ -716,7 +706,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
     func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
         if self.gregorian.isDateInToday(date) {
-            return "今"
+            return "Today"
         }
         return nil
     }
@@ -731,24 +721,29 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         self.calendar.frame.size.height = bounds.height
         //self.eventLabel.frame.origin.y = calendar.frame.maxY + 10
     }
-    /*
+    
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition)   -> Bool {
         return monthPosition == .current
     }
     
     func calendar(_ calendar: FSCalendar, shouldDeselect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
         return monthPosition == .current
-    } */
+    }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-       
+      
+     
+        hideCalendar()
         selectedDateInt = dateToHashableInt(date: date)
         update()
     }
     
+    
     func calendar(_ calendar: FSCalendar, didDeselect date: Date) {
-        selectedDateInt = dateToHashableInt(date: date)
-        update()
+  
+        
+        
+        
     }
     
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, eventDefaultColorsFor date: Date) -> [UIColor]? {

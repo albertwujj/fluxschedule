@@ -262,41 +262,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         currDateInt = dateToHashableInt(date: Date())
         
     }
-    func dateToHashableInt(date: Date) -> Int {
-        let calendar = Calendar.current
-        let month = calendar.component(.month, from: date)
-        let day = calendar.component(.day, from: date)
-        let year = calendar.component(.year, from: date)
-        //mathematically this will allow consistent conversion from date to int
-        return year * 372 + month * 31 + day
-    }
-    func getCurrentDurationFromMidnight() -> Int {
-        let date = Date()
-        let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: date)
-        let minutes = calendar.component(.minute, from: date)
-        let seconds = calendar.component(.second, from: date)
-        return hour * 3600 + minutes * 60 + seconds
-    }
-    func timeDescription(durationSinceMidnight: Int) -> String {
-       
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        let date = startOfToday.addingTimeInterval(Double(durationSinceMidnight))
-        var text = formatter.string(from: date)
-        if durationSinceMidnight >= 13 * 3600 {
-            text = text + " "
-        }
-       
-        if durationSinceMidnight < 10 * 3600 {
-            text = text + " "
-        }
-       
-        return text
-       
-    }
+   
     
     @IBAction func currTaskLockButtonPressed(_ sender: UIButton) {
         let scheduleItem = currScheduleItem!

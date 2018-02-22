@@ -49,6 +49,7 @@
 }
 
 -(BOOL)hasAutomaticKeyboardAvoidingBehaviour {
+    
     if ( [self.delegate isKindOfClass:[UITableViewController class]] ) {
         // Theory: Apps built using the iOS 8.3 SDK (probably: older SDKs not tested) seem to handle keyboard
         // avoiding automatically with UITableViewController. This doesn't seem to be documented anywhere

@@ -60,6 +60,8 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        let views = self.subviews[0].subviews
+        
         let textFields = self.subviews[0].subviews.filter{$0 is UITextField}
         for i in textFields {
             let tf = i as! UITextField
@@ -262,7 +264,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         for (i, p) in (tableViewController.tableView.indexPathsForVisibleRows?.enumerated()) ?? [].enumerated() {
             if p.row == row {
                 if i > 5 {
-                    tableViewController.scrollToBottom(indexPath: IndexPath(row))
+                    //tableViewController.scrollToBottom(indexPath: IndexPath(row))
                     
                 }
             }
@@ -329,13 +331,13 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         }
         
        
-        
-        if let pos = tableViewController.prevScrollPos {
+        /*
+        if let pos = tableViewController.loadScrollPosition() ?? tableViewController.prevScrollPos {
             tableViewController.tableView.scrollToRow(at: pos, at: .top, animated: false)
             tableViewController.prevScrollPos = nil
           
         }
-       
+       */
         tableViewController.update()
     }
     
