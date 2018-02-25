@@ -333,6 +333,7 @@
     
 }
 
+
 - (void)performBoundingRectTransitionFromMonth:(NSDate *)fromMonth toMonth:(NSDate *)toMonth duration:(CGFloat)duration
 {
     if (self.calendar.scope != FSCalendarScopeMonth) return;

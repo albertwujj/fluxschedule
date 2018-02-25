@@ -359,7 +359,6 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
             CGFloat contentHeight = _contentView.fs_height;
             _daysContainer.frame = CGRectMake(0, 0, self.fs_width, contentHeight);
             _collectionView.frame = _daysContainer.bounds;
-            
         }
         _collectionView.fs_height = FSCalendarHalfFloor(_collectionView.fs_height);
         _topBorder.frame = CGRectMake(0, -1, self.fs_width, 1);
@@ -1668,6 +1667,21 @@ cell.SEL1 = DEFAULT; \
     [self.visibleStickyHeaders makeObjectsPerformSelector:@selector(configureAppearance)];
     [self.calendarHeaderView configureAppearance];
     [self.calendarWeekdayView configureAppearance];
+}
+
+- (BOOL)updateBoundingRect {
+    if(self.transitionCoordinator.state == FSCalendarTransitionStateIdle) {
+        
+        CGRect bounds = (CGRect){CGPointZero,[self sizeThatFits:self.frame.size scope:FSCalendarScopeMonth]};
+        [self.transitionCoordinator boundingRectWillChange:bounds animated:NO];
+        self.transitionCoordinator.state = FSCalendarTransitionStateChanging;
+        self.needsAdjustingViewFrame = YES;
+        [self setNeedsLayout];
+        self.transitionCoordinator.state = FSCalendarTransitionStateIdle;
+        return YES;
+    }
+    return NO;
+   
 }
 
 @end

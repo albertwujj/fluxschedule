@@ -104,6 +104,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             scheduleViewController.schedules = newSchedule
             scheduleViewController.update()
         }
+        scheduleViewController.calendar.updateBoundingRect()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

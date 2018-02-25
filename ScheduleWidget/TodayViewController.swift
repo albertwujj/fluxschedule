@@ -25,6 +25,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBOutlet weak var prevTaskLockButton: UIButton!
     @IBOutlet weak var currentTaskLockButton: UIButton!
     @IBOutlet weak var nextTaskLockButton: UIButton!
+
+    
+    @IBOutlet weak var tasksStackView: UIStackView!
     
     var sharedDefaults: UserDefaults! = nil
     var schedules: [Int:[ScheduleItem]] = [:]
@@ -98,6 +101,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                 }
             }
         }
+        tasksStackView.subviews[0].isHidden = prevScheduleItem == nil ? true : false
+        tasksStackView.subviews[1].isHidden = currScheduleItem == nil ? true : false
+        tasksStackView.subviews[2].isHidden = nextScheduleItem == nil ? true : false
         prevTaskLockButton.isHidden = prevScheduleItem == nil ? true : false
         currentTaskLockButton.isHidden = currScheduleItem == nil ? true : false
         nextTaskLockButton.isHidden = nextScheduleItem == nil ? true : false
@@ -105,6 +111,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             extendPrevButton.isHidden = prevScheduleItem == nil ? true : false
             extendCurrButton.isHidden = currScheduleItem == nil ? true : false
         }
+        
     }
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
         

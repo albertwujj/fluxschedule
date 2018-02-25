@@ -57,6 +57,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
     var tutorialStep = 0
     
+    @IBOutlet weak var streakButton: UIButton!
+    
     @IBOutlet weak var calendarHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var calendarBottomSpaceConstraint: NSLayoutConstraint!
     override func viewDidLoad() {
@@ -69,6 +71,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         super.viewDidLoad()
         calendar.allowsMultipleSelection = false
         calendar.isHidden = true
+        calendar.placeholderType = .fillHeadTail
         userSettings = appDelegate.userSettings
         
         
@@ -124,6 +127,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         weekdayLabel.isUserInteractionEnabled = true
         weekdayLabel.textAlignment = .center
         addTutorial()
+        
         // Do any additional setup after loading the view.
     }
     
@@ -140,6 +144,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
             tutorialNextButton.isEnabled = false
         }
+        
     }
     func styleAddButton() {
         addButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
@@ -418,8 +423,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
     }
     
-    func currentScheduleUpdated() {
-        
+    func tvcUpdated() {
+        streakButton.titleLabel!.text = String(calculateDailyStreak(tableViewController.streakStats))
     }
     
     
@@ -671,9 +676,13 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
     func showCalendar() {
         
+        var dc = DateComponents.init(month: 9)
+        dc.year = 1999
         
         calendar.isHidden = false
-        calendarBottomSpaceConstraint.constant = calendar.frame.height
+        self.view.layoutIfNeeded()
+        
+        calendarBottomSpaceConstraint.constant = (calendarHeightConstraint.secondItem?.frame.height)! * calendarHeightConstraint.multiplier
         
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: { () -> Void in
             self.view.layoutIfNeeded()
@@ -681,7 +690,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }, completion: { (finished) -> Void in
             
         })
-        
+        calendar.updateBoundingRect()
     }
     func hideCalendar() {
         
@@ -752,4 +761,5 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }
         return [appearance.eventDefaultColor]
     }
+   
 }

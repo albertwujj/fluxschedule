@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -321,16 +322,13 @@
                                     <segue destination="Di3-sW-qHo" kind="embed" identifier="EmbeddedTable" id="1Wq-dJ-ZZG"/>
                                 </connections>
                             </containerView>
-                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xi6-IP-eJI" customClass="FSCalendar">
-                                <rect key="frame" x="0.0" y="-259" width="375" height="320"/>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xi6-IP-eJI" customClass="FSCalendar">
+                                <rect key="frame" x="0.0" y="-240" width="375" height="301"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="placeholderType">
-                                        <integer key="value" value="0"/>
-                                    </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="useVeryShortWeekdaySymbols" value="YES"/>
                                     <userDefinedRuntimeAttribute type="number" keyPath="titleTextSize">
-                                        <real key="value" value="16"/>
+                                        <real key="value" value="15"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
@@ -494,6 +492,7 @@
                             <constraint firstItem="b4K-1K-8Af" firstAttribute="centerX" secondItem="Ljn-hE-dG9" secondAttribute="centerX" id="KUN-2m-6f1"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="centerX" secondItem="SKS-Gt-Yfv" secondAttribute="centerX" id="Kay-hM-6pB"/>
                             <constraint firstItem="S1F-bE-qaP" firstAttribute="top" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="-100" id="OUk-RJ-kXJ"/>
+                            <constraint firstItem="Xi6-IP-eJI" firstAttribute="height" secondItem="LDu-hh-Dx7" secondAttribute="height" multiplier="0.45" constant="1" id="PBE-Z5-d9s"/>
                             <constraint firstItem="S1F-bE-qaP" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="QLY-cz-ebC"/>
                             <constraint firstItem="7V9-x7-620" firstAttribute="leading" secondItem="zRD-x9-WHF" secondAttribute="trailing" constant="-79" id="SfX-rM-mpz"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="top" constant="60" id="V9q-3A-cQa"/>
@@ -521,6 +520,7 @@
                         <outlet property="addButton" destination="7V9-x7-620" id="QUX-j8-CSj"/>
                         <outlet property="calendar" destination="Xi6-IP-eJI" id="cV5-zt-TL2"/>
                         <outlet property="calendarBottomSpaceConstraint" destination="AEN-Y9-psS" id="3cB-Wd-9ZB"/>
+                        <outlet property="calendarHeightConstraint" destination="PBE-Z5-d9s" id="rlO-bS-78V"/>
                         <outlet property="containerView" destination="zRD-x9-WHF" id="HbQ-J9-iZi"/>
                         <outlet property="dateTextField" destination="Y8o-P1-EhR" id="qZk-kV-P2Q"/>
                         <outlet property="iapButton" destination="Gxe-LF-NkH" id="Y6y-8a-qTR"/>
@@ -528,6 +528,7 @@
                         <outlet property="recurringTasksButton" destination="6UZ-1E-uIs" id="ycd-jU-i1m"/>
                         <outlet property="rightDateButton" destination="Nws-Cy-H1T" id="eyK-VV-Mwb"/>
                         <outlet property="settingsButton" destination="seG-dg-VIZ" id="09b-3M-8Bo"/>
+                        <outlet property="streakButton" destination="kkd-uC-PsF" id="ckO-Gb-Aet"/>
                         <outlet property="topStripe" destination="Je9-4Q-GfF" id="gf4-rY-va5"/>
                         <outlet property="tutorialNextButton" destination="S1F-bE-qaP" id="oSV-uL-WKy"/>
                         <outlet property="weekdayLabel" destination="Ljn-hE-dG9" id="IrB-dy-zER"/>

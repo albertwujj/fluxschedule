@@ -154,13 +154,15 @@ extension UIViewController {
         view.endEditing(true)
     }
     func calculateDailyStreak(_ streakStats: StreakStats) -> Int{
+        let currDateInt = getCurrDateInt()
         var j = 0
-        for i in ((streakStats.markedDays.min() ?? getCurrDateInt()) ..< getCurrDateInt()).reversed() {
+        for i in ((streakStats.markedDays.min() ?? currDateInt) ..< currDateInt).reversed() {
             if !streakStats.markedDays.contains(i) {
                 break
             }
             j += 1
         }
+        j += streakStats.markedDays.contains(currDateInt).hashValue
         return j
     }
     func getCurrentDurationFromMidnight() -> Int {

@@ -414,6 +414,8 @@ IB_DESIGNABLE
  */
 @property (assign, nonatomic) IBInspectable CGFloat rowHeight;
 
+
+
 /**
  The calendar appearance used to control the global fonts、colors .etc
  */
@@ -546,6 +548,8 @@ IB_DESIGNABLE
  @param sender A UIPanGestureRecognizer instance which controls the scope of the calendar
  */
 - (void)handleScopeGesture:(UIPanGestureRecognizer *)sender;
+
+- (BOOL)updateBoundingRect;
 
 @end
 

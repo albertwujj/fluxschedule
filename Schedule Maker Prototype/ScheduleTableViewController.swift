@@ -940,7 +940,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         normalizeTFLengths()
         if scheduleViewController.tutorialStep == 0 {
             scheduleViewController.schedules[currDateInt] = scheduleItems
-            scheduleViewController.currentScheduleUpdated()
+            scheduleViewController.tvcUpdated()
             scheduleViewController.saveSchedules()
         }
         flashItemsForUpdate()

@@ -158,6 +158,7 @@
                         <outlet property="prevTaskLabel" destination="oJ2-MQ-RHH" id="FUJ-qA-c8F"/>
                         <outlet property="prevTaskLockButton" destination="prg-78-2V4" id="IFa-9A-MvH"/>
                         <outlet property="prevTaskTimeLabel" destination="oeC-Fz-A6h" id="t3e-rW-qdJ"/>
+                        <outlet property="tasksStackView" destination="kNn-1R-LnO" id="djb-DZ-ACS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vXp-U4-Rya" userLabel="First Responder" sceneMemberID="firstResponder"/>
