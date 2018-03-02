@@ -19,6 +19,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter
     }()
+   
+    
     @IBOutlet weak var fsCalendarButton: UIButton!
     @IBOutlet weak var calendar: FSCalendar!
     
@@ -425,6 +427,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
     func tvcUpdated() {
         streakButton.titleLabel!.text = String(calculateDailyStreak(tableViewController.streakStats))
+        
     }
     
     

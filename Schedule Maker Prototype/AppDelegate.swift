@@ -105,6 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             scheduleViewController.update()
         }
         scheduleViewController.calendar.updateBoundingRect()
+        scheduleViewController.tableViewController.deFlashInstant(itemsToFlash: scheduleViewController.tableViewController.scheduleItems)
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

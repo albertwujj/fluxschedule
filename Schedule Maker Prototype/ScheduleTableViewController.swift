@@ -887,8 +887,11 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         return Calendar.current.component(.weekday, from: svc.intToDate(int: svc.currDateInt))
     }
     @objc func markAsPlanned() {
+        print("EF DE FAK U")
         streakStats.markedDays.insert(getCurrDateInt())
+        saveStreakStats(streakStats: streakStats)
         tableView.reloadData()
+        update()
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -897,8 +900,10 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        print("NUM ROWS CALLED")
         if(isPlanned && !streakStats.markedDays.contains(getCurrDateInt()) && scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.currDateInt) {
             return scheduleItems.count + 1
+        
         } else {
             return scheduleItems.count
         }
@@ -944,7 +949,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             scheduleViewController.saveSchedules()
         }
         flashItemsForUpdate()
-        saveStreakStats(streakStats: streakStats)
+        tableView.reloadData()
     }
     func flashItemsForUpdate() {
         flashItems(itemsToFlash: itemsToFullGreen, for: 2, color: .green)
@@ -1121,6 +1126,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     
     //MARK: Outer functions
     func addButtonPressed() {
+        print("Number of ScheduleItems: \(scheduleItems.count)")
         var newTask: ScheduleItem!
         
         if testingMode {
