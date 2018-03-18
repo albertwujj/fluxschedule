@@ -339,7 +339,7 @@ static const int kStateKey;
     TPKeyboardAvoidingState *state = self.keyboardAvoidingState;
     UIEdgeInsets newInset = self.contentInset;
     CGRect keyboardRect = state.keyboardRect;
-    newInset.bottom = keyboardRect.size.height - MAX((CGRectGetMaxY(keyboardRect) - CGRectGetMaxY(self.bounds)) + 100, 0);
+    newInset.bottom = keyboardRect.size.height - MAX((CGRectGetMaxY(keyboardRect) - CGRectGetMaxY(self.bounds)), 0);
     return newInset;
 }
 
@@ -364,7 +364,7 @@ static const int kStateKey;
     
     void(^centerViewInViewableArea)(void)  = ^ {
         // Attempt to center the subview in the visible space
-        padding = (viewAreaHeight - subviewRect.size.height) / 2;
+        padding = (viewAreaHeight - subviewRect.size.height) / 2 + 110;
         
         // But if that means there will be less than kMinimumScrollOffsetPadding
         // pixels above the view, then substitute kMinimumScrollOffsetPadding
@@ -387,7 +387,7 @@ static const int kStateKey;
             
             // Attempt to center the cursor in the visible space
             // pixels above the view, then substitute kMinimumScrollOffsetPadding
-            padding = (viewAreaHeight - caretRect.size.height) / 2;
+            padding = (viewAreaHeight - caretRect.size.height) / 2 + 110;
             
             // But if that means there will be less than kMinimumScrollOffsetPadding
             // pixels above the view, then substitute kMinimumScrollOffsetPadding

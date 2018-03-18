@@ -10,7 +10,7 @@ import os.log
 import UIKit
 import UserNotifications
 
-class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var userSettings: Settings!
@@ -32,7 +32,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     var duringKeyboardScroll = false
     var isPlanned = false
     
-    
+    var activeTextField: UITextField?
     var streakStats = StreakStats()
 
     @IBOutlet weak var header: UIView!
@@ -61,7 +61,10 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         
         userSettings = appDelegate.userSettings
         super.viewDidLoad()
+        let touchDown = SingleTouchDownGestureRecognizer(target: self, action: #selector(touchedDown))
+        touchDown.delegate = self
         
+        self.view.addGestureRecognizer(touchDown)
         
         
        
@@ -88,6 +91,9 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         changeRowHeight()
         tableView.delegate = self
         tableView.dataSource = self
+    }
+    @objc func touchedDown() {
+        tableView.endEditing(true)
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return CGFloat(rowHeight)
@@ -206,6 +212,11 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             }
         }
         highlightCurrCell()
+    }
+   
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return activeTextField != nil
+        
     }
     func deFlashInstant(itemsToFlash: [ScheduleItem], timeToFullColor: TimeInterval = 0.7) {
         for i in 0..<self.scheduleItems.count {
@@ -825,7 +836,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: streakStats), forKey: Paths.streakStats)
     }
     func loadStreakStats() -> StreakStats? {
-        if let data = sharedDefaults.object(forKey: Paths.scrollPosition) as? Data {
+        if let data = sharedDefaults.object(forKey: Paths.streakStats) as? Data {
             let unarcher = NSKeyedUnarchiver(forReadingWith: data)
             return unarcher.decodeObject(forKey: "root") as? StreakStats
         }
@@ -879,15 +890,20 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             cell.selectionStyle = .none
             return cell
         }
-        
-        
+        /*
+        else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "emptyCell", for: indexPath)
+            cell.selectionStyle = .none
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            
+            return cell
+        } */
     }
     func getWeekday() -> Int {
         let svc = scheduleViewController!
         return Calendar.current.component(.weekday, from: svc.intToDate(int: svc.currDateInt))
     }
     @objc func markAsPlanned() {
-        print("EF DE FAK U")
         streakStats.markedDays.insert(getCurrDateInt())
         saveStreakStats(streakStats: streakStats)
         tableView.reloadData()
@@ -900,7 +916,6 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        print("NUM ROWS CALLED")
         if(isPlanned && !streakStats.markedDays.contains(getCurrDateInt()) && scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.currDateInt) {
             return scheduleItems.count + 1
         
@@ -943,13 +958,15 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         
         highlightCurrCell()
         normalizeTFLengths()
-        if scheduleViewController.tutorialStep == 0 {
-            scheduleViewController.schedules[currDateInt] = scheduleItems
-            scheduleViewController.tvcUpdated()
-            scheduleViewController.saveSchedules()
-        }
+        
         flashItemsForUpdate()
         tableView.reloadData()
+        if scheduleViewController.tutorialStep == 0 {
+            scheduleViewController.schedules[currDateInt] = scheduleItems
+            
+            scheduleViewController.saveSchedules()
+            scheduleViewController.tvcUpdated()
+        }
     }
     func flashItemsForUpdate() {
         flashItems(itemsToFlash: itemsToFullGreen, for: 2, color: .green)
@@ -1108,14 +1125,20 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         return true
     }
     
+    
      // Override to support editing the table view.
      func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            scheduleItems.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-            update()
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        if(activeTextField == nil) {
+            
+            if editingStyle == .delete {
+                
+                    scheduleItems.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .fade)
+                    update()
+                
+            } else if editingStyle == .insert {
+                // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+            }
         }
      }
      

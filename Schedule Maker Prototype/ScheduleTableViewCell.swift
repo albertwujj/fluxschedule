@@ -255,6 +255,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     }
     //MARK: UITextFieldDelegateFunctions
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        tableViewController.activeTextField = textField
         tableViewController.duringKeyboardScroll = false
         tableViewController.quickReloadCells()
         tableViewController.duringKeyboardScroll = true
@@ -309,6 +310,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         return false
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
+        tableViewController.activeTextField = nil
         if textField == taskNameTF {
             scheduleItem.taskName = textField.text ?? ""
             if textField.text?.range(of: "New Item *\\d*", options: .regularExpression, range: nil, locale: nil) == nil {
@@ -364,7 +366,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
  
     }
     @objc func datePickerValueChangedStartTime(sender:UIDatePicker) {
-        print("START TIME CHANED VLAUE FUCKERS")
+    
         startTimeTFCustomButton.setTitle(ScheduleTableViewCell.timeDescription(durationSinceMidnight: Int(sender.date.timeIntervalSince(startOfToday))), for: .normal)
         startTimeTFCustomButton.sizeToFit()
         

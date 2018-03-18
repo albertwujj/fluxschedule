@@ -40,11 +40,14 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     var startOfToday = Calendar.current.startOfDay(for: Date())
     override func viewDidLoad() {
         super.viewDidLoad()
+
         if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
             sharedDefaults = loadedDefaults
         } else {
             print("UserDefaults BUG")
         }
+        sharedDefaults.register(defaults: [:])
+        Zephyr.sync()
         changeCurrDate()
         if let savedSettings = loadUserSettings() {
             userSettings = savedSettings
@@ -61,6 +64,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(updateDisplay), userInfo: nil, repeats: true)
     }
     @objc func updateDisplay() {
+      
         prevScheduleItem = nil
         currScheduleItem = nil
         nextScheduleItem = nil
@@ -111,7 +115,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             extendPrevButton.isHidden = prevScheduleItem == nil ? true : false
             extendCurrButton.isHidden = currScheduleItem == nil ? true : false
         }
-        
+          Zephyr.sync()
     }
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
         

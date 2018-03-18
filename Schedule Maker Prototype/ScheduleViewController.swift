@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StoreKit
 import os.log
 import Foundation
 import UserNotifications
@@ -59,7 +60,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
     var tutorialStep = 0
     
-    @IBOutlet weak var streakButton: UIButton!
+    
+    @IBOutlet weak var streakLabel: UILabel!
     
     @IBOutlet weak var calendarHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var calendarBottomSpaceConstraint: NSLayoutConstraint!
@@ -71,6 +73,13 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             print("UserDefaults BUG")
         }
         super.viewDidLoad()
+        
+        if let savedStreakStats = tableViewController.loadStreakStats() {
+            tableViewController.streakStats = savedStreakStats
+        }
+        print("FUCKKA")
+        print(String(calculateDailyStreak(tableViewController.streakStats)))
+        streakLabel.text = String(calculateDailyStreak(tableViewController.streakStats))
         calendar.allowsMultipleSelection = false
         calendar.isHidden = true
         calendar.placeholderType = .fillHeadTail
@@ -422,14 +431,17 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         //saveScheduleDates()
         saveSchedules()
         //saveSchedulesData()
-        
+        updateStreakButton()
     }
     
     func tvcUpdated() {
-        streakButton.titleLabel!.text = String(calculateDailyStreak(tableViewController.streakStats))
+        updateStreakButton()
         
     }
-    
+    func updateStreakButton() {
+        streakLabel.text = String(calculateDailyStreak(tableViewController.streakStats))
+        print(String(calculateDailyStreak(tableViewController.streakStats)))
+    }
     
     func saveTutorialStep() {
         
@@ -559,11 +571,12 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             center.add(inactiveRequest)
             if(userSettings.fluxPlus) {
                 for i in schedules[currDateInt] ?? [] {
-                    if let startDate = i.startTime {
+                    
+                    if let startDate = i.startTime, i.taskName != userSettings.defaultName {
                         if startDate > tableViewController.getCurrentDurationFromMidnight() {
                             let content = UNMutableNotificationContent()
-                            content.title = "Time for: \(i.taskName)"
-                            content.body = "Leggo!"
+                            content.title = "\(i.taskName)"
+                            content.body = "Let's go!"
                             content.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
                             content.userInfo = ["notifDate": startDate]
                             content.sound = UNNotificationSound.default()

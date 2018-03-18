@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		750378352055B4270047E10C /* TouchDownGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750378342055B4270047E10C /* TouchDownGestureRecognizer.swift */; };
+		750378372055B7E60047E10C /* Zephyr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750378362055B7E60047E10C /* Zephyr.swift */; };
+		750378382055B7E60047E10C /* Zephyr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750378362055B7E60047E10C /* Zephyr.swift */; };
 		751672E2203F5DC000B2CFCB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7544C5221FCA735E001CC0A6 /* Extensions.swift */; };
 		751672E4203F641E00B2CFCB /* StreakViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751672E3203F641E00B2CFCB /* StreakViewController.swift */; };
 		752693E4201F8AC100BC5D31 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 752693E3201F8AC100BC5D31 /* StoreKit.framework */; };
@@ -117,6 +120,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		750378342055B4270047E10C /* TouchDownGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchDownGestureRecognizer.swift; sourceTree = "<group>"; };
+		750378362055B7E60047E10C /* Zephyr.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Zephyr.swift; sourceTree = "<group>"; };
 		751672E3203F641E00B2CFCB /* StreakViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakViewController.swift; sourceTree = "<group>"; };
 		752693E3201F8AC100BC5D31 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		752704AB20292077005FF9B6 /* IAPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPViewController.swift; sourceTree = "<group>"; };
@@ -218,6 +223,7 @@
 		7591A30E1FB26518002DA737 = {
 			isa = PBXGroup;
 			children = (
+				750378362055B7E60047E10C /* Zephyr.swift */,
 				75F6A37B2038FDAD00E76AFE /* FSCalendar */,
 				7591A3191FB26518002DA737 /* Schedule Maker Prototype */,
 				75A31C731FE5BE34004C6404 /* ScheduleWidget */,
@@ -244,6 +250,7 @@
 				7591A32F1FB26769002DA737 /* ScheduleTableViewCell.swift */,
 				7591A33B1FB683AE002DA737 /* ScheduleViewController.swift */,
 				75A332EA1FC7E7A1001050B8 /* SettingsViewController.swift */,
+				751672E3203F641E00B2CFCB /* StreakViewController.swift */,
 				7591A3351FB63576002DA737 /* PersistData.swift */,
 				7544C5221FCA735E001CC0A6 /* Extensions.swift */,
 				7591A33D1FBA6D23002DA737 /* Schedule.swift */,
@@ -271,7 +278,7 @@
 				75EF86502037E12200916706 /* UIScrollView+TPKeyboardAvoidingAdditions.m */,
 				75EF86522037E15000916706 /* TPKeyboardAvoidingScrollView.h */,
 				75EF86532037E1E300916706 /* TPKeyboardAvoidingScrollView.m */,
-				751672E3203F641E00B2CFCB /* StreakViewController.swift */,
+				750378342055B4270047E10C /* TouchDownGestureRecognizer.swift */,
 			);
 			path = "Schedule Maker Prototype";
 			sourceTree = "<group>";
@@ -400,6 +407,9 @@
 							com.apple.Push = {
 								enabled = 1;
 							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
 						};
 					};
 					75A31C6E1FE5BE34004C6404 = {
@@ -407,6 +417,9 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
 								enabled = 1;
 							};
 						};
@@ -472,6 +485,7 @@
 				75F88AC420030B5F005316DB /* TextFieldToolbarExtension.swift in Sources */,
 				75F6A3A72038FDAE00E76AFE /* FSCalendarCollectionView.m in Sources */,
 				75F6A3A32038FDAE00E76AFE /* FSCalendarCalculator.m in Sources */,
+				750378352055B4270047E10C /* TouchDownGestureRecognizer.swift in Sources */,
 				75F6A3C3203E414600E76AFE /* StreakStats.swift in Sources */,
 				75F88A981FF86400005316DB /* RecurringTasksViewController.swift in Sources */,
 				75F88A9E1FF975C6005316DB /* RecurringTaskTableViewCell.swift in Sources */,
@@ -500,6 +514,7 @@
 				75A31CF71FE5EAB9004C6404 /* ScheduleItem.swift in Sources */,
 				75A332ED1FC8D2D6001050B8 /* Settings.swift in Sources */,
 				75EF864D2037DEF500916706 /* TPKeyboardAvoidingTableView.m in Sources */,
+				750378372055B7E60047E10C /* Zephyr.swift in Sources */,
 				752704AE20292346005FF9B6 /* IAPHelper.swift in Sources */,
 				7591A31B1FB26518002DA737 /* AppDelegate.swift in Sources */,
 			);
@@ -517,6 +532,7 @@
 				75F6A3AA2038FDAE00E76AFE /* FSCalendarCollectionViewLayout.m in Sources */,
 				75F6A3AC2038FDAE00E76AFE /* FSCalendarConstants.m in Sources */,
 				75A31CF51FE5E248004C6404 /* PersistData.swift in Sources */,
+				750378382055B7E60047E10C /* Zephyr.swift in Sources */,
 				75A31CF91FE6458F004C6404 /* Settings.swift in Sources */,
 				751672E2203F5DC000B2CFCB /* Extensions.swift in Sources */,
 				75F6A3B42038FDAE00E76AFE /* FSCalendarHeaderView.m in Sources */,

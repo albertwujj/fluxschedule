@@ -29,6 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             print("UserDefaults BUG")
         }
+        sharedDefaults.register(defaults: [:])
+        Zephyr.sync()
         // Override point for customization after application launch.
         /*
         if (launchOptions != nil)
@@ -91,7 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if notifPermitted {
             scheduleViewController.scheduleTaskNotifs(withAction: false)
         }
-        
+        Zephyr.sync()
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {

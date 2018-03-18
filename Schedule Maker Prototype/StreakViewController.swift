@@ -7,21 +7,35 @@
 //
 
 import UIKit
+import StoreKit
 
 class StreakViewController: UIViewController {
     let sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
+    @IBOutlet weak var totalWeeksCounter: UILabel!
+    @IBOutlet weak var totalDaysCounter: UILabel!
+    @IBOutlet weak var weekStreakCounter: UILabel!
     @IBOutlet var dailyStreakCounter: UILabel!
     var streakStats: StreakStats = StreakStats()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let tvc = (UIApplication.shared.delegate as! AppDelegate).scheduleViewController.tableViewController!
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let savedStreakStats = loadStreakStats() {
+        if let savedStreakStats = tvc.loadStreakStats() {
             streakStats = savedStreakStats
         }
+        
+        updateDisplays()
+        
         // Do any additional setup after loading the view.
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        updateDisplays()
+        Timer.scheduledTimer(timeInterval: 3 * 60, target: self, selector: #selector(requestReview), userInfo: nil, repeats: false)
+    }
+    @objc func requestReview() {
+        if #available(iOS 10.3, *) {
+            SKStoreReviewController.requestReview()
+        }
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -29,6 +43,9 @@ class StreakViewController: UIViewController {
     }
     func updateDisplays() {
         dailyStreakCounter.text = String(calculateDailyStreak(streakStats))
+        weekStreakCounter.text = String(calculateWeeklyStreak(streakStats))
+        totalDaysCounter.text = String(calculateTotalDays(streakStats))
+        totalWeeksCounter.text = String(calculateTotalWeeks(streakStats))
     }
     
     
@@ -42,15 +59,9 @@ class StreakViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
-    func saveStreakStats(streakStats:StreakStats) {
-        sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: streakStats), forKey: Paths.streakStats)
+    
+    
+    @IBAction func backButtonPressed(_ sender: UIButton) {
+        dismiss(animated: true, completion: nil)
     }
-    func loadStreakStats() -> StreakStats? {
-        if let data = sharedDefaults.object(forKey: Paths.scrollPosition) as? Data {
-            let unarcher = NSKeyedUnarchiver(forReadingWith: data)
-            return unarcher.decodeObject(forKey: "root") as? StreakStats
-        }
-        return nil
-    }
-
 }

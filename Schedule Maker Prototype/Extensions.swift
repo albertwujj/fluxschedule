@@ -99,7 +99,7 @@ extension UIScrollView {
     
 }
 extension UIViewController {
-    func weekday(date: Date) -> String  {
+    func getStringWeekday(date: Date) -> String  {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE"
         return dateFormatter.string(from: date).uppercased()
@@ -165,6 +165,51 @@ extension UIViewController {
         j += streakStats.markedDays.contains(currDateInt).hashValue
         return j
     }
+    func getWeekday(_ date: Date) -> Int {
+        return Calendar.current.component(.weekday, from: date)
+    }
+    func calculateTotalDays(_ streakStats: StreakStats)->Int{
+        return streakStats.markedDays.count
+    }
+    func calculateTotalWeeks(_ streakStats: StreakStats) -> Int {
+        let currDateInt = getCurrDateInt()
+        let currDate = intToDate(int: currDateInt)
+        let weekday = getWeekday(currDate)
+        var weekCount = 0
+        
+        var j = 0
+        
+        var isUnbroken = true;
+        for i in ((streakStats.markedDays.min() ?? currDateInt) ... currDateInt - weekday).reversed() {
+            if !streakStats.markedDays.contains(i) {
+                isUnbroken = false
+            }
+            j += 1
+            if(j == 7) {
+                j = 0
+                if(isUnbroken) {
+                    weekCount += 1
+                }
+                isUnbroken = true
+            }
+        }
+        return weekCount
+    }
+    func calculateWeeklyStreak(_ streakStats: StreakStats) -> Int {
+        let currDateInt = getCurrDateInt()
+        let currDate = intToDate(int: currDateInt)
+        let weekday = getWeekday(currDate)
+        
+        var j = 0
+        for i in ((streakStats.markedDays.min() ?? currDateInt) ... currDateInt - weekday).reversed() {
+            if !streakStats.markedDays.contains(i) {
+                break
+            }
+            j += 1
+        }
+        return j / 7
+    }
+    
     func getCurrentDurationFromMidnight() -> Int {
         let date = Date()
         let calendar = Calendar.current
@@ -193,3 +238,4 @@ extension UIViewController {
         
     }
 }
+
