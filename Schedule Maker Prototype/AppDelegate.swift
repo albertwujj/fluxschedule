@@ -93,7 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if notifPermitted {
             scheduleViewController.scheduleTaskNotifs(withAction: false)
         }
-        Zephyr.sync()
+
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
