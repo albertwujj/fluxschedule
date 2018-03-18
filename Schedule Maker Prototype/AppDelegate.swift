@@ -30,7 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("UserDefaults BUG")
         }
         sharedDefaults.register(defaults: [:])
-        Zephyr.sync()
+        Zephyr.debugEnabled = true
+        Zephyr.sync(keys: Paths.schedules, Paths.schedulesEdited, Paths.streakStats, Paths.tutorialStep, Paths.userSettings)
         // Override point for customization after application launch.
         /*
         if (launchOptions != nil)

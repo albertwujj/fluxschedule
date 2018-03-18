@@ -1149,7 +1149,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     
     //MARK: Outer functions
     func addButtonPressed() {
-        print("Number of ScheduleItems: \(scheduleItems.count)")
+      
         var newTask: ScheduleItem!
         
         if testingMode {
