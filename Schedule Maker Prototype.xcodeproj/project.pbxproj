@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		750378352055B4270047E10C /* TouchDownGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750378342055B4270047E10C /* TouchDownGestureRecognizer.swift */; };
 		750378372055B7E60047E10C /* Zephyr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750378362055B7E60047E10C /* Zephyr.swift */; };
-		750378382055B7E60047E10C /* Zephyr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750378362055B7E60047E10C /* Zephyr.swift */; };
 		751672E2203F5DC000B2CFCB /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7544C5221FCA735E001CC0A6 /* Extensions.swift */; };
 		751672E4203F641E00B2CFCB /* StreakViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751672E3203F641E00B2CFCB /* StreakViewController.swift */; };
 		752693E4201F8AC100BC5D31 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 752693E3201F8AC100BC5D31 /* StoreKit.framework */; };
@@ -532,7 +531,6 @@
 				75F6A3AA2038FDAE00E76AFE /* FSCalendarCollectionViewLayout.m in Sources */,
 				75F6A3AC2038FDAE00E76AFE /* FSCalendarConstants.m in Sources */,
 				75A31CF51FE5E248004C6404 /* PersistData.swift in Sources */,
-				750378382055B7E60047E10C /* Zephyr.swift in Sources */,
 				75A31CF91FE6458F004C6404 /* Settings.swift in Sources */,
 				751672E2203F5DC000B2CFCB /* Extensions.swift in Sources */,
 				75F6A3B42038FDAE00E76AFE /* FSCalendarHeaderView.m in Sources */,

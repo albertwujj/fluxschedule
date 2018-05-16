@@ -83,14 +83,11 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         calendar.allowsMultipleSelection = false
         calendar.isHidden = true
         calendar.placeholderType = .fillHeadTail
+       
         userSettings = appDelegate.userSettings
-        
-        
-        
+
         styleAddButton()
-        
-        defaultSchedule = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: userSettings.defaultStartTime)]
-        
+
         topStripe.backgroundColor = appDelegate.userSettings.themeColor
         AppDelegate.changeStatusBarColor(color: appDelegate.userSettings.themeColor)
         recurringTasksButton.setTitle("\u{2630}", for: .normal)
@@ -252,10 +249,11 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
              */
             
         }
+        /*
         else if(segue.identifier == "toSettings") {
             let settingsViewController = segue.destination as! SettingsViewController
             settingsViewController.svc = self
-        }
+        } */
         
     }
     //UITextFieldDelegateFunctions
@@ -274,6 +272,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     //MARK: Input handling
     @IBAction func startTimeEditing(_ sender: UITextField) {
         calendar.isHidden = false
+
         let datePickerView:UIDatePicker = UIDatePicker()
         datePickerView.datePickerMode = UIDatePickerMode.date
         sender.inputView = datePickerView
@@ -396,7 +395,9 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             if selectedDateInt ?? currDateInt == currDateInt {
                 schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: tableViewController.getCurrentDurationFromMidnight())]
             }
-            else { schedules[selectedDateInt ?? currDateInt] = defaultSchedule }
+            else {
+                schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: userSettings.defaultStartTime)]
+            }
              //schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
         }
         
@@ -432,6 +433,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         saveSchedules()
         //saveSchedulesData()
         updateStreakButton()
+        calendar.updateBoundingRect()
     }
     
     func tvcUpdated() {
@@ -487,6 +489,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
             sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedules), forKey: Paths.schedules)
             sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedulesEdited), forKey: Paths.schedulesEdited)
+            print("schedules saved")
         }
     }
     
@@ -659,9 +662,11 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         changeDate(change: 1)
     }
     func changeDate(change: Int) {
+        calendar.updateBoundingRect()
         changeDate(intDate: (selectedDateInt ?? currDateInt) + change)
     }
     func changeDate(intDate: Int) {
+        calendar.updateBoundingRect()
         selectedDateInt = intDate
         calendar.select(intToDate(int: selectedDateInt ?? currDateInt))
         update()
@@ -756,8 +761,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-      
-     
+        
+
         hideCalendar()
         selectedDateInt = dateToHashableInt(date: date)
         update()
@@ -765,12 +770,10 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
     
     func calendar(_ calendar: FSCalendar, didDeselect date: Date) {
-  
-        
-        
-        
     }
-    
+
+
+
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, eventDefaultColorsFor date: Date) -> [UIColor]? {
         if self.gregorian.isDateInToday(date) {
             return [UIColor.orange]

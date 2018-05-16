@@ -24,14 +24,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var recurringTasksTableViewController: RecurringTasksTableViewController?
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
      
+        
         if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
             sharedDefaults = loadedDefaults
         } else {
             print("UserDefaults BUG")
         }
         sharedDefaults.register(defaults: [:])
-        Zephyr.debugEnabled = true
-        Zephyr.sync(keys: Paths.schedules, Paths.schedulesEdited, Paths.streakStats, Paths.tutorialStep, Paths.userSettings)
+
+        Zephyr.sync(keys: [], userDefaults: sharedDefaults!)
+        Zephyr.addKeysToBeMonitored(keys: Paths.schedules, Paths.schedulesEdited, Paths.schedule, Paths.streakStats, Paths.tutorialStep, Paths.userSettings)
+       
         // Override point for customization after application launch.
         /*
         if (launchOptions != nil)
@@ -54,6 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = scheduleViewController
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         print("THIS IS THE SCREEN SIZE: \(UIScreen.main.bounds)")
+        
         return true
     }
     func registerForPushNotifications() {
@@ -86,7 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         scheduleViewController.tableViewController.saveScrollPosition()
     }
-
+    
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
@@ -94,7 +98,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if notifPermitted {
             scheduleViewController.scheduleTaskNotifs(withAction: false)
         }
-
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {

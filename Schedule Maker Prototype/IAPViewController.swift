@@ -14,14 +14,15 @@ class IAPViewController: UIViewController {
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var userSettings: Settings!
     @IBOutlet weak var fluxPlusButton: UIButton!
-    
+    @IBOutlet weak var subButton: UIButton!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         userSettings = appDelegate.userSettings
         
         fluxPlusButton.setSquareBorder(color: UIColor.blue.withAlphaComponent(0.7))
         IAPHandler.shared.fetchAvailableProducts()
-        IAPHandler.shared.purchaseStatusBlock = {[weak self] (type) in
+        IAPHandler.shared.purchaseStatusBlock = {[weak self] (type, trans) in
             guard let strongSelf = self else{ return }
             if type == .disabled {
                 let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
@@ -33,24 +34,28 @@ class IAPViewController: UIViewController {
             }
             
             if type == .purchased || type == .restored {
-                strongSelf.userSettings.fluxPlus = true
-                
-                let svc = strongSelf.appDelegate.scheduleViewController!
-                if(svc.tutorialStep == 0) {
-                    svc.tutorialStep = 6
-                    svc.appDelegate.scheduleViewController.addTutorial()
+                if trans!.payment.productIdentifier == "9P3FVEPY7V.fluxplus" {
+                    strongSelf.userSettings.fluxPlus = true
+
+                    let svc = strongSelf.appDelegate.scheduleViewController!
+                    if(svc.tutorialStep == 0) {
+                        svc.tutorialStep = 6
+                        svc.appDelegate.scheduleViewController.addTutorial()
+                    }
+                    if(svc.tutorialStep == 5) {
+                        svc.tutorialStep = 4
+                        svc.tableViewController.scheduleItems = svc.tutorialStep4
+                        svc.tableViewController.updateFromSVC()
+                        svc.tutorialNextButton.setTitle("Done! Now give me an example.", for: .normal)
+                        svc.tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
+                        svc.tutorialNextButton.isEnabled = false
+                    }
+                    svc.tutorialStep5 = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600, locked: true), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60, locked: true), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: 30 * 60)]
+                    svc.appDelegate.scheduleViewController.saveTutorialStep()
+                    svc.appDelegate.saveUserSettings()
+                } else if trans!.payment.productIdentifier == "9P3FVEPY7V.sub" {
+                    strongSelf.userSettings.subs = true
                 }
-                if(svc.tutorialStep == 5) {
-                    svc.tutorialStep = 4
-                    svc.tableViewController.scheduleItems = svc.tutorialStep4
-                    svc.tableViewController.updateFromSVC()
-                    svc.tutorialNextButton.setTitle("Done! Now give me an example.", for: .normal)
-                    svc.tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
-                    svc.tutorialNextButton.isEnabled = false
-                }
-                svc.tutorialStep5 = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600, locked: true), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60, locked: true), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: 30 * 60)]
-                svc.appDelegate.scheduleViewController.saveTutorialStep()
-                svc.appDelegate.saveUserSettings()
             }
         }
         // Do any additional setup after loading the view.

@@ -25,6 +25,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var userSettings: Settings!
     override func viewDidLoad() {
         super.viewDidLoad()
+        svc = appDelegate.scheduleViewController
         userSettings = (UIApplication.shared.delegate as! AppDelegate).userSettings
         timeModeSwitch.addTarget(self, action: #selector(timeModeChanged(switchState:)), for: .valueChanged)
         timeModeSwitch.isOn = appDelegate.userSettings.is24Mode

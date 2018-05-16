@@ -27,7 +27,7 @@ class IAPHandler: NSObject {
     fileprivate var productsRequest = SKProductsRequest()
     fileprivate var iapProducts = [SKProduct]()
     
-    var purchaseStatusBlock: ((IAPHandlerAlertType) -> Void)?
+    var purchaseStatusBlock: ((IAPHandlerAlertType, SKPaymentTransaction?) -> Void)?
     
     // MARK: - MAKE PURCHASE OF A PRODUCT
     func canMakePurchases() -> Bool {  return SKPaymentQueue.canMakePayments()  }
@@ -44,7 +44,7 @@ class IAPHandler: NSObject {
             print("PRODUCT TO PURCHASE: \(product.productIdentifier)")
             productID = product.productIdentifier
         } else {
-            purchaseStatusBlock?(.disabled)
+            purchaseStatusBlock?(.disabled, nil)
         }
     }
     
@@ -85,7 +85,9 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
     }
     
     func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
-        purchaseStatusBlock?(.restored)
+        for trans in queue.transactions {
+            purchaseStatusBlock?(.restored, trans)
+        }
     }
     
     // MARK:- IAP PAYMENT QUEUE
@@ -96,7 +98,7 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
                 case .purchased:
                     print("purchased")
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
-                    purchaseStatusBlock?(.purchased)
+                    purchaseStatusBlock?(.purchased, trans)
                     break
                     
                 case .failed:
@@ -105,7 +107,7 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
                     break
                 case .restored:
                     print("restored")
-                    purchaseStatusBlock?(.restored)
+                    purchaseStatusBlock?(.restored, trans)
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
                     break
                     

@@ -312,6 +312,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     func textFieldDidEndEditing(_ textField: UITextField) {
         tableViewController.activeTextField = nil
         if textField == taskNameTF {
+            //update name
             scheduleItem.taskName = textField.text ?? ""
             if textField.text?.range(of: "New Item *\\d*", options: .regularExpression, range: nil, locale: nil) == nil {
                 tableViewController.scheduleViewController.schedulesEdited.insert(tableViewController.currDateInt)

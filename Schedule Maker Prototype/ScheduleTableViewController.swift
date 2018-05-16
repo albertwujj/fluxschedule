@@ -11,7 +11,9 @@ import UIKit
 import UserNotifications
 
 class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
-    
+
+    static let maxItems = 50
+
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var userSettings: Settings!
     var sharedDefaults: UserDefaults!
@@ -30,7 +32,6 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     var shouldSelectLast = false
     var prevScrollPos: IndexPath?
     var duringKeyboardScroll = false
-    var isPlanned = false
     
     var activeTextField: UITextField?
     var streakStats = StreakStats()
@@ -904,7 +905,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         return Calendar.current.component(.weekday, from: svc.intToDate(int: svc.currDateInt))
     }
     @objc func markAsPlanned() {
-        streakStats.markedDays.insert(getCurrDateInt())
+        streakStats.markedDays.insert(currDateInt)
         saveStreakStats(streakStats: streakStats)
         tableView.reloadData()
         update()
@@ -916,7 +917,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if(isPlanned && !streakStats.markedDays.contains(getCurrDateInt()) && scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.currDateInt) {
+        if isPlanned() && !streakStats.markedDays.contains(currDateInt) &&  scheduleViewController.tutorialStep == 0 {
             return scheduleItems.count + 1
         
         } else {
@@ -953,9 +954,6 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.reloadData()
         mergeSameName()
         tableView.reloadData()
-        
-        checkForPlanned()
-        
         highlightCurrCell()
         normalizeTFLengths()
         
@@ -976,10 +974,8 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         flashItems(itemsToFlash: itemsToRed, for: 1, color: .red)
         itemsToRed = []
     }
-    func checkForPlanned() {
-        isPlanned = planned()
-    }
-    func planned() -> Bool{
+
+    func isPlanned() -> Bool{
         for i in scheduleItems {
             if i.taskName == userSettings.defaultName {
                 return false
@@ -1149,39 +1145,57 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     
     //MARK: Outer functions
     func addButtonPressed() {
-      
-        var newTask: ScheduleItem!
-        
-        if testingMode {
-            newTask = ScheduleItem(name: "\(scheduleItems.count + 1)", duration: userSettings.defaultDuration, locked: false)
-        }
-        else { newTask = ScheduleItem(name: "\(userSettings.defaultName)", duration: userSettings.defaultDuration, locked: false) }
-        newTask.startTime = userSettings.defaultStartTime
-        scheduleItems.append(newTask)
-        
-        tableView.insertRows(at: [IndexPath(scheduleItems.count - 1)], with: .none)
-       
-        update()
-        let indexPath = IndexPath(self.scheduleItems.count - 1)
-        self.scrollToBottom(indexPath: IndexPath(self.scheduleItems.count - 1))
-        tableView.reloadData()
-        self.scheduleViewController.schedulesEdited.insert(self.currDateInt)
-        if let tf = self.tableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
-            //tf.taskNameTF.becomeFirstResponder()
-            /*
-            var scrollPoint = CGPoint(x: 0.0, y: tf.startTimeTF.frame.origin.y)
-            scrollPoint = tableView.convert(scrollPoint, from: tf)
-            tableView.setContentOffset(CGPoint(x: 0.0, y: tableView.contentOffset.y), animated: true)
-            */
-          
+        if scheduleItems.count <= ScheduleTableViewController.maxItems {
+            var newTask: ScheduleItem!
 
-            tf.startTimeTF.backgroundColor = UIColor.white
-            tf.durationTF.backgroundColor = UIColor.white
-            tf.backgroundColor = UIColor.white
-        } else {
-            
+            if testingMode {
+                newTask = ScheduleItem(name: "\(scheduleItems.count + 1)", duration: userSettings.defaultDuration, locked: false)
+            }
+            else { newTask = ScheduleItem(name: "\(userSettings.defaultName)", duration: userSettings.defaultDuration, locked: false) }
+            newTask.startTime = userSettings.defaultStartTime
+            scheduleItems.append(newTask)
+
+            tableView.insertRows(at: [IndexPath(scheduleItems.count - 1)], with: .none)
+
+            update()
+            let indexPath = IndexPath(self.scheduleItems.count - 1)
+            self.scrollToBottom(indexPath: IndexPath(self.scheduleItems.count - 1))
+            tableView.reloadData()
+            self.scheduleViewController.schedulesEdited.insert(self.currDateInt)
+            if let tf = self.tableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
+                //tf.taskNameTF.becomeFirstResponder()
+                /*
+                var scrollPoint = CGPoint(x: 0.0, y: tf.startTimeTF.frame.origin.y)
+                scrollPoint = tableView.convert(scrollPoint, from: tf)
+                tableView.setContentOffset(CGPoint(x: 0.0, y: tableView.contentOffset.y), animated: true)
+                */
+
+
+                tf.startTimeTF.backgroundColor = UIColor.white
+                tf.durationTF.backgroundColor = UIColor.white
+                tf.backgroundColor = UIColor.white
+            } else {
+
+            }
+            self.shouldSelectLast = true
+            if let data = NSKeyedArchiver.archivedData(withRootObject: scheduleViewController.schedules) as Data? {
+                print("There were \(data.count) bytes")
+                let bcf = ByteCountFormatter()
+                bcf.allowedUnits = [.useMB] // optional: restricts the units to MB only
+                bcf.countStyle = .file
+                let string = bcf.string(fromByteCount: Int64(data.count))
+                print("formatted result: \(string)")
+            }
+        } else{
+            let alertController = UIAlertController(title: "Too many items!", message: "Sorry, you cannot have more than \(ScheduleTableViewController.maxItems) items.", preferredStyle: UIAlertControllerStyle.alert)
+
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            {
+                (result : UIAlertAction) -> Void in
+            }
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
         }
-        self.shouldSelectLast = true
     }
   
     

@@ -46,8 +46,8 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         } else {
             print("UserDefaults BUG")
         }
-        sharedDefaults.register(defaults: [:])
-        Zephyr.sync()
+        //sharedDefaults.register(defaults: [:])
+        //Zephyr.sync(userDefaults: sharedDefaults)
         changeCurrDate()
         if let savedSettings = loadUserSettings() {
             userSettings = savedSettings
@@ -115,7 +115,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             extendPrevButton.isHidden = prevScheduleItem == nil ? true : false
             extendCurrButton.isHidden = currScheduleItem == nil ? true : false
         }
-          Zephyr.sync()
+       
     }
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
         

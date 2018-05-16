@@ -31,6 +31,7 @@ class Settings: NSObject, NSCoding {
     var defaultDuration = 30 * 60
     var notificationsOn = true
     var fluxPlus = true
+    var subs = true
     func encode(with aCoder: NSCoder) {
         aCoder.encode(is24Mode, forKey: PropertyKey.is24Mode)
         aCoder.encode(notifDelayTime, forKey: PropertyKey.notifDelayTime)
@@ -42,6 +43,7 @@ class Settings: NSObject, NSCoding {
         aCoder.encode(is5MinIncrement, forKey: PropertyKey.is5MinIncrement)
         aCoder.encode(notificationsOn as Any, forKey: PropertyKey.notificationsOn)
         aCoder.encode(fluxPlus, forKey: PropertyKey.fluxPlus)
+        aCoder.encode(subs, forKey: PropertyKey.subs)
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
@@ -53,9 +55,11 @@ class Settings: NSObject, NSCoding {
         self.defaultDuration = (aDecoder.decodeObject(forKey: PropertyKey.defaultDuration) ?? 30 * 60) as! Int
         //self.themeColor = aDecoder.decodeObject(forKey: PropertyKey.themeColor) as! UIColor
         self.notificationsOn = (aDecoder.decodeObject(forKey: PropertyKey.notificationsOn) ?? true) as! Bool
-        self.fluxPlus = aDecoder.decodeBool(forKey: PropertyKey.fluxPlus) ?? fluxPlus
+        self.fluxPlus = aDecoder.decodeBool(forKey: PropertyKey.fluxPlus) 
+        self.subs = aDecoder.decodeBool(forKey: PropertyKey.subs) 
         //self.insertOption = InsertOption(rawValue: aDecoder.decodeInteger(forKey: PropertyKey.insertOption))!
         self.insertOption = .split
+
         //self.defaultStartTime = aDecoder.decodeInteger(forKey: PropertyKey.defaultStartTime)
         //self.defaultName =
     }
@@ -71,6 +75,7 @@ class Settings: NSObject, NSCoding {
         static let is5MinIncrement = "is5MinIncrement"
         static let notificationsOn = "notificationsOn"
         static let fluxPlus = "fluxPlus"
+        static let subs = "subs"
     }
     
    
