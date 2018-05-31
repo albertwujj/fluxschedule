@@ -13,7 +13,7 @@ import Foundation
 import UserNotifications
 
 
-class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate, FSCalendarDelegate, FSCalendarDataSource {
+class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate, FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
     fileprivate let gregorian = Calendar.current
     fileprivate let formatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -21,16 +21,15 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         return formatter
     }()
    
-    
-    @IBOutlet weak var fsCalendarButton: UIButton!
+
+    @IBOutlet weak var calendarHeader: UIView!
     @IBOutlet weak var calendar: FSCalendar!
-    
+    @IBOutlet weak var calendarTodayButton: UIButton!
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet weak var tutorialNextButton: UIButton!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var userSettings: Settings!
     @IBOutlet weak var iapButton: UIButton!
-    @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var weekdayLabel: UILabel!
     @IBOutlet weak var dateTextField: AccessoryTextField!
     
@@ -52,6 +51,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var tutorialStep3: [ScheduleItem]!
     var tutorialStep4: [ScheduleItem]!
     var tutorialStep5: [ScheduleItem]!
+    var tutorialStep7: [ScheduleItem]!
     var defaultSchedule: [ScheduleItem]!
     var lockedTasksEnabled = true
     
@@ -63,30 +63,28 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
     @IBOutlet weak var streakLabel: UILabel!
     
+    @IBOutlet weak var calendarHeaderHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var calendarHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var calendarBottomSpaceConstraint: NSLayoutConstraint!
     override func viewDidLoad() {
-        
+      
         if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
             sharedDefaults = loadedDefaults
         } else {
             print("UserDefaults BUG")
         }
         super.viewDidLoad()
-        
-        if let savedStreakStats = tableViewController.loadStreakStats() {
-            tableViewController.streakStats = savedStreakStats
-        }
+
+
         print("FUCKKA")
         print(String(calculateDailyStreak(tableViewController.streakStats)))
         streakLabel.text = String(calculateDailyStreak(tableViewController.streakStats))
         calendar.allowsMultipleSelection = false
         calendar.isHidden = true
         calendar.placeholderType = .fillHeadTail
-       
         userSettings = appDelegate.userSettings
 
-        styleAddButton()
+        styleAddButtonPlus()
 
         topStripe.backgroundColor = appDelegate.userSettings.themeColor
         AppDelegate.changeStatusBarColor(color: appDelegate.userSettings.themeColor)
@@ -94,10 +92,12 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
         tutorialStep1 = [ScheduleItem(name: "Welcome to Flux!", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "These are", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "schedule items.", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
         tutorialStep2 = [ScheduleItem(name: "Try tapping", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "any of", duration: userSettings.defaultDuration), ScheduleItem(name: "the boxes.", duration: userSettings.defaultDuration), ScheduleItem(name: "Left is start time.", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "Right is duration.", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
-        tutorialStep3 = [ScheduleItem(name: "Now, try", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "holding the", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "blue swirly button", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "Can you move us", duration: userSettings.defaultDuration), ScheduleItem(name: "around?", duration: userSettings.defaultDuration)]
+        tutorialStep7 = [ScheduleItem(name: "Swipe", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "left", duration: userSettings.defaultDuration), ScheduleItem(name: "on an item", duration: userSettings.defaultDuration), ScheduleItem(name: "to delete it.", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
+        tutorialStep3 = [ScheduleItem(name: "Now, try", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "holding the", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "blue swirly button", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "Can you drag us", duration: userSettings.defaultDuration), ScheduleItem(name: "around?", duration: userSettings.defaultDuration)]
          tutorialStep4 = [ScheduleItem(name: "Tap the", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "blue swirly button", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime), ScheduleItem(name: "to lock a task.", duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
     
-        tutorialStep5 = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600, locked: userSettings.fluxPlus), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60, locked: userSettings.fluxPlus), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
+        tutorialStep5 = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Inspect Instagram", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600, locked: userSettings.fluxPlus), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60, locked: userSettings.fluxPlus), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
+
         
         tutorialNextButton.layer.cornerRadius = 2
         tutorialNextButton.layer.borderWidth = 1
@@ -128,17 +128,16 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         containerView.layer.borderWidth = 0.0;
         changeCurrDate()
         dateTextField.delegate = self
-        dateTextField.addButtons(customString: "Today")
         dateTextField.accessoryDelegate = self
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(textFieldPressed(_:)))
         weekdayLabel.addGestureRecognizer(tapGesture)
         weekdayLabel.isUserInteractionEnabled = true
         weekdayLabel.textAlignment = .center
+        calendarHeader.layer.borderColor = UIColor.clear.cgColor
         addTutorial()
-        
         // Do any additional setup after loading the view.
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if(userSettings.fluxPlus) {
@@ -154,15 +153,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }
         
     }
-    func styleAddButton() {
-        addButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
-        addButton.layer.cornerRadius = 0.5 * addButton.bounds.size.width
-        addButton.titleLabel?.baselineAdjustment = .alignBaselines
-        let separatorColor = tableViewController.tableView.separatorColor
-        addButton.layer.borderColor = separatorColor?.cgColor
-        addButton.layer.borderWidth = 0.5
-        addButton.backgroundColor = .white
-    }
+
+
     func addTutorial() {
         
         
@@ -190,7 +182,12 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
     func stepLockedComplete() {
         if tutorialStep == 4 || tutorialStep == 6 {
-            
+            tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
+            tutorialNextButton.isEnabled = true
+        }
+    }
+    func stepDeleteComplete() {
+        if tutorialStep == 7 {
             tutorialNextButton.layer.borderColor = UIColor.blue.cgColor
             tutorialNextButton.isEnabled = true
         }
@@ -237,7 +234,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         if(segue.identifier == "EmbeddedTable") {
             tableViewController = segue.destination as! ScheduleTableViewController
             tableViewController.scheduleViewController = self
-            tableViewController.currDateInt = currDateInt
+            tableViewController.dateInt = currDateInt
         
             /*
              if let sDate = selectedDate {
@@ -285,12 +282,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         textFieldShouldReturn(dateTextField)
     }
     //MARK: AccessoryTextFieldDelegate functions
-    func textFieldContainerButtonPressed(_ sender: AccessoryTextField) {
-        sender.resignFirstResponder()
-        if sender === dateTextField {
-            changeDate(intDate: currDateInt)
-        }
-    }
+    
     func textFieldCancelButtonPressed(_ sender: AccessoryTextField) {
         sender.resignFirstResponder()
     }
@@ -309,11 +301,18 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             tableViewController.updateFromSVC()
             sender.setTitle("Next", for: .normal)
             saveTutorialStep()
-            
         }
         else if tutorialStep == 2 {
-           
-            tutorialStep += 1
+            tutorialStep = 7
+            tableViewController.scheduleItems = tutorialStep7
+            tableViewController.updateFromSVC()
+            sender.setTitle("Done!", for: .normal)
+            saveTutorialStep()
+            tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
+            sender.isEnabled = false
+        }
+        else if tutorialStep == 7 {
+            tutorialStep = 3
             tableViewController.scheduleItems = tutorialStep3
             tableViewController.updateFromSVC()
             sender.setTitle("Done!", for: .normal)
@@ -360,7 +359,6 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     //adds recurring tasks to new schedules
     //updates tableViewController
     //updates self
-   // FICI SFOUSDFHFDS
     func update() {
         
         /*
@@ -390,17 +388,16 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         if testingMode {
              schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: userSettings.defaultStartTime)]
         }
-        
-        else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil {
+        else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil{
             if selectedDateInt ?? currDateInt == currDateInt {
                 schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: tableViewController.getCurrentDurationFromMidnight())]
             }
             else {
                 schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: userSettings.defaultStartTime)]
             }
-             //schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
+
         }
-        
+
         if tutorialStep != 0 {
             if (tutorialStep == 1) {
                 tableViewController.scheduleItems = tutorialStep1
@@ -420,7 +417,11 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         else {
             tableViewController.scheduleItems = schedules[selectedDateInt ?? currDateInt]!
         }
-        tableViewController.currDateInt = selectedDateInt ?? currDateInt
+        //tableViewController.scheduleItems = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Inspect Instagram", duration: 15 * 60), ScheduleItem(name: "Museum", duration: 90 * 60, locked: userSettings.fluxPlus), ScheduleItem(name: "Tour the market", duration: 40 * 60, locked: userSettings.fluxPlus), ScheduleItem(name: "Space needle", duration: 40 * 60), ScheduleItem(name: "Brunch at buffet", duration: 80 * 60), ScheduleItem(name: "Meet up with family", duration: userSettings.defaultDuration), ScheduleItem(name: "Ride the ferr", duration: userSettings.defaultDuration)]
+        tableViewController.scheduleItems = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
+        //tableViewController.scheduleItems = [ScheduleItem(name: "Westworld season 2", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Finish essay", duration: 15 * 60), ScheduleItem(name: "10 min abs", duration: 8 * 3600)]
+        //tableViewController.scheduleItems = [ScheduleItem(name: "Dinner", duration: 40 * 60, startTime: 18 * 3600)]
+        tableViewController.dateInt = selectedDateInt ?? currDateInt
         tableViewController.updateFromSVC()
   
         
@@ -433,7 +434,10 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         saveSchedules()
         //saveSchedulesData()
         updateStreakButton()
-        calendar.updateBoundingRect()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1)) {
+            self.calendar.updateBoundingRect()
+        }
+
     }
     
     func tvcUpdated() {
@@ -446,9 +450,6 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
     
     func saveTutorialStep() {
-        
-
-        
         if sharedDefaults != nil {
             sharedDefaults.set(tutorialStep + 1, forKey: Paths.tutorialStep)
         }
@@ -473,6 +474,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }
         return nil
     }
+   
   
     func saveSchedules() {
         if(!loadedSchedules) {
@@ -492,7 +494,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             print("schedules saved")
         }
     }
-    
+
     func loadSchedules() -> [Int:[ScheduleItem]]? {
     
      
@@ -500,7 +502,6 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             if let data = sharedDefaults.object(forKey: Paths.schedules) as? Data {
                 NSKeyedUnarchiver.setClass(ScheduleItem.self, forClassName: "ScheduleItem")
                 let unarcher = NSKeyedUnarchiver(forReadingWith: data)
-             
                 return unarcher.decodeObject(forKey: "root") as? [Int:[ScheduleItem]]
             }
         }
@@ -517,9 +518,17 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         return nil
     }
     
- 
+    @IBAction func calendarTodayButtonPressed(_ sender: UIButton) {
+        changeDate(intDate: currDateInt)
+    }
+
     @IBAction func addButtonPressed(_ sender: UIButton) {
-        tableViewController!.addButtonPressed()
+        if calendar.isHidden || true {
+            tableViewController!.addButtonPressed()
+        } else {
+            changeDate(intDate: currDateInt)
+            hideCalendar()
+        }
     }
     
    
@@ -544,13 +553,16 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         let delay = UNNotificationAction(identifier: "delay",
                                          title: "Delay by \(appDelegate.userSettings.notifDelayTime) minutes",
             options: UNNotificationActionOptions(rawValue: 0))
+        let delay5 = UNNotificationAction(identifier: "delay5",
+                                         title: "Delay by 5 minutes",
+            options: UNNotificationActionOptions(rawValue: 0))
         
         let taskNoAction = UNNotificationCategory(identifier: "taskNoAction",
                                                       actions: [],
                                                       intentIdentifiers: [],
                                                       options: UNNotificationCategoryOptions(rawValue: 0))
         let taskWithAction = UNNotificationCategory(identifier: "taskWithAction",
-                                                      actions: [delay],
+                                                      actions: [delay5, delay],
                                                       intentIdentifiers: [],
                                                       options: UNNotificationCategoryOptions(rawValue: 0))
         let center = UNUserNotificationCenter.current()
@@ -568,18 +580,16 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
             inactiveContent.body = "You've been gone for 48 hours. Wanna get back on a schedule?"
             inactiveContent.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
             inactiveContent.sound = UNNotificationSound.default()
-            
-            
+
             let inactiveRequest = UNNotificationRequest(identifier: UUID().uuidString, content: inactiveContent, trigger: inactiveTrigger)
             center.add(inactiveRequest)
             if(userSettings.fluxPlus) {
                 for i in schedules[currDateInt] ?? [] {
-                    
                     if let startDate = i.startTime, i.taskName != userSettings.defaultName {
                         if startDate > tableViewController.getCurrentDurationFromMidnight() {
                             let content = UNMutableNotificationContent()
                             content.title = "\(i.taskName)"
-                            content.body = "Let's go!"
+                            content.body = "\(timeDescription(durationSinceMidnight: i.startTime!))"
                             content.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
                             content.userInfo = ["notifDate": startDate]
                             content.sound = UNNotificationSound.default()
@@ -587,8 +597,8 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
                             var dateComponents = DateComponents()
                             dateComponents.hour = startDate / 3600
                             dateComponents.minute = (startDate % 3600) / 60
-                            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-                            
+                            var trigger: UNNotificationTrigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+                            //trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
                             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
                             center.add(request)
                         }
@@ -600,6 +610,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         if let savedSchedules = loadSchedules() {
             schedules = savedSchedules
         }
@@ -611,11 +622,14 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
         if let notifDate = userInfo["notifDate"] as? Int {
             print("notifDate received: \(notifDate)")
-            
+
+            var delay = appDelegate.userSettings.notifDelayTime
             switch response.actionIdentifier {
             case UNNotificationDefaultActionIdentifier:
                 print("default action notification")
-            
+            case "delay5":
+                delay = 5
+                fallthrough
             case "delay":
                 // the user tapped our "show more info…" button
                 print("delay task")
@@ -626,7 +640,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
                     if schedules[currDateInt]![i].startTime != nil && schedules[currDateInt]![i].startTime! == notifDate {
                         
                         if(i > 0) {
-                            schedules[currDateInt]![i - 1].duration += appDelegate.userSettings.notifDelayTime * 60
+                            schedules[currDateInt]![i - 1].duration += delay * 60
                         
                             if(selectedDateInt ?? currDateInt == currDateInt) {
                                 update()
@@ -635,22 +649,21 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
                             break
                         }
                         if(i == 0) {
-                            schedules[currDateInt]![0].startTime! += appDelegate.userSettings.notifDelayTime * 60
+                            schedules[currDateInt]![0].startTime! += delay * 60
                             if(selectedDateInt ?? currDateInt == currDateInt) {
                                 update()
-                        
                             }
                         }
                     }
                 }
                 schedulesEdited.insert(selectedDateInt ?? currDateInt)
                 saveSchedules()
-                
+
             default:
                 break
             }
         }
-        
+        scheduleTaskNotifs(withAction: true)
         // you must call the completion handler when you're done
         completionHandler()
     }
@@ -662,11 +675,9 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         changeDate(change: 1)
     }
     func changeDate(change: Int) {
-        calendar.updateBoundingRect()
         changeDate(intDate: (selectedDateInt ?? currDateInt) + change)
     }
     func changeDate(intDate: Int) {
-        calendar.updateBoundingRect()
         selectedDateInt = intDate
         calendar.select(intToDate(int: selectedDateInt ?? currDateInt))
         update()
@@ -687,22 +698,30 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         
     }
     @IBAction func fsCalendarButtonPressed(_ sender: UIButton) {
-        
+
         if calendar.isHidden {
             showCalendar()
         } else {
             hideCalendar()
         }
-        calendar.select(intToDate(int: selectedDateInt ?? currDateInt))
+
+    }
+    func styleAddButtonPlus() {
+        addButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
+        addButton.layer.cornerRadius = 0.5 * addButton.bounds.size.width
+        addButton.titleLabel?.baselineAdjustment = .alignBaselines
+        let separatorColor = tableViewController.tableView.separatorColor
+        addButton.layer.borderColor = separatorColor?.cgColor
+        addButton.layer.borderWidth = 0.5
+        addButton.backgroundColor = .white
+
     }
     func showCalendar() {
-        
-        var dc = DateComponents.init(month: 9)
-        dc.year = 1999
-        
+        calendar.updateBoundingRect()
+        calendar.select(intToDate(int: selectedDateInt ?? currDateInt))
         calendar.isHidden = false
         self.view.layoutIfNeeded()
-        
+
         calendarBottomSpaceConstraint.constant = (calendarHeightConstraint.secondItem?.frame.height)! * calendarHeightConstraint.multiplier
         
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: { () -> Void in
@@ -714,7 +733,6 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         calendar.updateBoundingRect()
     }
     func hideCalendar() {
-        
         calendarBottomSpaceConstraint.constant = 0
         UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations: { () -> Void in
             self.view.layoutIfNeeded()
@@ -722,7 +740,6 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }, completion: { (finished) -> Void in
             self.calendar.isHidden = true
         })
-        
     }
     /*
     func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
@@ -736,7 +753,7 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
     func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
         if self.gregorian.isDateInToday(date) {
-            return "Today"
+            return "T"
         }
         return nil
     }
@@ -780,5 +797,16 @@ class ScheduleViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }
         return [appearance.eventDefaultColor]
     }
+    /*
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
+
+        for i in tableViewController.streakStats.markedDays {
+            if self.gregorian.isDate(intToDate(int: i), inSameDayAs: date) {
+                return UIColor.purple
+            }
+        }
+        return appearance.titleDefaultColor
+    } */
+   
    
 }
