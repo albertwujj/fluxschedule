@@ -43,10 +43,10 @@ class IAPViewController: UIViewController {
                         svc.appDelegate.scheduleViewController.addTutorial()
                     }
                     if(svc.tutorialStep == 5) {
-                        svc.tutorialStep = 4
+                        svc.tutorialStep = 3
                         svc.tableViewController.scheduleItems = svc.tutorialStep4
                         svc.tableViewController.updateFromSVC()
-                        svc.tutorialNextButton.setTitle("Done! Now give me an example.", for: .normal)
+                        svc.tutorialNextButton.setTitle("Done!", for: .normal)
                         svc.tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
                         svc.tutorialNextButton.isEnabled = false
                     }

@@ -22,5 +22,6 @@ struct Paths {
     static let streakStats = "streakStats"
     static let notNewPhone = "notNewPhone"
     static let notNewStore = "notNewStore"
+    static let sessCount = "sessCount"
     
 }

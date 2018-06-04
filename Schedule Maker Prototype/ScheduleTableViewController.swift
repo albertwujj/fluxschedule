@@ -20,6 +20,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     var cellSnapshot: UIView?
     var initialIndexPath: IndexPath? = nil
     var veryInitialIndexPath : IndexPath? = nil
+    var veryVeryInitialIndexPath : IndexPath? = nil
     var firstTouch: IndexPath?
     var isAnyLockedItems: Bool = false
     var didDragLockedItem = false
@@ -45,11 +46,12 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     
     var scheduleItems: [ScheduleItem] = [ScheduleItem(name: "BUG! IF YOU SEE THIS", duration: 30 * 60)]
     var origLockedItems: [ScheduleItem] = []
-    var currDateInt = 0
+    var dateInt = 0
     
     @IBOutlet var tableView: UITableView!
     //MARK: Initialization
     override func viewDidLoad() {
+
         if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
             sharedDefaults = loadedDefaults
         } else {
@@ -59,20 +61,15 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         self.tableView.contentInset = insets
         darkPurple = UIColor(displayP3Red: 52/255, green: 8/255, blue: 107/255, alpha: 0.35)
         //tableView.separatorColor = darkPurple
-        
+        if let savedStreakStats = loadStreakStats() {
+            streakStats = savedStreakStats
+        }
         userSettings = appDelegate.userSettings
         super.viewDidLoad()
         let touchDown = SingleTouchDownGestureRecognizer(target: self, action: #selector(touchedDown))
         touchDown.delegate = self
         
         self.view.addGestureRecognizer(touchDown)
-        
-        
-       
-        //update()
-        //Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(highlightCurrCell), userInfo: nil, repeats: true)
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
         addLongPressGesture()
         
         /*
@@ -103,7 +100,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         super.viewDidAppear(true)
         
         update()
-        if currDateInt == scheduleViewController.dateToHashableInt(date: Date()), let scrollPosition = loadScrollPosition() {
+        if dateInt == scheduleViewController.dateToHashableInt(date: Date()), let scrollPosition = loadScrollPosition() {
             scrollToTop(indexPath: scrollPosition)
         }
     }
@@ -111,29 +108,46 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         changeRowHeight()
+        tableView.reloadData()
     }
     func changeRowHeight() {
         DispatchQueue.main.async {
             
-        
+            /*
             if UIDevice.current.orientation.isLandscape {
-    
-                if (UIScreen.main.bounds.height < 600) {
+                if (UIScreen.main.bounds.width < 600) {
                     self.rowHeight = 43
                 } else {
                     self.rowHeight = 45
                 }
-            } else {
- 
+             else {
                 if (UIScreen.main.bounds.height < 600) {
                     self.rowHeight = 45
                 } else {
                     self.rowHeight = 60
                 }
+             }
+            */
+
+            //iphone 5, iphone, iphone+x, ipad, ipad 12.9
+            var sizesToHeights = [(599,43), (700,52), (820,55), (1300,60), (99999,65)]
+            if self.userSettings.compactMode || UIDevice.current.orientation.isLandscape {
+                //iphone 5, iphone, ipad
+                sizesToHeights = [(350,38), (750,41), (99999, 47)]
             }
+            //sets rowHeight to first tuple's whose screenHeight is greater than the screen height
+            for i in sizesToHeights {
+                let height = Int(UIScreen.main.bounds.height)
+                if height < i.0 {
+                    self.rowHeight = i.1
+                    break
+                }
+            }
+            //self.rowHeight = Int(UIScreen.main.bounds.height * 0.09)
             self.tableView.reloadData()
         }
     }
+
     func flashItems(itemsToFlash: [ScheduleItem], for tfID: Int, color: UIColor) {
         for i in 0..<self.scheduleItems.count {
             for j in itemsToFlash {
@@ -255,11 +269,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                             tf = cell.durationTF
                         } else if tfID == 2{
                             tf = cell.subviews[0]
-                    
                         }
-                        
-                        
-                      
                         DispatchQueue.main.async {
                             UIView.animate(withDuration: 0.9, animations: { () -> Void in
                                 tf.backgroundColor = .white
@@ -268,7 +278,6 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                                 
                             })
                         }
-                               
                     }
                     break
                 }
@@ -397,7 +406,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.addGestureRecognizer(longpress)
         
     }
-    func quickReloadCellTimes(index: Int) {
+    func quickReloadCellTimes() {
         for path in tableView.indexPathsForVisibleRows! where path.row < scheduleItems.count {
             let row = path.row
             let scheduleItem = scheduleItems[row]
@@ -407,9 +416,9 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                 } else {
                     cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
                     if scheduleItem.startTime != scheduleItem.initialStartTime {
-        
+
                         cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
-                     }
+                    }
                     else {
                         cell.startTimeTF.backgroundColor = UIColor.white
                     }
@@ -422,6 +431,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         }
         highlightCurrCell()
     }
+
     func quickReloadCells() {
             for path in tableView.indexPathsForVisibleRows! {
                 let row = path.row
@@ -450,6 +460,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         var indexPath = tableView.indexPathForRow(at: locationInView)
         
         if sender.state == .began && indexPath != nil {
+            veryInitialIndexPath = indexPath
             if indexPath!.row >= scheduleItems.count {
                 return
             }
@@ -502,31 +513,43 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             var center = cellSnapshot!.center
             center.y = locationInView.y
             cellSnapshot?.center = center
-            
-
-            if indexPath != nil && indexPath!.row < scheduleItems.count && indexPath != initialIndexPath && !scheduleItems[indexPath!.row].locked {
-
-                adjustScheduleItems(index: indexPath!.row)
-
-                recalculateTimesBasic()
-                quickReloadCellTimes(index: indexPath!.row)
-
-                if let cell = tableView.cellForRow(at: indexPath!) as? ScheduleTableViewCell {
-                    //cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
-                    cell.isHidden = false
-                    cell.alpha = 1
-                    self.cellSnapshot?.removeFromSuperview()
-                    self.cellSnapshot = snapshotOfCell(inputView: cell)
-                    cell.alpha = 0
-                    cell.isHidden = true
-                    self.cellSnapshot!.center = center
-                    self.cellSnapshot?.transform = (self.cellSnapshot?.transform.scaledBy(x: 1.05, y: 1.05))!
-                    self.cellSnapshot?.alpha = 0.99
-                    tableView.addSubview(cellSnapshot!)
-                    initialIndexPath = indexPath
+            if indexPath != nil && indexPath!.row < scheduleItems.count && indexPath != initialIndexPath {
+                if !scheduleItems[indexPath!.row].locked {
+                    adjustAndRecalc(indexPath: indexPath)
+                    redraw(indexPath: indexPath, center: center)
                 }
+
+                //allow move into locked task place if from one side to the other
+                //moving up
+                else if initialIndexPath! > indexPath! && (indexPath!.row == 0 || !scheduleItems[indexPath!.row - 1].locked) {
+
+                //moving down
+                } else if initialIndexPath! < indexPath! && (indexPath!.row == scheduleItems.count - 1 || !scheduleItems[indexPath!.row + 1].locked) {
+
+                }
+
             }
         } else if initialIndexPath != nil && !didDragLockedItem && sender.state == .ended {
+            var isUp = false
+            var isDown = false
+            if indexPath != nil && scheduleItems[indexPath!.row].locked{
+                let currRow = indexPath!.row
+                let initRow = initialIndexPath!.row
+                //moving up
+                isUp = initialIndexPath! > indexPath! && (indexPath!.row != 0 || !scheduleItems[currRow - 1].locked) && scheduleItems[initRow].duration < scheduleItems[currRow - 1].duration
+                isDown = initialIndexPath! < indexPath! && (indexPath!.row != scheduleItems.count - 1 || !scheduleItems[indexPath!.row + 1].locked) && scheduleItems[initRow].duration < scheduleItems[currRow + 1].duration
+                if isUp {
+
+                    adjustScheduleItems(index: indexPath!.row - 1)
+                    recalculateTimes(with: origLockedItems)
+                    updateNoRecalculate()
+                }
+                if isDown {
+                    adjustScheduleItems(index: indexPath!.row + 1)
+                    recalculateTimes(with: origLockedItems)
+                    updateNoRecalculate()
+                }
+            }
             var currPath: IndexPath?
             var item: ScheduleItem?
             let cell = tableView.cellForRow(at: initialIndexPath!) as? ScheduleTableViewCell
@@ -536,9 +559,10 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                 currPath = initialIndexPath
                 item = scheduleItems[currPath!.row]
                 if(veryInitialIndexPath!.row != initialIndexPath!.row) {
-                    scheduleViewController.step3Complete()
+                    scheduleViewController.step4Complete()
                 }
             }
+
             UIView.animate(withDuration: 0.25, animations: { () -> Void in
                 self.cellSnapshot?.center = (cell?.center)!
                 self.cellSnapshot?.transform = CGAffineTransform.identity
@@ -552,14 +576,40 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                 }
             })
             
-            
             isAnyLockedItems = false
             didDragLockedItem = false
             veryInitialIndexPath = nil
+            veryVeryInitialIndexPath = nil
             
-            recalculateTimes(with: origLockedItems)
-            updateNoRecalculate()
-            scheduleViewController.schedulesEdited.insert(currDateInt)
+
+            if isUp {
+                let row1 = indexPath!.row - 1
+                let row2 = indexPath!.row
+                swapItemsAt(row1, row2)
+                UIView.performWithoutAnimation {
+                    let loc = tableView.contentOffset
+                    self.tableView.reloadRows(at: [IndexPath(row1), IndexPath(row2)], with: .none)
+                    tableView.contentOffset = loc
+                }
+            }
+            if isDown {
+                
+
+                let row1 = indexPath!.row + 1
+                let row2 = indexPath!.row + 2
+                swapItemsAt(row1, row2)
+                UIView.performWithoutAnimation {
+                    let loc = tableView.contentOffset
+                    self.tableView.reloadRows(at: [IndexPath(row1), IndexPath(row2)], with: .none)
+                    tableView.contentOffset = loc
+                }
+            } else {
+                recalculateTimes(with: origLockedItems)
+                updateNoRecalculate()
+            }
+            //replace with reload 2 swapped
+
+            scheduleViewController.schedulesEdited.insert(dateInt)
             self.cellSnapshot?.removeFromSuperview()
             /*
             if currPath != nil && item != nil && item!.inColor {
@@ -573,16 +623,50 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         }
         
     }
-    func adjustScheduleItems(index: Int) {
-        
-        
+    func swapItemsAt(_ row1: Int, _ row2: Int) {
+        if row1 < 0 || row2 >= scheduleItems.count {
+            return
+        }
+        var startTime = 0
+        if row1 == 0 {
+            startTime = scheduleItems[0].startTime!
+        }
+        var temp = scheduleItems[row1]
+        scheduleItems[row1] = scheduleItems[row2]
+        scheduleItems[row2] = temp
+        if row1 == 0 {
+            scheduleItems[row1].startTime = startTime
+        }
+    }
+    func adjustAndRecalc(indexPath: IndexPath?) {
+        adjustScheduleItems(index: indexPath!.row)
+        recalculateTimesBasic()
+        quickReloadCellTimes()
+    }
+    func redraw(indexPath: IndexPath?, center: CGPoint) {
+        if let cell = tableView.cellForRow(at: indexPath!) as? ScheduleTableViewCell {
+            //cell.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
+            cell.isHidden = false
+            cell.alpha = 1
+            self.cellSnapshot?.removeFromSuperview()
+            self.cellSnapshot = snapshotOfCell(inputView: cell)
+            cell.alpha = 0
+            cell.isHidden = true
+            self.cellSnapshot!.center = center
+            self.cellSnapshot?.transform = (self.cellSnapshot?.transform.scaledBy(x: 1.05, y: 1.05))!
+            self.cellSnapshot?.alpha = 0.99
+            tableView.addSubview(cellSnapshot!)
+            initialIndexPath = indexPath
+        }
+    }
+    func adjustScheduleItems(index: Int, lockStart: Bool = true) {
         var initialIndex = initialIndexPath!.row
         var index = index
         
         let movingDown = initialIndex < index
         let movingUp = !movingDown
         
-        var previousFirstStartTime = scheduleItems[0].startTime!
+        let previousFirstStartTime = scheduleItems[0].startTime!
         var initialDuration = scheduleItems[initialIndex].duration
         
         if movingUp {
@@ -647,8 +731,9 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.moveRow(at: IndexPath(initialIndex), to: IndexPath(index))
         tableView.moveRow(at: IndexPath(index), to: IndexPath(targetIndex))
         tableView.endUpdates()
-        
-        scheduleItems[0].startTime! = previousFirstStartTime
+        if lockStart {
+            scheduleItems[0].startTime! = previousFirstStartTime
+        }
     }
     /*
     func recalculateTimesWith(origLockedItems: [ScheduleItem]) {
@@ -872,7 +957,6 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if(indexPath.row < scheduleItems.count) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! ScheduleTableViewCell
-            cell.changeFontForScreenSize(tvc: self)
             cell.tableViewController = self
             cell.row = indexPath.row
             cell.scheduleItem = scheduleItems[indexPath.row]
@@ -883,46 +967,32 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.origScheduleItem = scheduleItems[indexPath.row]
                 cell.origRow = indexPath.row
             }
+            cell.fitToScreenSize()
             return cell
         }
+
+        //for markasplanned button, currently unused
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "checkOffCell", for: indexPath)
             (cell.subviews[0].subviews[0] as! UIButton).addTarget(self, action: #selector(markAsPlanned), for: .touchUpInside)
             cell.selectionStyle = .none
             return cell
         }
-        /*
-        else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "emptyCell", for: indexPath)
-            cell.selectionStyle = .none
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-            
-            return cell
-        } */
+
     }
     func getWeekday() -> Int {
         let svc = scheduleViewController!
         return Calendar.current.component(.weekday, from: svc.intToDate(int: svc.currDateInt))
     }
-    @objc func markAsPlanned() {
-        streakStats.markedDays.insert(currDateInt)
-        saveStreakStats(streakStats: streakStats)
-        tableView.reloadData()
-        update()
-    }
+
     func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        if isPlanned() && !streakStats.markedDays.contains(currDateInt) &&  scheduleViewController.tutorialStep == 0 {
-            return scheduleItems.count + 1
-        
-        } else {
-            return scheduleItems.count
-        }
+        return scheduleItems.count
     }
 
    
@@ -944,27 +1014,44 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     func update() {
         //when a ScheduleItem's duration is changed, or when the first ScheduleItem's startTime is changed,
         //recalculate all startTimes based on the first startTime and each scheduleItem's duration
+
         recalculateTimes(with: nil)
         updateNoRecalculate()
-        
-       
-       
+
+    }
+    func printFontSizes() {
+        for i in tableView.visibleCells {
+            let cell = i as! ScheduleTableViewCell
+            print("start:\(cell.startTimeTF.font!.pointSize)")
+            print("taskName:\(cell.taskNameTF.font!.pointSize)")
+        }
+    }
+    func checkForExcessDuration() {
+        for scheduleItem in scheduleItems {
+            if scheduleItem.duration > 10 * 3600 - 60 {
+                scheduleItem.duration = 10 * 3600 - 60
+                presentAlert(title: "Task too long!", message: "Tasks cannot have a duration greater than 9 hours 59 minutes.")
+                quickReloadCellTimes()
+            }
+        }
     }
     func updateNoRecalculate() {
         tableView.reloadData()
         mergeSameName()
         tableView.reloadData()
         highlightCurrCell()
-        normalizeTFLengths()
         
         flashItemsForUpdate()
         tableView.reloadData()
         if scheduleViewController.tutorialStep == 0 {
-            scheduleViewController.schedules[currDateInt] = scheduleItems
-            
+            scheduleViewController.schedules[dateInt] = scheduleItems
             scheduleViewController.saveSchedules()
             scheduleViewController.tvcUpdated()
         }
+        tableView(tableView, numberOfRowsInSection: 0)
+        saveStreakStats(streakStats: streakStats)
+        checkPlanned()
+        //checkForExcessDuration()
     }
     func flashItemsForUpdate() {
         flashItems(itemsToFlash: itemsToFullGreen, for: 2, color: .green)
@@ -976,6 +1063,12 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     }
 
     func isPlanned() -> Bool{
+        if !(dateInt == getCurrDateInt() || testingMode) {
+            return false
+        }
+        if scheduleViewController.tutorialStep != 0 {
+            return false
+        }
         for i in scheduleItems {
             if i.taskName == userSettings.defaultName {
                 return false
@@ -986,6 +1079,21 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         }
         return true
     }
+    func checkPlanned() {
+        if isPlanned() {
+            markAsPlanned()
+        }
+    }
+    @objc func markAsPlanned() {
+        if streakStats.markedDays.count == 0 {
+           //presentAlert(title: "First day marked off!", message: "Because you filled out 5 (or more) tasks for the current day, the day is marked as completed. Click \"View Stats\" under Settings to see your daily streak!")
+        }
+        streakStats.markedDays.insert(dateInt)
+        saveStreakStats(streakStats: streakStats)
+        //tableView.reloadData()
+        //update()
+    }
+
     func normalizeTFLengths() {
         /*
         var largestLength: CGFloat = 0.0
@@ -1004,8 +1112,8 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     func updateFromSVC() {
         recalculateTimesBasic()
         tableView.reloadData()
-        currDateInt = scheduleViewController.selectedDateInt ?? currDateInt
-        if currDateInt == scheduleViewController.dateToHashableInt(date: Date()), let scrollPosition = loadScrollPosition() {
+        dateInt = scheduleViewController.selectedDateInt ?? dateInt
+        if dateInt == scheduleViewController.dateToHashableInt(date: Date()), let scrollPosition = loadScrollPosition() {
             scrollToTop(indexPath: scrollPosition)
         }
         recalculateTimes(with: nil)
@@ -1127,10 +1235,10 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         if(activeTextField == nil) {
             
             if editingStyle == .delete {
-                
-                    scheduleItems.remove(at: indexPath.row)
-                    tableView.deleteRows(at: [indexPath], with: .fade)
-                    update()
+                scheduleViewController.stepDeleteComplete()
+                scheduleItems.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .fade)
+                update()
                 
             } else if editingStyle == .insert {
                 // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -1161,7 +1269,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             let indexPath = IndexPath(self.scheduleItems.count - 1)
             self.scrollToBottom(indexPath: IndexPath(self.scheduleItems.count - 1))
             tableView.reloadData()
-            self.scheduleViewController.schedulesEdited.insert(self.currDateInt)
+            self.scheduleViewController.schedulesEdited.insert(self.dateInt)
             if let tf = self.tableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
                 //tf.taskNameTF.becomeFirstResponder()
                 /*
@@ -1236,6 +1344,13 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
      // Pass the selected object to the new view controller.
      }
      */
+    /*
+    func highlightMoveLocked(row: Int) {
+        let cell = tableView(tableView, cellForRowAt: IndexPath(row))
+         let bgColorView = UIView()
+         let contentView = sCell.subviews[0]
+         contentView.backgroundColor = orig.withAlphaComponent(0.10)
+    } */
     @objc func highlightCurrCell() {
         unhighlightAllCells()
         if scheduleViewController.tutorialStep == 0 {
@@ -1317,7 +1432,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     func scrollingStopped() {
         deFlashInstant(itemsToFlash: scheduleItems)
         
-        if currDateInt == scheduleViewController.dateToHashableInt(date: Date()) {
+        if dateInt == scheduleViewController.dateToHashableInt(date: Date()) {
             saveScrollPosition()
         }
         highlightCurrCell()
@@ -1336,7 +1451,15 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         let newR = currR + (1 - currR) * tintFactor
         return UIColor(red: CGFloat(newR), green: CGFloat(newG), blue: CGFloat(newB), alpha: CGFloat(components.alpha))
     }
-    
+    func printAllStreaks() {
+        print("All streaks:")
+        for i in streakStats.markedDays {
+            print(dateDescription(date: intToDate(int: i)))
+        }
+        print()
+        print()
+        print()
+    }
 }
 extension UIColor {
     var coreImageColor: CIColor {

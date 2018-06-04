@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import os.log
 import UserNotifications
+import StoreKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -23,17 +24,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var sharedDefaults: UserDefaults! = nil
     var recurringTasksTableViewController: RecurringTasksTableViewController?
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-     
+        print(UIDevice.current.modelName)
+        print("\(UIScreen.main.bounds.width) \(UIScreen.main.bounds.height)")
         
         if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
             sharedDefaults = loadedDefaults
         } else {
             print("UserDefaults BUG")
         }
-        sharedDefaults.register(defaults: [:])
 
-        Zephyr.sync(keys: [], userDefaults: sharedDefaults!)
+        //sharedDefaults.register(defaults: [:])
+        
+        Zephyr.sync(keys: [Paths.schedules, Paths.schedulesEdited, Paths.schedule, Paths.streakStats, Paths.tutorialStep, Paths.userSettings], userDefaults: sharedDefaults!)
         Zephyr.addKeysToBeMonitored(keys: Paths.schedules, Paths.schedulesEdited, Paths.schedule, Paths.streakStats, Paths.tutorialStep, Paths.userSettings)
+
+        print("icloud status: \(isICloudContainerAvailable())")
        
         // Override point for customization after application launch.
         /*
@@ -47,32 +52,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         */
-        
         if let loadedSettings = loadUserSettings() {
             userSettings = loadedSettings
         }
-       
+        self.scheduleViewController = self.window!.rootViewController as! ScheduleViewController
         registerForPushNotifications()
-        self.scheduleViewController = self.window!.rootViewController?.childViewControllers.first as! ScheduleViewController
         UNUserNotificationCenter.current().delegate = scheduleViewController
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         print("THIS IS THE SCREEN SIZE: \(UIScreen.main.bounds)")
-        
+
+        if let loadedSessCount = loadBasic(key: Paths.sessCount) as? Int {
+            for i in [10, 40, 70, 120, 180, 250] {
+                if loadedSessCount + 1 == i {
+                    requestReview()
+                }
+            }
+            saveBasic(data: loadedSessCount + 1, key: Paths.sessCount)
+        } else {
+             saveBasic(data: 1, key: Paths.sessCount)
+        }
         return true
+    }
+    func isICloudContainerAvailable()->Bool {
+        if let currentToken = FileManager.default.ubiquityIdentityToken {
+            return true
+        }
+        else {
+            return false
+        }
     }
     func registerForPushNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in
             print("Permission granted: \(granted)")
-            guard granted else { return }
+            guard granted else { return}
             self.notifPermitted = granted
             //self.getNotificationSettings()
             // Create the custom actions for the TIMER_EXPIRED category.
-            
     
         }
-        
-        
     }
     func getNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { (settings) in
@@ -84,7 +102,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
         scheduleViewController.saveSchedules()
-        print("YES BITCH")
         if let rtvc = recurringTasksTableViewController {
             rtvc.saveRTasks()
         }
@@ -94,14 +111,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        //scheduleTaskNotif()
         if notifPermitted {
-            scheduleViewController.scheduleTaskNotifs(withAction: false)
+            scheduleViewController.scheduleTaskNotifs(withAction: true)
         }
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -110,8 +127,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             scheduleViewController.schedules = newSchedule
             scheduleViewController.update()
         }
-        scheduleViewController.calendar.updateBoundingRect()
+
+
         scheduleViewController.tableViewController.deFlashInstant(itemsToFlash: scheduleViewController.tableViewController.scheduleItems)
+        self.scheduleViewController.calendar.updateBoundingRect()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -204,6 +223,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             statusBar.backgroundColor = color
         }*/
     }
-    
+    func saveBasic(data: Any, key: String) {
+        UserDefaults.shared.set(data, forKey: key)
+    }
+    func loadBasic(key: String) -> Any? {
+        return UserDefaults.shared.value(forKey: key)
+    }
+    @objc func requestReview() {
+        if #available(iOS 10.3, *) {
+            SKStoreReviewController.requestReview()
+        }
+    }
 }
+
 

@@ -9,8 +9,9 @@
 import UIKit
 
 
-class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate {
-    
+class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UIPopoverPresentationControllerDelegate {
+
+    @IBOutlet weak var viewStatsButton: UIButton!
     @IBOutlet weak var notificationsSwitch: UISwitch!
     var startTimeTFCustomButton: UIButton!
     var durationTFCustomButton: UIButton!
@@ -20,6 +21,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     @IBOutlet weak var incrementsSwitch: UISwitch!
     @IBOutlet weak var timeModeSwitch: UISwitch!
     @IBOutlet weak var topStripe: UIView!
+    @IBOutlet weak var compactModeSwitch: UISwitch!
+
     var svc: ScheduleViewController!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var userSettings: Settings!
@@ -31,6 +34,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         timeModeSwitch.isOn = appDelegate.userSettings.is24Mode
         incrementsSwitch.isOn = appDelegate.userSettings.is5MinIncrement
         notificationsSwitch.isOn = appDelegate.userSettings.notificationsOn
+        compactModeSwitch.isOn = appDelegate.userSettings.compactMode
         topStripe.backgroundColor = userSettings.themeColor
         defaultStartTimeTF.accessoryDelegate = self
         defaultDurationTF.accessoryDelegate = self
@@ -38,7 +42,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         defaultDurationTF.delegate = self
         defaultStartTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: userSettings.defaultStartTime)
        
-        defaultDurationTF.text = "\(ScheduleTableViewCell.durationDescription(duration: userSettings.defaultDuration)) min"
+        defaultDurationTF.text = "\(ScheduleTableViewCell.durationDescription(duration: userSettings.defaultDuration))"
         startTimeTFCustomButton = UIButton()
         startTimeTFCustomButton.setTitle(" 88:88 AM  ", for: .normal)
         startTimeTFCustomButton.setTitleColor(.black, for: .normal)
@@ -71,7 +75,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         }
         else if sender == defaultDurationTF {
             appDelegate.userSettings.defaultDuration = Int((sender.inputView as! UIDatePicker).countDownDuration)
-            sender.text = "\(ScheduleTableViewCell.durationDescription(duration: userSettings.defaultDuration)) min"
+            sender.text = "\(ScheduleTableViewCell.durationDescription(duration: userSettings.defaultDuration))"
             appDelegate.saveUserSettings()
             svc.update()
         }
@@ -121,15 +125,28 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         appDelegate.userSettings.is24Mode = switchState.isOn
     }
     @IBAction func notificationsSwitched(_ sender: UISwitch) {
+        if sender.isOn {
+            appDelegate.registerForPushNotifications()
+            if appDelegate.notifPermitted == false {
+                presentAlert(title: "Unable to allow notifications", message: "You must enable notifications for this app in system settings.")
+                sender.isOn = false
+            }
+        }
         appDelegate.userSettings.notificationsOn = sender.isOn
     }
     @IBAction func incrementSwitched(_ sender: UISwitch) {
         appDelegate.userSettings.is5MinIncrement = sender.isOn
-        if  appDelegate.userSettings.is5MinIncrement {
-            svc.tableViewController.tableView.reloadData()
-        }
-        
+        svc.tableViewController.tableView.reloadData()
+
     }
+
+    @IBAction func compactModeSwitched(_ sender: UISwitch) {
+        let tvc = svc.tableViewController!
+        appDelegate.userSettings.compactMode = sender.isOn
+        tvc.changeRowHeight()
+        tvc.tableView.reloadData()
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -137,18 +154,32 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     
 
     
-    /*
+
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        if segue.identifier == "statspopover" {
+            let vc = segue.destination
+            vc.preferredContentSize = CGSize(width:200.0, height:100.0)
+            let pc = vc.popoverPresentationController!
+            pc.delegate = self
+            let button = pc.sourceView!
+            pc.sourceRect = CGRect(x:button.bounds.midX, y: button.bounds.maxY,width:0,height:0)
+        }
     }
-    */
-    
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.none
+    }
+    func popoverPresentationControllerShouldDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) -> Bool {
+        return true
+    }
     @IBAction func backButtonPressed(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
     }
-    
+
+
+
 }

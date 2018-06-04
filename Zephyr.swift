@@ -21,6 +21,7 @@ public class Zephyr: NSObject {
     /// If **true**, then this will enable console log statements.
     ///
     /// By default, this flag is set to **false**.
+
     public static var debugEnabled = false
 
     /// If **true**, then NSUbiquitousKeyValueStore.synchronize() will be called immediately after any change is made.
@@ -97,12 +98,14 @@ public class Zephyr: NSObject {
 
         switch shared.dataStoreWithLatestData() {
         case .local:
+             print("localloaded")
             printGeneralSyncStatus(finished: false, destination: .remote)
             shared.zephyrQueue.sync {
                 shared.syncToCloud()
             }
             printGeneralSyncStatus(finished: true, destination: .remote)
         case .remote:
+            print("remoteloaded")
             printGeneralSyncStatus(finished: false, destination: .local)
             shared.zephyrQueue.sync {
                 shared.syncFromCloud()
@@ -118,15 +121,16 @@ public class Zephyr: NSObject {
     /// - Parameters:
     ///     - keys: An array of keys that should be synchronized between NSUserDefaults and NSUbiquitousKeyValueStore.
     public static func sync(keys: [String]) {
-
         switch shared.dataStoreWithLatestData() {
         case .local:
+            print("localloaded")
             printGeneralSyncStatus(finished: false, destination: .remote)
             shared.zephyrQueue.sync {
                 shared.syncSpecificKeys(keys: keys, dataStore: .local)
             }
             printGeneralSyncStatus(finished: true, destination: .remote)
         case .remote:
+             print("remoteloaded")
             printGeneralSyncStatus(finished: false, destination: .local)
             shared.zephyrQueue.sync {
                 shared.syncSpecificKeys(keys: keys, dataStore: .remote)
@@ -228,6 +232,51 @@ private extension Zephyr {
     /// - Returns: The persistent data store that has the newest data.
     func dataStoreWithLatestData() -> ZephyrDataStore {
 
+        if let localS = zephyrLocalStoreDictionary[Paths.schedulesEdited] as? Set<Int> {
+            if let remoteS = zephyrRemoteStoreDictionary[Paths.schedulesEdited] as? Set<Int> {
+
+                if remoteS.count == localS.count || (remoteS.count > 25 && localS.count > 25) {
+                    if let remoteDate = zephyrRemoteStoreDictionary[ZephyrSyncKey] as? Date,
+                        let localDate = zephyrLocalStoreDictionary[ZephyrSyncKey] as? Date {
+                        print("9 \(localDate.timeIntervalSince1970 > remoteDate.timeIntervalSince1970 ? "local later": "remote later" )")
+                        // If both localDate and remoteDate exist, compare the two, and then synchronize the data stores.
+                        return localDate.timeIntervalSince1970 > remoteDate.timeIntervalSince1970 ? .local : .remote
+                    } else {
+
+                        // If remoteDate doesn't exist, then assume local data is newer.
+                        guard let _ = zephyrRemoteStoreDictionary[ZephyrSyncKey] as? Date else {
+                            print("9 no remote time")
+                            return .local
+                        }
+
+                        // If localDate doesn't exist, then assume that remote data is newer.
+                        guard let _ = zephyrLocalStoreDictionary[ZephyrSyncKey] as? Date else {
+                            print("9 no local time")
+                            return .remote
+                        }
+
+                        // If neither exist, synchronize local data store to iCloud.
+                        print("9 no time")
+                        return .local
+                    }
+                }
+                else if remoteS.count > localS.count {
+                    print("9 remote greater")
+                    return .remote
+                }
+                else {
+                    print("9 local greater")
+                    return .local
+                }
+            } else {
+                print("9 no remote but local")
+                return .local
+            }
+        } else {
+            print("9 no local")
+            return .remote
+        }
+        /*
         if let remoteDate = zephyrRemoteStoreDictionary[ZephyrSyncKey] as? Date,
             let localDate = zephyrLocalStoreDictionary[ZephyrSyncKey] as? Date {
 
@@ -249,7 +298,7 @@ private extension Zephyr {
             // If neither exist, synchronize local data store to iCloud.
             return .local
         }
-
+    */
     }
 
 }
@@ -389,10 +438,8 @@ extension Zephyr {
         }
 
         if let index = registeredObservationKeys.index(of: key) {
-
             userDefaults.removeObserver(self, forKeyPath: key, context: nil)
             registeredObservationKeys.remove(at: index)
-
         }
 
         Zephyr.printObservationStatus(key: key, subscribed: false)
@@ -409,8 +456,8 @@ extension Zephyr {
                 if object is UserDefaults {
                     self.userDefaults.set(Date(), forKey: self.ZephyrSyncKey)
                 }
-
                 self.syncSpecificKeys(keys: [keyPath], dataStore: .local)
+                print("Detected change in local, synced")
             }
         }
     }
@@ -437,6 +484,7 @@ extension Zephyr {
             }
 
             for key in monitoredKeys where cloudKeys.contains(key) {
+                print("Detected change in remote, synced")
                 syncSpecificKeys(keys: [key], dataStore: .remote)
             }
         }

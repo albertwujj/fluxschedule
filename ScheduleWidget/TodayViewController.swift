@@ -25,8 +25,8 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBOutlet weak var prevTaskLockButton: UIButton!
     @IBOutlet weak var currentTaskLockButton: UIButton!
     @IBOutlet weak var nextTaskLockButton: UIButton!
+    @IBOutlet weak var noTasksLabel: UILabel!
 
-    
     @IBOutlet weak var tasksStackView: UIStackView!
     
     var sharedDefaults: UserDefaults! = nil
@@ -37,6 +37,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     var currScheduleItem: ScheduleItem?
     var nextScheduleItem: ScheduleItem?
     var prevScheduleItem: ScheduleItem?
+    var maxHeight: CGFloat = 100
+    var totalHeight: CGFloat = 100
+    var totalWidth: CGFloat = 2000
     var startOfToday = Calendar.current.startOfDay(for: Date())
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,10 +76,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         nextTaskLabel.text = ""
         nextTaskTimeLabel.text = ""
         
-        if let currSchedule = schedules[currDateInt] {
-            scheduleItems = currSchedule
+        if let scheduleItems = schedules[currDateInt] {
             var prevWasCurr = false
-            for (i, scheduleItem) in currSchedule.enumerated()  {
+            for (i, scheduleItem) in scheduleItems.enumerated()  {
                 
                 if let startTime = scheduleItem.startTime {
                     let currentTime = getCurrentDurationFromMidnight()
@@ -96,7 +98,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                         currentTaskLockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀", for: .normal)
                         prevWasCurr = true
                         if i > 0 {
-                            prevScheduleItem = currSchedule[i-1];
+                            prevScheduleItem = scheduleItems[i-1];
                             prevTaskLabel.text = prevScheduleItem!.taskName
                             prevTaskTimeLabel.text = timeDescription(durationSinceMidnight: prevScheduleItem!.startTime!)
                             prevTaskLockButton.setTitle(prevScheduleItem!.locked ? "🔒" : "🌀", for: .normal)
@@ -104,10 +106,31 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                     }
                 }
             }
+            //PURPOSE: Show prev task if there is only a prev task
+            //a next task is only recorded if a current task was
+            //so if curr nil the latest task is previous task
+            if currScheduleItem == nil && scheduleItems.count > 0 {
+                prevScheduleItem = scheduleItems.last!;
+                prevTaskLabel.text = prevScheduleItem!.taskName
+                prevTaskTimeLabel.text = timeDescription(durationSinceMidnight: prevScheduleItem!.startTime!)
+                prevTaskLockButton.setTitle(prevScheduleItem!.locked ? "🔒" : "🌀", for: .normal)
+            }
         }
+
         tasksStackView.subviews[0].isHidden = prevScheduleItem == nil ? true : false
         tasksStackView.subviews[1].isHidden = currScheduleItem == nil ? true : false
         tasksStackView.subviews[2].isHidden = nextScheduleItem == nil ? true : false
+        var hiddenTasks = 0
+        for i in 0..<3 {
+            if tasksStackView.subviews[i].isHidden {
+                hiddenTasks += 1
+            }
+        }
+        totalHeight = maxHeight - CGFloat(hiddenTasks) * 20.5
+        self.preferredContentSize = CGSize(width: totalWidth, height: totalHeight)
+        if hiddenTasks == 3 {
+            noTasksLabel.isHidden = false
+        }
         prevTaskLockButton.isHidden = prevScheduleItem == nil ? true : false
         currentTaskLockButton.isHidden = currScheduleItem == nil ? true : false
         nextTaskLockButton.isHidden = nextScheduleItem == nil ? true : false
@@ -115,19 +138,20 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             extendPrevButton.isHidden = prevScheduleItem == nil ? true : false
             extendCurrButton.isHidden = currScheduleItem == nil ? true : false
         }
-       
+        if (prevScheduleItem != nil && currScheduleItem == nil) {
+            tasksStackView.subviews[1].isHidden = false
+            currTaskTimeLabel.text = "\(timeDescription(durationSinceMidnight: prevScheduleItem!.startTime! + prevScheduleItem!.duration))"
+            currentTaskLabel.text = "unscheduled"
+        }
+        else if (currScheduleItem != nil && nextScheduleItem == nil) {
+            tasksStackView.subviews[2].isHidden = false
+            nextTaskTimeLabel.text = "\(timeDescription(durationSinceMidnight: currScheduleItem!.startTime! + currScheduleItem!.duration))"
+            nextTaskLabel.text = "unscheduled"
+        }
+
     }
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
-        
-        //self.preferredContentSize = (activeDisplayMode == .compact) ? maxSize : CGSize(width: maxSize.width, height: 300)
-        
-        if activeDisplayMode == NCWidgetDisplayMode.compact
-        {
-        }
-        else
-        {
-            self.preferredContentSize = CGSize(width: maxSize.width, height: 560)
-        }
+        self.preferredContentSize = CGSize(width: maxSize.width, height: totalHeight)
     }
 
     @IBAction func extendTaskButtonPressed(_ sender: UIButton) {
@@ -296,9 +320,6 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         }
     }
     func registerCategories() {
-        let view = UNNotificationAction(identifier: "view",
-                                        title: "View",
-                                        options: .foreground)
         let delay = UNNotificationAction(identifier: "delay",
                                          title: "Delay by \(userSettings.notifDelayTime) minutes",
             options: UNNotificationActionOptions(rawValue: 0))

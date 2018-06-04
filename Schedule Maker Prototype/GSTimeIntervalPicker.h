@@ -1,13 +1,28 @@
 //
 //  GSTimeIntervalPicker.h
-//  Schedule Maker Prototype
+//  Timelines
 //
-//  Created by Albert Wu on 5/29/18.
-//  Copyright © 2018 Old Friend. All rights reserved.
+//  Created by Lukas Petr on 12/1/16.
+//  Copyright © 2016 Glimsoft. All rights reserved.
 //
 
-#ifndef GSTimeIntervalPicker_h
-#define GSTimeIntervalPicker_h
+//
+//  This picker aims to replicate UIDatePicker in countDownTimer mode,
+//  with one major improvement: support for setting maximum time interval,
+//
 
+#import <UIKit/UIKit.h>
 
-#endif /* GSTimeIntervalPicker_h */
+@interface GSTimeIntervalPicker : UIPickerView
+
+@property (nonatomic) NSTimeInterval maxTimeInterval;
+@property (nonatomic) NSInteger minuteInterval;         // Used as a 'step' in minutes column. Default is 1 minute.
+
+@property (nonatomic) BOOL allowZeroTimeInterval;       // Default is NO.
+
+@property (nonatomic) NSTimeInterval timeInterval;
+- (void)setTimeInterval:(NSTimeInterval)timeInterval animated:(BOOL)animated;
+
+@property (copy) void (^onTimeIntervalChanged)(NSTimeInterval newTimeInterval);
+
+@end

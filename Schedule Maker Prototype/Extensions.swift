@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import StoreKit
 
 extension Date {
     
@@ -70,7 +71,14 @@ extension UIView {
             
         }
     }
-    
+    func fadeTransition(_ duration:CFTimeInterval) {
+        let animation = CATransition()
+        animation.timingFunction = CAMediaTimingFunction(name:
+            kCAMediaTimingFunctionEaseInEaseOut)
+        animation.type = kCATransitionFade
+        animation.duration = duration
+        layer.add(animation, forKey: kCATransitionFade)
+    }
 }
 extension UIButton {
     func setSquareBorder(color: UIColor) {
@@ -99,6 +107,28 @@ extension UIScrollView {
     
 }
 extension UIViewController {
+    @objc func requestReview() {
+        if #available(iOS 10.3, *) {
+            SKStoreReviewController.requestReview()
+        }
+    }
+    
+    
+    func presentAlert(title: String, message: String, actions: UIAlertAction...){
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        if actions.count == 0 {
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            {
+                (result : UIAlertAction) -> Void in
+            }
+            alertController.addAction(okAction)
+        } else {
+            for action in actions {
+                alertController.addAction(action)
+            }
+        }
+        self.present(alertController, animated: true, completion: nil)
+    }
     func getStringWeekday(date: Date) -> String  {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE"
@@ -156,7 +186,10 @@ extension UIViewController {
     func calculateDailyStreak(_ streakStats: StreakStats) -> Int{
         let currDateInt = getCurrDateInt()
         var j = 0
-        for i in ((streakStats.markedDays.min() ?? currDateInt) ..< currDateInt).reversed() {
+        if streakStats.markedDays.min() ?? currDateInt >= currDateInt {
+            return 0
+        }
+        for i in (streakStats.markedDays.min()! ..< currDateInt).reversed() {
             if !streakStats.markedDays.contains(i) {
                 break
             }
@@ -225,23 +258,29 @@ extension UIViewController {
         return hour * 3600 + minutes * 60 + seconds
     }
     func timeDescription(durationSinceMidnight: Int) -> String {
-        
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         formatter.dateStyle = .none
         formatter.timeStyle = .short
         let date = Calendar.current.startOfDay(for: Date()).addingTimeInterval(Double(durationSinceMidnight))
         var text = formatter.string(from: date)
+
         if durationSinceMidnight >= 13 * 3600 {
             text = text + " "
         }
         
         if durationSinceMidnight < 10 * 3600 {
             text = text + " "
-        }
+        } 
         
         return text
         
+    }
+    func saveBasic(data: Any, key: String) {
+        UserDefaults.shared.set(data, forKey: key)
+    }
+    func loadBasic(key: String) -> Any? {
+        return UserDefaults.shared.value(forKey: key)
     }
 }
 extension UserDefaults{
@@ -277,6 +316,15 @@ extension UITextField {
         let t = textField.text
         textField.text = t?.safelyLimitedTo(length: maxLength)
     }
+    func getWidth(text: String) -> CGFloat
+    {
+        let txtField = UITextField(frame: .zero)
+        txtField.font = self.font
+        txtField.text = text
+        txtField.sizeToFit()
+        return txtField.frame.size.width
+    }
+
 }
 
 extension String
@@ -287,4 +335,5 @@ extension String
         }
         return String( Array(self).prefix(upTo: n) )
     }
+    
 }

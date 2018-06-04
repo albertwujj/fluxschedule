@@ -32,11 +32,7 @@ class StreakViewController: UIViewController {
         super.viewDidAppear(animated)
         Timer.scheduledTimer(timeInterval: 3 * 60, target: self, selector: #selector(requestReview), userInfo: nil, repeats: false)
     }
-    @objc func requestReview() {
-        if #available(iOS 10.3, *) {
-            SKStoreReviewController.requestReview()
-        }
-    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
