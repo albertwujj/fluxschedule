@@ -9,7 +9,7 @@
 import UIKit
 
 
-class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UIPopoverPresentationControllerDelegate {
+class SettingsViewController: BaseViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UIPopoverPresentationControllerDelegate {
 
     @IBOutlet weak var viewStatsButton: UIButton!
     @IBOutlet weak var notificationsSwitch: UISwitch!
@@ -18,6 +18,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var startOfToday = Calendar.current.startOfDay(for: Date())
     @IBOutlet weak var defaultDurationTF: AccessoryTextField!
     @IBOutlet weak var defaultStartTimeTF: AccessoryTextField!
+    @IBOutlet weak var tutorialButton: UIButton!
     @IBOutlet weak var incrementsSwitch: UISwitch!
     @IBOutlet weak var timeModeSwitch: UISwitch!
     @IBOutlet weak var topStripe: UIView!
@@ -28,7 +29,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     var userSettings: Settings!
     override func viewDidLoad() {
         super.viewDidLoad()
-        svc = appDelegate.scheduleViewController
+        svc = appDelegate.svc
+        //svc.styleTutButton(button: tutorialButton)
         userSettings = (UIApplication.shared.delegate as! AppDelegate).userSettings
         timeModeSwitch.addTarget(self, action: #selector(timeModeChanged(switchState:)), for: .valueChanged)
         timeModeSwitch.isOn = appDelegate.userSettings.is24Mode
@@ -53,6 +55,13 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
         defaultDurationTF.addButtons(customString: nil, customButton: durationTFCustomButton)
         // Do any additional setup after loading the view.
         Timer.scheduledTimer(timeInterval: 20, target: self, selector: #selector(updateStartOfToday), userInfo: nil, repeats: true)
+
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if svc.hasFinishedTutorial {
+            //tutorialButton.isHidden = true
+        }
     }
     @objc func updateStartOfToday() {
         startOfToday = Calendar.current.startOfDay(for: Date())
@@ -143,6 +152,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     @IBAction func compactModeSwitched(_ sender: UISwitch) {
         let tvc = svc.tableViewController!
         appDelegate.userSettings.compactMode = sender.isOn
+        tvc.setSeparator()
         tvc.changeRowHeight()
         tvc.tableView.reloadData()
     }
@@ -181,5 +191,10 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, AccessoryTe
     }
 
 
+    @IBAction func tutorialButtonPressed(_ sender: UIButton) {
+        svc.tutorialStep = .welcome
+        svc.addTutorial()
+        dismiss(animated: true, completion: nil)
+    }
 
 }

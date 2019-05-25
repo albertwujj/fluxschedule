@@ -23,5 +23,6 @@ struct Paths {
     static let notNewPhone = "notNewPhone"
     static let notNewStore = "notNewStore"
     static let sessCount = "sessCount"
+    static let hasFinishedTutorial = "hasFinishedTutorial"
     
 }

@@ -107,6 +107,8 @@ extension UIScrollView {
     
 }
 extension UIViewController {
+    
+
     @objc func requestReview() {
         if #available(iOS 10.3, *) {
             SKStoreReviewController.requestReview()
@@ -313,8 +315,12 @@ extension UITextField {
         }
     }
     @objc func fix(textField: UITextField) {
-        let t = textField.text
-        textField.text = t?.safelyLimitedTo(length: maxLength)
+        if let text = textField.text, text.count > maxLength {
+            if let marked = textField.markedTextRange {
+                textField.replace(marked, withText: "")
+            }
+            textField.text = text.safelyLimitedTo(length: maxLength)
+        }
     }
     func getWidth(text: String) -> CGFloat
     {
@@ -330,10 +336,10 @@ extension UITextField {
 extension String
 {
     func safelyLimitedTo(length n: Int)->String {
-        if (self.count <= n) {
-            return self
-        }
         return String( Array(self).prefix(upTo: n) )
     }
-    
+    func substring(with nsrange: NSRange) -> Substring? {
+        guard let range = Range(nsrange, in: self) else { return nil }
+        return self[range]
+    }
 }

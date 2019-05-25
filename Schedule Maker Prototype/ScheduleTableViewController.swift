@@ -10,7 +10,7 @@ import os.log
 import UIKit
 import UserNotifications
 
-class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
+class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
 
     static let maxItems = 50
 
@@ -37,6 +37,8 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     var activeTextField: UITextField?
     var streakStats = StreakStats()
 
+    var editItemStep = 0
+
     @IBOutlet weak var header: UIView!
     @IBOutlet weak var deleteButton: UIButton!
     
@@ -51,7 +53,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     @IBOutlet var tableView: UITableView!
     //MARK: Initialization
     override func viewDidLoad() {
-
+        super.viewDidLoad()
         if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
             sharedDefaults = loadedDefaults
         } else {
@@ -65,7 +67,8 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             streakStats = savedStreakStats
         }
         userSettings = appDelegate.userSettings
-        super.viewDidLoad()
+
+        tableView.tableFooterView = UIView()
         let touchDown = SingleTouchDownGestureRecognizer(target: self, action: #selector(touchedDown))
         touchDown.delegate = self
         
@@ -85,11 +88,17 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         }
  */
         
-        
+        setSeparator()
         changeRowHeight()
         tableView.delegate = self
         tableView.dataSource = self
+        appDelegate.tvcLoaded = true
     }
+    func setSeparator() {
+        tableView.separatorStyle = userSettings.compactMode ? .none : .singleLineEtched
+        tableView.reloadData()
+    }
+
     @objc func touchedDown() {
         tableView.endEditing(true)
     }
@@ -128,21 +137,36 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                 }
              }
             */
-
+            // SE, iphone standard, iphone+ and ipad, ipad+
+            var tutTextToWidths = [(330,15), (380,16), (1000,17), (99999,19)]
             //iphone 5, iphone, iphone+x, ipad, ipad 12.9
-            var sizesToHeights = [(599,43), (700,52), (820,55), (1300,60), (99999,65)]
-            if self.userSettings.compactMode || UIDevice.current.orientation.isLandscape {
+            var sizesToHeights = [(599,43), (700,52), (820,54), (1300,60), (99999,65)]
+
+            if UIDevice.current.orientation.isLandscape {
                 //iphone 5, iphone, ipad
                 sizesToHeights = [(350,38), (750,41), (99999, 47)]
             }
+            if self.userSettings.compactMode {
+                //iphone 5, iphone, ipad
+                sizesToHeights = [(350,36), (750,39), (99999, 43)]
+            }
+
+            let height = Int(UIScreen.main.bounds.height)
             //sets rowHeight to first tuple's whose screenHeight is greater than the screen height
             for i in sizesToHeights {
-                let height = Int(UIScreen.main.bounds.height)
                 if height < i.0 {
                     self.rowHeight = i.1
                     break
                 }
             }
+            let width = Int(UIScreen.main.bounds.width)
+            for i in tutTextToWidths {
+                if width < i.0 {
+                    self.scheduleViewController.tutInstructions.font = self.scheduleViewController.tutInstructions.font.withSize(CGFloat(i.1))
+                    break
+                }
+            }
+            self.scheduleViewController.tutInstructions.layoutIfNeeded()
             //self.rowHeight = Int(UIScreen.main.bounds.height * 0.09)
             self.tableView.reloadData()
         }
@@ -161,8 +185,6 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                         } else if tfID == 2{
                             tf = cell.subviews[0]
                         }
-                        
-                        
                         UIView.animate(
                                 withDuration: 0.7,
                                 delay: 0,
@@ -178,9 +200,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                                     DispatchQueue.main.async {
                                         UIView.animate(withDuration: 0.9, animations: { () -> Void in
                                             tf.backgroundColor = .white
-                                            
                                         }, completion: { (finished) -> Void in
-                                            
                                         })
                                     }
                                 })
@@ -207,20 +227,11 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                             tf = cell.subviews[0]
                     
                         }
-                        
-                        
-                        
-                       
-                            
-                        
                         UIView.animate(withDuration: timeToFullColor, animations: { () -> Void in
                             tf.backgroundColor = color.withAlphaComponent(0.3)
                             
                         }, completion: { (finished) -> Void in
-                            
                         })
-                        
-                        
                     }
                     break
                 }
@@ -238,18 +249,9 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             for j in itemsToFlash {
                 if j === scheduleItems[i] {
                     if let cell = self.tableView.cellForRow(at: IndexPath(i)) as? ScheduleTableViewCell {
-                 
-                     
                         cell.startTimeTF.backgroundColor = .white
-                 
                         cell.durationTF.backgroundColor = .white
                         cell.subviews[0].backgroundColor = .white
-                        
-                        
-               
-                                
-                        
-                        
                     }
                     break
                 }
@@ -460,7 +462,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         var indexPath = tableView.indexPathForRow(at: locationInView)
         
         if sender.state == .began && indexPath != nil {
-            veryInitialIndexPath = indexPath
+            veryVeryInitialIndexPath = indexPath
             if indexPath!.row >= scheduleItems.count {
                 return
             }
@@ -532,14 +534,15 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         } else if initialIndexPath != nil && !didDragLockedItem && sender.state == .ended {
             var isUp = false
             var isDown = false
+
+            //to allow swapping to row right after/before locked task
             if indexPath != nil && scheduleItems[indexPath!.row].locked{
                 let currRow = indexPath!.row
                 let initRow = initialIndexPath!.row
                 //moving up
-                isUp = initialIndexPath! > indexPath! && (indexPath!.row != 0 || !scheduleItems[currRow - 1].locked) && scheduleItems[initRow].duration < scheduleItems[currRow - 1].duration
-                isDown = initialIndexPath! < indexPath! && (indexPath!.row != scheduleItems.count - 1 || !scheduleItems[indexPath!.row + 1].locked) && scheduleItems[initRow].duration < scheduleItems[currRow + 1].duration
+                isUp = initialIndexPath! > indexPath! && (indexPath!.row != 0 && !scheduleItems[currRow - 1].locked) && scheduleItems[initRow].duration < scheduleItems[currRow - 1].duration && veryVeryInitialIndexPath!.row > indexPath!.row
+                isDown = initialIndexPath! < indexPath! && (indexPath!.row != scheduleItems.count - 1 && !scheduleItems[indexPath!.row + 1].locked) && scheduleItems[initRow].duration < scheduleItems[currRow + 1].duration && veryVeryInitialIndexPath!.row < indexPath!.row
                 if isUp {
-
                     adjustScheduleItems(index: indexPath!.row - 1)
                     recalculateTimes(with: origLockedItems)
                     updateNoRecalculate()
@@ -559,10 +562,9 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                 currPath = initialIndexPath
                 item = scheduleItems[currPath!.row]
                 if(veryInitialIndexPath!.row != initialIndexPath!.row) {
-                    scheduleViewController.step4Complete()
+                    scheduleViewController.stepDragComplete()
                 }
             }
-
             UIView.animate(withDuration: 0.25, animations: { () -> Void in
                 self.cellSnapshot?.center = (cell?.center)!
                 self.cellSnapshot?.transform = CGAffineTransform.identity
@@ -593,8 +595,6 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
                 }
             }
             if isDown {
-                
-
                 let row1 = indexPath!.row + 1
                 let row2 = indexPath!.row + 2
                 swapItemsAt(row1, row2)
@@ -826,6 +826,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         return lockedItems
     }
     func recalculateTimes(with lockedTasksP: [ScheduleItem]?) {
+        recalculateTimesBasic()
         var lockedTasks = lockedTasksP ?? getLockedItems()
         deletedLockedItemsAndOrdered()
         lockedTasks = lockedTasks.sorted(by: { $0.startTime! < $1.startTime! })
@@ -872,17 +873,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         }
     }
  */
-    func recalculateTimesBasic(with scheduleItemsP: [ScheduleItem]) -> [ScheduleItem] {
-        var currStartTime = 0
-        if scheduleItemsP.count > 0, let st = scheduleItemsP[0].startTime {
-            currStartTime = st
-        }
-        for i in scheduleItemsP {
-            i.startTime = currStartTime
-            currStartTime += i.duration
-        }
-        return scheduleItemsP
-    }
+
     func captureInitial() {
         for i in scheduleItems {
             i.initialStartTime = i.startTime
@@ -896,6 +887,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             currStartTime = st
         }
         for i in scheduleItems {
+            currStartTime += i.gapDuration
             i.startTime = currStartTime
             currStartTime += i.duration
         }
@@ -957,7 +949,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if(indexPath.row < scheduleItems.count) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! ScheduleTableViewCell
-            cell.tableViewController = self
+            cell.tvc = self
             cell.row = indexPath.row
             cell.scheduleItem = scheduleItems[indexPath.row]
             cell.selectionStyle = .none
@@ -1043,7 +1035,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         
         flashItemsForUpdate()
         tableView.reloadData()
-        if scheduleViewController.tutorialStep == 0 {
+        if scheduleViewController.tutorialStep == .done {
             scheduleViewController.schedules[dateInt] = scheduleItems
             scheduleViewController.saveSchedules()
             scheduleViewController.tvcUpdated()
@@ -1066,7 +1058,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         if !(dateInt == getCurrDateInt() || testingMode) {
             return false
         }
-        if scheduleViewController.tutorialStep != 0 {
+        if scheduleViewController.tutorialStep != .done {
             return false
         }
         for i in scheduleItems {
@@ -1134,7 +1126,8 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             let curr = scheduleItems[i]
             if let prev = p {
                 if curr.taskName == prev.taskName {
-                    if curr.taskName.range(of: "New Item *\\d*", options: .regularExpression, range: nil, locale: nil) == nil && ((curr.locked && prev.locked) || (!curr.locked && !prev.locked)) {
+                    //if curr.taskName.range(of: "unscheduled *\\d*", options: .regularExpression, range: nil, locale: nil) == nil && curr.taskName.range(of: "New Item *\\d*", options: .regularExpression, range: nil, locale: nil) == nil && ((curr.locked && prev.locked) || (!curr.locked && !prev.locked))
+                     if !(curr.taskName == userSettings.defaultName) && ((curr.locked && prev.locked) || (!curr.locked && !prev.locked)) {
                         for k in 0..<itemsToFullGreen.count {
                             if itemsToFullGreen[k] === curr || itemsToFullGreen[k] === prev {
                                 itemsToFullGreen.remove(at: k)
@@ -1201,7 +1194,6 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             }
             
         }
-        
         return scheduleItems
     }
     /*
@@ -1255,12 +1247,17 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     func addButtonPressed() {
         if scheduleItems.count <= ScheduleTableViewController.maxItems {
             var newTask: ScheduleItem!
-
             if testingMode {
                 newTask = ScheduleItem(name: "\(scheduleItems.count + 1)", duration: userSettings.defaultDuration, locked: false)
             }
             else { newTask = ScheduleItem(name: "\(userSettings.defaultName)", duration: userSettings.defaultDuration, locked: false) }
-            newTask.startTime = userSettings.defaultStartTime
+
+            if scheduleItems.count == 0 && dateInt == getCurrDateInt() {
+                newTask.startTime = getCurrentDurationFromMidnight()
+            } else {
+                newTask.startTime = userSettings.defaultStartTime
+            }
+
             scheduleItems.append(newTask)
 
             tableView.insertRows(at: [IndexPath(scheduleItems.count - 1)], with: .none)
@@ -1270,45 +1267,45 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
             self.scrollToBottom(indexPath: IndexPath(self.scheduleItems.count - 1))
             tableView.reloadData()
             self.scheduleViewController.schedulesEdited.insert(self.dateInt)
-            if let tf = self.tableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
-                //tf.taskNameTF.becomeFirstResponder()
-                /*
-                var scrollPoint = CGPoint(x: 0.0, y: tf.startTimeTF.frame.origin.y)
-                scrollPoint = tableView.convert(scrollPoint, from: tf)
+            if let cell = self.tableView.cellForRow(at: indexPath) as? ScheduleTableViewCell {
+
+
+                var scrollPoint = CGPoint(x: 0.0, y: cell.startTimeTF.frame.origin.y)
+                scrollPoint = tableView.convert(scrollPoint, from: cell)
                 tableView.setContentOffset(CGPoint(x: 0.0, y: tableView.contentOffset.y), animated: true)
-                */
 
 
-                tf.startTimeTF.backgroundColor = UIColor.white
-                tf.durationTF.backgroundColor = UIColor.white
-                tf.backgroundColor = UIColor.white
+                cell.startTimeTF.backgroundColor = UIColor.white
+                cell.durationTF.backgroundColor = UIColor.white
+                cell.backgroundColor = UIColor.white
+
+                cell.taskNameTF.becomeFirstResponder()
+                /*
+                cell.startTimeTF.becomeFirstResponder()
+                cell.setupTFForEdit(cell.startTimeTF)
+                editItemStep = 1 */
+
             } else {
 
             }
             self.shouldSelectLast = true
+            /*
             if let data = NSKeyedArchiver.archivedData(withRootObject: scheduleViewController.schedules) as Data? {
-                print("There were \(data.count) bytes")
-                let bcf = ByteCountFormatter()
-                bcf.allowedUnits = [.useMB] // optional: restricts the units to MB only
-                bcf.countStyle = .file
-                let string = bcf.string(fromByteCount: Int64(data.count))
-                print("formatted result: \(string)")
-            }
+             printBytes(data)
+            } */
         } else{
-            let alertController = UIAlertController(title: "Too many items!", message: "Sorry, you cannot have more than \(ScheduleTableViewController.maxItems) items.", preferredStyle: UIAlertControllerStyle.alert)
-
-            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
-            {
-                (result : UIAlertAction) -> Void in
-            }
-            alertController.addAction(okAction)
-            self.present(alertController, animated: true, completion: nil)
+            presentAlert(title: "Too many items!", message: "Sorry, you cannot have more than \(ScheduleTableViewController.maxItems) items.")
         }
     }
-  
-    
-    
-    
+
+    func printBytes(_ data: Data) {
+        print("There were \(data.count) bytes")
+        let bcf = ByteCountFormatter()
+        bcf.allowedUnits = [.useMB] // optional: restricts the units to MB only
+        bcf.countStyle = .file
+        let string = bcf.string(fromByteCount: Int64(data.count))
+        print("formatted result: \(string)")
+    }
     func scrollToRowAfter(at row: Int) {
         
         //tableView.scrollToRow(at: IndexPath(row + 1), at: .none, animated: true)
@@ -1353,7 +1350,7 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
     } */
     @objc func highlightCurrCell() {
         unhighlightAllCells()
-        if scheduleViewController.tutorialStep == 0 {
+        if scheduleViewController.tutorialStep == .done {
             if scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.dateToHashableInt(date: Date()) {
                 for cell in tableView.visibleCells where cell is ScheduleTableViewCell  {
                     let sCell = (cell as! ScheduleTableViewCell)
@@ -1456,9 +1453,6 @@ class ScheduleTableViewController: UIViewController, UITableViewDelegate, UITabl
         for i in streakStats.markedDays {
             print(dateDescription(date: intToDate(int: i)))
         }
-        print()
-        print()
-        print()
     }
 }
 extension UIColor {

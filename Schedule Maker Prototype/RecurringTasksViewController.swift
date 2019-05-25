@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RecurringTasksViewController: UIViewController {
+class RecurringTasksViewController: BaseViewController {
 
     
     @IBOutlet weak var backButton: UIBarButtonItem!

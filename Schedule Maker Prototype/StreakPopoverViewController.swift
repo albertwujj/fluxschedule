@@ -16,7 +16,7 @@ class StreakPopoverViewController: UIViewController {
     @IBOutlet weak var totalDaysCounter: UILabel!
 
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    let tvc = (UIApplication.shared.delegate as! AppDelegate).scheduleViewController.tableViewController!
+    let tvc = (UIApplication.shared.delegate as! AppDelegate).svc.tableViewController!
     override func viewDidLoad() {
         super.viewDidLoad()
 

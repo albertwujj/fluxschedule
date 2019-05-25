@@ -10,7 +10,7 @@
 import UIKit
 
 
-class IAPViewController: UIViewController {
+class IAPViewController: BaseViewController {
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var userSettings: Settings!
     @IBOutlet weak var fluxPlusButton: UIButton!
@@ -37,21 +37,22 @@ class IAPViewController: UIViewController {
                 if trans!.payment.productIdentifier == "9P3FVEPY7V.fluxplus" {
                     strongSelf.userSettings.fluxPlus = true
 
-                    let svc = strongSelf.appDelegate.scheduleViewController!
-                    if(svc.tutorialStep == 0) {
-                        svc.tutorialStep = 6
-                        svc.appDelegate.scheduleViewController.addTutorial()
+                    let svc = strongSelf.appDelegate.svc!
+                    if(svc.tutorialStep == .done) {
+                        //svc.tutorialStep = .lock
+                        svc.appDelegate.svc.checkAddTutorial()
                     }
-                    if(svc.tutorialStep == 5) {
+                    /*
+                    if(svc.tutorialStep == Tut(5) {
                         svc.tutorialStep = 3
-                        svc.tableViewController.scheduleItems = svc.tutorialStep4
+                        svc.tableViewController.scheduleItems = svc.tutorialStepDrag
                         svc.tableViewController.updateFromSVC()
                         svc.tutorialNextButton.setTitle("Done!", for: .normal)
                         svc.tutorialNextButton.layer.borderColor = UIColor.blue.withAlphaComponent(0.1).cgColor
                         svc.tutorialNextButton.isEnabled = false
-                    }
-                    svc.tutorialStep5 = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600, locked: true), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60, locked: true), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: 30 * 60)]
-                    svc.appDelegate.scheduleViewController.saveTutorialStep()
+                    }*/
+                    svc.tutorialStepExample = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Check Facebook", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600, locked: true), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60, locked: true), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: 30 * 60)]
+                    svc.appDelegate.svc.saveTutorialStep()
                     svc.appDelegate.saveUserSettings()
                 } else if trans!.payment.productIdentifier == "9P3FVEPY7V.sub" {
                     strongSelf.userSettings.subs = true

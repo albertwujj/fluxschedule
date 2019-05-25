@@ -9,7 +9,7 @@
 import UIKit
 import StoreKit
 
-class StreakViewController: UIViewController {
+class StreakViewController: BaseViewController {
     let sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
     @IBOutlet weak var totalWeeksCounter: UILabel!
     @IBOutlet weak var totalDaysCounter: UILabel!
@@ -17,7 +17,7 @@ class StreakViewController: UIViewController {
     @IBOutlet var dailyStreakCounter: UILabel!
     var streakStats: StreakStats = StreakStats()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    let tvc = (UIApplication.shared.delegate as! AppDelegate).scheduleViewController.tableViewController!
+    let tvc = (UIApplication.shared.delegate as! AppDelegate).svc.tableViewController!
     override func viewDidLoad() {
         super.viewDidLoad()
         if let savedStreakStats = tvc.loadStreakStats() {

@@ -12,21 +12,21 @@ import Foundation
 import os.log
 import UIKit
 
-public class ScheduleItem: NSObject, NSCoding {
-    
+public class ScheduleItem: NSObject, NSCoding, NSCopying {
+
     
     public var taskName: String = ""
     //duration represented in seconds
     public var duration: Int = 0
+    public var gapDuration: Int = 0
     //startTime represented in seconds since midnight
     public var startTime: Int?
     public var locked:Bool = false
     public var recurDays:Set<Int>? = Set<Int>()
     public var oldRow: Int?
 
-    //duration represented in seconds
+
     public var initialDuration: Int?
-    //startTime represented in seconds since midnight
     public var initialStartTime: Int?
     public var previousStartTime: Int?
 
@@ -38,6 +38,7 @@ public class ScheduleItem: NSObject, NSCoding {
         static let recurDays = "recurDays"
         static let row = "row"
         static let pseudoLocked = "pseudoLocked"
+        static let gapDuration = "gapDuration"
     }
     
     public func encode(with aCoder: NSCoder) {
@@ -47,6 +48,7 @@ public class ScheduleItem: NSObject, NSCoding {
         aCoder.encode(locked, forKey: PropertyKey.locked)
         aCoder.encode(recurDays, forKey: PropertyKey.recurDays)
         aCoder.encode(oldRow, forKey: PropertyKey.row)
+        aCoder.encode(gapDuration, forKey: PropertyKey.gapDuration)
     }
     
     
@@ -92,5 +94,8 @@ public class ScheduleItem: NSObject, NSCoding {
         deepCopy.recurDays = self.recurDays
         deepCopy.initialStartTime = self.initialStartTime
         return deepCopy
+    }
+    public func copy(with zone: NSZone? = nil) -> Any {
+        return deepCopy()
     }
 }

@@ -31,7 +31,7 @@ public class Zephyr: NSObject {
     public static var syncUbiquitousStoreKeyValueStoreOnChange = true
 
     /// The singleton for Zephyr.
-    private static let shared = Zephyr()
+    public static var shared: Zephyr! = nil
 
     /// A shared key that stores the last synchronization date between NSUserDefaults and NSUbiquitousKeyValueStore.
     private let ZephyrSyncKey = "ZephyrSyncKey"
@@ -46,12 +46,12 @@ public class Zephyr: NSObject {
     private let zephyrQueue = DispatchQueue(label: "com.zephyr.queue")
 
     /// A session-persisted variable to directly access all of the NSUserDefaults elements.
-    private var zephyrLocalStoreDictionary: [String: Any] {
+    public var zephyrLocalStoreDictionary: [String: Any] {
         return userDefaults.dictionaryRepresentation()
     }
 
     /// A session-persisted variable to directly access all of the NSUbiquitousKeyValueStore elements.
-    private var zephyrRemoteStoreDictionary: [String: Any] {
+    public var zephyrRemoteStoreDictionary: [String: Any] {
         return NSUbiquitousKeyValueStore.default.dictionaryRepresentation
     }
 
@@ -70,6 +70,7 @@ public class Zephyr: NSObject {
                                                name: NSNotification.Name.UIApplicationWillEnterForeground,
                                                object: nil)
         NSUbiquitousKeyValueStore.default.synchronize()
+        print("yas")
     }
 
     /// Zephyr's de-initialization method.
@@ -90,7 +91,6 @@ public class Zephyr: NSObject {
     /// - Parameters:
     ///     - keys: If you pass a one or more keys, only those key will be synchronized. If no keys are passed, than all NSUserDefaults will be synchronized with NSUbiquitousKeyValueStore.
     public static func sync(keys: String...) {
-
         if !keys.isEmpty {
             sync(keys: keys)
             return
@@ -98,20 +98,19 @@ public class Zephyr: NSObject {
 
         switch shared.dataStoreWithLatestData() {
         case .local:
-             print("localloaded")
             printGeneralSyncStatus(finished: false, destination: .remote)
             shared.zephyrQueue.sync {
                 shared.syncToCloud()
             }
             printGeneralSyncStatus(finished: true, destination: .remote)
         case .remote:
-            print("remoteloaded")
             printGeneralSyncStatus(finished: false, destination: .local)
             shared.zephyrQueue.sync {
                 shared.syncFromCloud()
             }
             printGeneralSyncStatus(finished: true, destination: .local)
         }
+
     }
 
     /// Overloaded version of Zephyr's synchronization method, **sync(keys:)**.
@@ -137,6 +136,7 @@ public class Zephyr: NSObject {
             }
             printGeneralSyncStatus(finished: true, destination: .local)
         }
+
     }
 
     /// Overloaded version of Zephyr's synchronization method, **sync(keys:)**.
@@ -231,10 +231,20 @@ private extension Zephyr {
     ///
     /// - Returns: The persistent data store that has the newest data.
     func dataStoreWithLatestData() -> ZephyrDataStore {
+        var remoteSOpt: Set<Int>? = nil
+        var localSOpt: Set<Int>? = nil
+        if let remoteData = zephyrRemoteStoreDictionary[Paths.schedulesEdited] as? Data {
+            let unarcher = NSKeyedUnarchiver(forReadingWith: remoteData)
+            remoteSOpt = unarcher.decodeObject(forKey: "root") as? Set<Int>
+        } else {
+        }
+        if let localData = zephyrLocalStoreDictionary[Paths.schedulesEdited] as? Data {
+            let unarcher = NSKeyedUnarchiver(forReadingWith: localData)
+            localSOpt = unarcher.decodeObject(forKey: "root") as? Set<Int>
+        }
 
-        if let localS = zephyrLocalStoreDictionary[Paths.schedulesEdited] as? Set<Int> {
-            if let remoteS = zephyrRemoteStoreDictionary[Paths.schedulesEdited] as? Set<Int> {
-
+        if let localS = localSOpt {
+            if let remoteS = remoteSOpt {
                 if remoteS.count == localS.count || (remoteS.count > 25 && localS.count > 25) {
                     if let remoteDate = zephyrRemoteStoreDictionary[ZephyrSyncKey] as? Date,
                         let localDate = zephyrLocalStoreDictionary[ZephyrSyncKey] as? Date {
@@ -274,6 +284,9 @@ private extension Zephyr {
             }
         } else {
             print("9 no local")
+            if remoteSOpt == nil {
+                print("9 also no remote")
+            }
             return .remote
         }
         /*
@@ -316,6 +329,7 @@ private extension Zephyr {
             switch dataStore {
             case .local:
                 let value = zephyrLocalStoreDictionary[key]
+
                 syncToCloud(key: key, value: value)
             case .remote:
                 let value = zephyrRemoteStoreDictionary[key]
@@ -393,6 +407,7 @@ private extension Zephyr {
         unregisterObserver(key: key)
 
         if let value = value {
+
             defaults.set(value, forKey: key)
             Zephyr.printKeySyncStatus(key: key, value: value, destination: .local)
         } else {
@@ -475,16 +490,28 @@ extension Zephyr {
     ///  Observation method for NSUbiquitousKeyValueStoreDidChangeExternallyNotification
     func keysDidChangeOnCloud(notification: Notification) {
         if notification.name == NSUbiquitousKeyValueStore.didChangeExternallyNotification {
+            /*
+            if let userInfo = (notification as NSNotification).userInfo {
+                if let remoteData = userInfo[Paths.schedulesEdited] as? Data {
+
+                    print("Schedules not nil", true)
+                } else {
+                    print("SCHEDULES nil", true)
+                }
+            } */
+            print("didchangeexternally")
+            appDelegate.kvsNotifRecieved = true
+            appDelegate.syncKVS()
             guard let userInfo = (notification as NSNotification).userInfo,
                 let cloudKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String],
                 let localStoredDate = zephyrLocalStoreDictionary[ZephyrSyncKey] as? Date,
                 let remoteStoredDate = zephyrRemoteStoreDictionary[ZephyrSyncKey] as? Date,
+
                 remoteStoredDate.timeIntervalSince1970 > localStoredDate.timeIntervalSince1970 else {
                     return
             }
 
             for key in monitoredKeys where cloudKeys.contains(key) {
-                print("Detected change in remote, synced")
                 syncSpecificKeys(keys: [key], dataStore: .remote)
             }
         }
@@ -521,7 +548,7 @@ private extension Zephyr {
     ///     - value: The value being synchronized.
     ///     - destination: The data store that is receiving the updated key-value pair.
     static func printKeySyncStatus(key: String, value: Any?, destination dataStore: ZephyrDataStore) {
-        if debugEnabled == true {
+        if true || debugEnabled == true {
             let destination = dataStore == .local ? "FROM iCloud" : "TO iCloud."
 
             guard let value = value else {
