@@ -23,7 +23,14 @@ public class ScheduleItem: NSObject, NSCoding {
     public var locked:Bool = false
     public var recurDays:Set<Int>? = Set<Int>()
     public var oldRow: Int?
-    
+
+    //duration represented in seconds
+    public var initialDuration: Int?
+    //startTime represented in seconds since midnight
+    public var initialStartTime: Int?
+
+    public var inColor:Bool = false
+
     public struct PropertyKey {
         static let taskName = "taskName"
         static let duration = "duration"
@@ -79,6 +86,7 @@ public class ScheduleItem: NSObject, NSCoding {
         let deepCopy = ScheduleItem(name: self.taskName, duration: self.duration, locked: self.locked)
         deepCopy.startTime = self.startTime
         deepCopy.recurDays = self.recurDays
+        deepCopy.initialStartTime = self.initialStartTime
         return deepCopy
     }
 }
