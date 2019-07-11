@@ -9,7 +9,7 @@
 import UIKit
 
 protocol AccessoryTextFieldDelegate{
-    func textFieldContainerButtonPressed(_ sender: AccessoryTextField)
+    //func textFieldContainerButtonPressed(_ sender: AccessoryTextField)
     func textFieldCancelButtonPressed(_ sender: AccessoryTextField)
     func textFieldDoneButtonPressed(_ sender: AccessoryTextField)
 }
@@ -46,10 +46,11 @@ class AccessoryTextField: UITextField {
         let cancel: UIBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(self.cancelButtonPressed))
         let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonPressed))
         var items:[UIBarButtonItem] = []
-        if let customText = customString {
+        /*if let customText = customString {
             let containerButton: UIBarButtonItem = UIBarButtonItem(title: customText, style: .done, target: self, action: #selector(self.containerButtonPressed))
             items = [cancel, flexSpace, containerButton, flexSpace, done]
-        } else if let givenButton = customButton{
+        } else */if let givenButton = customButton{
+       
             let containerButton = UIBarButtonItem(customView: givenButton)
             items = [cancel, flexSpace, containerButton, flexSpace, done]
         }
@@ -66,9 +67,10 @@ class AccessoryTextField: UITextField {
         
         accessoryDelegate?.textFieldDoneButtonPressed(self)
     }
+    /*
     @objc func containerButtonPressed() {
         accessoryDelegate?.textFieldContainerButtonPressed(self)
-    }
+    } */
     override func caretRect(for position: UITextPosition) -> CGRect {
         return CGRect.zero
     }

@@ -28,8 +28,7 @@ public class ScheduleItem: NSObject, NSCoding {
     public var initialDuration: Int?
     //startTime represented in seconds since midnight
     public var initialStartTime: Int?
-
-    public var inColor:Bool = false
+    public var previousStartTime: Int?
 
     public struct PropertyKey {
         static let taskName = "taskName"
@@ -62,6 +61,11 @@ public class ScheduleItem: NSObject, NSCoding {
     public convenience init(name: String, duration: Int, startTime: Int) {
         self.init(name: name, duration: duration)
         self.startTime = startTime
+    }
+    public convenience init(name: String, duration: Int, startTime: Int, locked: Bool) {
+        self.init(name: name, duration: duration)
+        self.startTime = startTime
+        self.locked = locked
     }
     
    
