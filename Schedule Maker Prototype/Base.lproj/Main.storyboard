@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="MWw-Go-rfF">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="MWw-Go-rfF">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -16,15 +13,15 @@
             <objects>
                 <tableViewController id="Di3-sW-qHo" customClass="ScheduleTableViewController" customModule="Schedule_Maker_Prototype" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="jG1-6o-cg5" customClass="TPKeyboardAvoidingTableView">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="562"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="577"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="taskCell" rowHeight="50" id="evD-WS-gY8" customClass="ScheduleTableViewCell" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="375" height="50"/>
+                                <rect key="frame" x="0.0" y="50" width="375" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="evD-WS-gY8" id="O4r-qH-0yz">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <view hidden="YES" alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q9b-ms-59u">
@@ -33,7 +30,6 @@
                                                 <textField hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="L0Z-Zn-mhf">
                                                     <rect key="frame" x="110" y="-2" width="24" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <nil key="textColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -41,12 +37,11 @@
                                             <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </view>
                                         <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" contentHorizontalAlignment="fill" contentVerticalAlignment="center" text="12:59 AM" borderStyle="roundedRect" textAlignment="natural" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Fug-9y-DCG" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
-                                            <rect key="frame" x="10" y="10" width="81" height="30"/>
+                                            <rect key="frame" x="10" y="8" width="81" height="34"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="81" id="fXz-n9-aoK"/>
                                             </constraints>
                                             <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
-                                            <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <textInputTraits key="textInputTraits"/>
                                             <connections>
@@ -54,36 +49,36 @@
                                             </connections>
                                         </textField>
                                         <textField opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX:XX" borderStyle="roundedRect" textAlignment="natural" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Iz8-IK-xC5" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
-                                            <rect key="frame" x="306" y="10" width="59" height="30"/>
+                                            <rect key="frame" x="306" y="8" width="59" height="34"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="59" id="fR8-ij-A2w"/>
                                             </constraints>
-                                            <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <textInputTraits key="textInputTraits"/>
                                             <connections>
                                                 <action selector="durationEditing:" destination="evD-WS-gY8" eventType="editingDidBegin" id="pLw-l9-5iy"/>
                                             </connections>
                                         </textField>
-                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Task Name" borderStyle="roundedRect" textAlignment="natural" adjustsFontSizeToFit="NO" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="3RJ-X4-MO2">
-                                            <rect key="frame" x="136" y="10" width="157" height="30"/>
-                                            <nil key="textColor"/>
+                                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Task Name" borderStyle="roundedRect" textAlignment="natural" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3RJ-X4-MO2">
+                                            <rect key="frame" x="136" y="8" width="157" height="34"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <textInputTraits key="textInputTraits"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="maxLength">
-                                                    <integer key="value" value="130"/>
+                                                    <integer key="value" value="160"/>
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </textField>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="37v-Co-Zac">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="37v-Co-Zac">
                                             <rect key="frame" x="99" y="10" width="30" height="30"/>
                                             <state key="normal" title="🌀"/>
                                             <connections>
+                                                <action selector="doubleTap:forEvent:" destination="evD-WS-gY8" eventType="touchDownRepeat" id="Vvm-we-LZ7"/>
                                                 <action selector="lockButtonPressed:" destination="evD-WS-gY8" eventType="touchUpInside" id="1bn-WM-G78"/>
                                             </connections>
                                         </button>
                                     </subviews>
+                                    <gestureRecognizers/>
                                     <constraints>
                                         <constraint firstItem="3RJ-X4-MO2" firstAttribute="leading" secondItem="37v-Co-Zac" secondAttribute="trailing" constant="7" id="4KZ-4c-KOk"/>
                                         <constraint firstItem="Iz8-IK-xC5" firstAttribute="leading" secondItem="3RJ-X4-MO2" secondAttribute="trailing" constant="13" id="F4I-zv-pps"/>
@@ -111,14 +106,14 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="checkOffCell" id="cgi-N3-jXj">
-                                <rect key="frame" x="0.0" y="78" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="100" width="375" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="cgi-N3-jXj" id="7p8-tr-LLu">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h58-yS-fgW">
-                                            <rect key="frame" x="130" y="6" width="114" height="30"/>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h58-yS-fgW">
+                                            <rect key="frame" x="130.5" y="7" width="114" height="30"/>
                                             <state key="normal" title="Mark as Planned"/>
                                         </button>
                                     </subviews>
@@ -129,10 +124,10 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="emptyCell" rowHeight="50" id="ub1-57-3Py">
-                                <rect key="frame" x="0.0" y="122" width="375" height="50"/>
+                                <rect key="frame" x="0.0" y="143.5" width="375" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ub1-57-3Py" id="6Be-9H-IBC">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -150,25 +145,32 @@
             </objects>
             <point key="canvasLocation" x="975" y="184"/>
         </scene>
-        <!--Data Source-->
+        <!--Schedule View Controller-->
         <scene sceneID="B3p-dl-mT2">
             <objects>
-                <viewController automaticallyAdjustsScrollViewInsets="NO" id="MWw-Go-rfF" customClass="ScheduleViewController" customModule="Schedule_Maker_Prototype" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="svc" automaticallyAdjustsScrollViewInsets="NO" id="MWw-Go-rfF" customClass="ScheduleViewController" customModule="Schedule_Maker_Prototype" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="LDu-hh-Dx7">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CBW-dq-wwW">
+                                <rect key="frame" x="0.0" y="-60" width="375" height="60"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="sZ4-7W-Wkb"/>
+                                </constraints>
+                            </view>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zRD-x9-WHF">
-                                <rect key="frame" x="0.0" y="61" width="375" height="562"/>
+                                <rect key="frame" x="0.0" y="41" width="375" height="577"/>
                                 <connections>
                                     <segue destination="Di3-sW-qHo" kind="embed" identifier="EmbeddedTable" id="1Wq-dJ-ZZG"/>
                                 </connections>
                             </containerView>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VYB-aW-I9G" userLabel="CalendarHeader">
-                                <rect key="frame" x="0.0" y="-271" width="375" height="31"/>
+                                <rect key="frame" x="0.0" y="-291" width="375" height="31"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tpa-O2-eUj">
-                                        <rect key="frame" x="168" y="0.5" width="39" height="29"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tpa-O2-eUj">
+                                        <rect key="frame" x="168" y="1" width="39" height="29"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <state key="normal" title="Today"/>
                                         <connections>
@@ -184,7 +186,7 @@
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xi6-IP-eJI" customClass="FSCalendar">
-                                <rect key="frame" x="0.0" y="-240" width="375" height="301"/>
+                                <rect key="frame" x="0.0" y="-260" width="375" height="301"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="useVeryShortWeekdaySymbols" value="YES"/>
@@ -198,10 +200,10 @@
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Je9-4Q-GfF">
-                                <rect key="frame" x="0.0" y="-40" width="375" height="101"/>
+                                <rect key="frame" x="0.0" y="-60" width="375" height="101"/>
                                 <subviews>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6UZ-1E-uIs">
-                                        <rect key="frame" x="325" y="54" width="30" height="55"/>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6UZ-1E-uIs">
+                                        <rect key="frame" x="325" y="54" width="30" height="56.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="29"/>
                                         <state key="normal">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -210,8 +212,8 @@
                                             <segue destination="Ie6-0g-j9o" kind="showDetail" id="8yN-nf-iBc"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nws-Cy-H1T">
-                                        <rect key="frame" x="275" y="53.5" width="30" height="60"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nws-Cy-H1T">
+                                        <rect key="frame" x="274.5" y="54" width="30" height="60.5"/>
                                         <fontDescription key="fontDescription" name="AlNile-Bold" family="Al Nile" pointSize="35"/>
                                         <state key="normal" title="&gt;">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -220,8 +222,8 @@
                                             <action selector="rightDateButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="TNn-8q-4XN"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IVK-sZ-5AT">
-                                        <rect key="frame" x="77" y="53.5" width="30" height="60"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IVK-sZ-5AT">
+                                        <rect key="frame" x="77.5" y="54" width="30" height="60.5"/>
                                         <fontDescription key="fontDescription" name="AlNile-Bold" family="Al Nile" pointSize="35"/>
                                         <state key="normal" title="&lt;">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -230,8 +232,8 @@
                                             <action selector="leftDateButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="X96-Nu-jBT"/>
                                         </connections>
                                     </button>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tck-CV-ptU">
-                                        <rect key="frame" x="308" y="52.5" width="54" height="22"/>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tck-CV-ptU">
+                                        <rect key="frame" x="308" y="53" width="54" height="22.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                         <state key="normal" title="Testing Mode">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -240,8 +242,8 @@
                                             <action selector="testingModeButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="CBc-2z-UEN"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gxe-LF-NkH">
-                                        <rect key="frame" x="325" y="67" width="30" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gxe-LF-NkH">
+                                        <rect key="frame" x="325" y="66.5" width="30" height="30"/>
                                         <state key="normal" title="💸">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -271,7 +273,7 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="seG-dg-VIZ" userLabel="StreakButton">
-                                <rect key="frame" x="27" y="30.5" width="20" height="20"/>
+                                <rect key="frame" x="27" y="10.5" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="UKI-DK-pHw"/>
                                     <constraint firstAttribute="width" constant="20" id="ngH-T8-6IW"/>
@@ -283,7 +285,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WEDNESDAY, JAN 88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ljn-hE-dG9">
-                                <rect key="frame" x="109" y="31" width="167" height="20.5"/>
+                                <rect key="frame" x="109.5" y="11" width="166" height="20.5"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="165" id="EMW-oe-AnX"/>
@@ -292,8 +294,30 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7V9-x7-620">
-                                <rect key="frame" x="296" y="550" width="45" height="45"/>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zee-yk-vjS">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tf9-k7-fdI">
+                                        <rect key="frame" x="10" y="11" width="355" height="36"/>
+                                        <string key="text">Welcome to Flux!
+Try tapping any box to edit it.</string>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                        <color key="shadowColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="tf9-k7-fdI" firstAttribute="centerX" secondItem="Zee-yk-vjS" secondAttribute="centerX" id="4rQ-fg-4hg"/>
+                                    <constraint firstItem="tf9-k7-fdI" firstAttribute="width" secondItem="Zee-yk-vjS" secondAttribute="width" constant="-20" id="AaD-PF-teE"/>
+                                    <constraint firstAttribute="bottom" secondItem="tf9-k7-fdI" secondAttribute="bottom" constant="9" id="jFl-no-lkR"/>
+                                    <constraint firstAttribute="height" secondItem="tf9-k7-fdI" secondAttribute="height" constant="20" id="xen-s1-nGh"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7V9-x7-620">
+                                <rect key="frame" x="296" y="545" width="45" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="6Iz-Sm-fPM"/>
                                     <constraint firstAttribute="width" constant="45" id="Ko2-sf-7oj"/>
@@ -307,27 +331,18 @@
                                 </connections>
                             </button>
                             <textField hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="XX/XX/XXXX" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Y8o-P1-EhR" customClass="AccessoryTextField" customModule="Schedule_Maker_Prototype" customModuleProvider="target">
-                                <rect key="frame" x="112" y="22" width="167" height="40"/>
+                                <rect key="frame" x="112.5" y="1.5" width="166" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="7Q2-dT-qaB"/>
                                 </constraints>
-                                <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
                                     <action selector="startTimeEditing:" destination="MWw-Go-rfF" eventType="editingDidBegin" id="L1G-3D-iFl"/>
                                 </connections>
                             </textField>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S1F-bE-qaP">
-                                <rect key="frame" x="166.5" y="523" width="41" height="36"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <state key="normal" title="Next"/>
-                                <connections>
-                                    <action selector="tutorialNextButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="Lj5-Id-Hx6"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" alpha="0.02" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b4K-1K-8Af" userLabel="FSCalendarButton">
-                                <rect key="frame" x="109" y="11" width="167" height="50"/>
+                            <button opaque="NO" alpha="0.02" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b4K-1K-8Af" userLabel="FSCalendarButton">
+                                <rect key="frame" x="109.5" y="-9" width="166" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="uMK-h5-WwX"/>
                                 </constraints>
@@ -335,7 +350,35 @@
                                     <action selector="fsCalendarButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="int-mP-Ocn"/>
                                 </connections>
                             </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="70" translatesAutoresizingMaskIntoConstraints="NO" id="EQz-dj-jqY">
+                                <rect key="frame" x="105.5" y="508" width="164" height="36"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EUn-CV-0Nb">
+                                        <rect key="frame" x="0.0" y="0.0" width="47" height="36"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="47" id="ym0-I2-20j"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <state key="normal" title="Back"/>
+                                        <connections>
+                                            <action selector="tutorialBackButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="y9x-W2-jAa"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S1F-bE-qaP">
+                                        <rect key="frame" x="117" y="0.0" width="47" height="36"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="47" id="HB8-m5-uzL"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <state key="normal" title="Next!"/>
+                                        <connections>
+                                            <action selector="tutorialNextButtonPressed:" destination="MWw-Go-rfF" eventType="touchUpInside" id="Lj5-Id-Hx6"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="SKS-Gt-Yfv"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="b4K-1K-8Af" firstAttribute="width" secondItem="Y8o-P1-EhR" secondAttribute="width" id="0Jt-gJ-4uH"/>
@@ -352,29 +395,40 @@
                             <constraint firstItem="Xi6-IP-eJI" firstAttribute="bottom" secondItem="Je9-4Q-GfF" secondAttribute="bottom" id="AEN-Y9-psS"/>
                             <constraint firstItem="VYB-aW-I9G" firstAttribute="bottom" secondItem="Xi6-IP-eJI" secondAttribute="top" id="BeJ-Le-fiA"/>
                             <constraint firstItem="Nws-Cy-H1T" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="3" id="D6T-qc-dcR"/>
+                            <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Zee-yk-vjS" secondAttribute="top" id="Dbg-WM-vmC"/>
+                            <constraint firstItem="CBW-dq-wwW" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="FqE-KK-cbC"/>
                             <constraint firstItem="b4K-1K-8Af" firstAttribute="bottom" secondItem="Je9-4Q-GfF" secondAttribute="bottom" id="G0G-zU-Dsf"/>
                             <constraint firstItem="IVK-sZ-5AT" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="3" id="HNO-mk-y7A"/>
                             <constraint firstItem="seG-dg-VIZ" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" constant="27" id="JwP-bc-tWi"/>
                             <constraint firstItem="b4K-1K-8Af" firstAttribute="centerX" secondItem="Ljn-hE-dG9" secondAttribute="centerX" id="KUN-2m-6f1"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="centerX" secondItem="SKS-Gt-Yfv" secondAttribute="centerX" id="Kay-hM-6pB"/>
-                            <constraint firstItem="S1F-bE-qaP" firstAttribute="top" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="-100" id="OUk-RJ-kXJ"/>
                             <constraint firstItem="Xi6-IP-eJI" firstAttribute="height" secondItem="LDu-hh-Dx7" secondAttribute="height" multiplier="0.45" constant="1" id="PBE-Z5-d9s"/>
-                            <constraint firstItem="S1F-bE-qaP" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="QLY-cz-ebC"/>
+                            <constraint firstItem="EQz-dj-jqY" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="Pox-83-2rO"/>
                             <constraint firstItem="7V9-x7-620" firstAttribute="leading" secondItem="zRD-x9-WHF" secondAttribute="trailing" constant="-79" id="SfX-rM-mpz"/>
-                            <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="top" constant="60" id="V9q-3A-cQa"/>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="leading" secondItem="IVK-sZ-5AT" secondAttribute="trailing" constant="2" id="VPq-lh-ju5"/>
+                            <constraint firstItem="Zee-yk-vjS" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="aMr-9T-xth"/>
                             <constraint firstItem="zRD-x9-WHF" firstAttribute="leading" secondItem="SKS-Gt-Yfv" secondAttribute="leading" id="cd2-7F-5b1"/>
                             <constraint firstItem="Y8o-P1-EhR" firstAttribute="width" secondItem="Ljn-hE-dG9" secondAttribute="width" id="fCW-0B-ebV"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="6UZ-1E-uIs" secondAttribute="top" constant="6" id="fwd-Cw-yDn"/>
                             <constraint firstItem="6UZ-1E-uIs" firstAttribute="centerY" secondItem="Ljn-hE-dG9" secondAttribute="centerY" constant="1" id="gZx-fb-c7s"/>
+                            <constraint firstItem="zRD-x9-WHF" firstAttribute="top" secondItem="Zee-yk-vjS" secondAttribute="bottom" id="iBu-b4-AIP"/>
+                            <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="CBW-dq-wwW" secondAttribute="top" constant="60" id="iRb-zl-9Yz"/>
+                            <constraint firstItem="CBW-dq-wwW" firstAttribute="width" secondItem="zRD-x9-WHF" secondAttribute="width" id="j51-cZ-jW7"/>
                             <constraint firstItem="VYB-aW-I9G" firstAttribute="centerX" secondItem="SKS-Gt-Yfv" secondAttribute="centerX" id="jCj-eh-6ic"/>
+                            <constraint firstItem="Zee-yk-vjS" firstAttribute="width" secondItem="LDu-hh-Dx7" secondAttribute="width" id="kbR-RC-iPi"/>
                             <constraint firstItem="Xi6-IP-eJI" firstAttribute="width" secondItem="zRD-x9-WHF" secondAttribute="width" id="lIy-ZK-ezc"/>
                             <constraint firstItem="SKS-Gt-Yfv" firstAttribute="bottom" secondItem="zRD-x9-WHF" secondAttribute="bottom" id="muh-IT-yDc"/>
                             <constraint firstItem="Nws-Cy-H1T" firstAttribute="leading" secondItem="Ljn-hE-dG9" secondAttribute="trailing" constant="-1" id="rog-XZ-boM"/>
                             <constraint firstItem="Ljn-hE-dG9" firstAttribute="centerX" secondItem="Y8o-P1-EhR" secondAttribute="centerX" constant="-3" id="s3e-dq-bkd"/>
+                            <constraint firstItem="EQz-dj-jqY" firstAttribute="top" secondItem="zRD-x9-WHF" secondAttribute="bottom" constant="-110" id="s88-xj-RFz"/>
+                            <constraint firstItem="SKS-Gt-Yfv" firstAttribute="top" secondItem="Je9-4Q-GfF" secondAttribute="top" constant="60" id="se9-cF-0m9"/>
                             <constraint firstItem="Xi6-IP-eJI" firstAttribute="centerX" secondItem="zRD-x9-WHF" secondAttribute="centerX" id="x02-EB-uyN"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="SKS-Gt-Yfv"/>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="iBu-b4-AIP"/>
+                            </mask>
+                        </variation>
                     </view>
                     <toolbarItems>
                         <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="oXi-gn-K8s"/>
@@ -392,13 +446,20 @@
                         <outlet property="calendarHeightConstraint" destination="PBE-Z5-d9s" id="rlO-bS-78V"/>
                         <outlet property="calendarTodayButton" destination="tpa-O2-eUj" id="Ufs-2t-k6a"/>
                         <outlet property="containerView" destination="zRD-x9-WHF" id="HbQ-J9-iZi"/>
+                        <outlet property="containerViewTopConstraint" destination="9MZ-gI-Dh3" id="4ZA-Jy-2YP"/>
+                        <outlet property="containerViewTopConstraintTut" destination="iBu-b4-AIP" id="9wh-GY-47h"/>
                         <outlet property="dateTextField" destination="Y8o-P1-EhR" id="qZk-kV-P2Q"/>
+                        <outlet property="fsCalendarButton" destination="b4K-1K-8Af" id="XEw-Tf-4Mg"/>
                         <outlet property="iapButton" destination="Gxe-LF-NkH" id="Y6y-8a-qTR"/>
                         <outlet property="leftDateButton" destination="IVK-sZ-5AT" id="UiI-gm-sAK"/>
                         <outlet property="recurringTasksButton" destination="6UZ-1E-uIs" id="ycd-jU-i1m"/>
                         <outlet property="rightDateButton" destination="Nws-Cy-H1T" id="eyK-VV-Mwb"/>
                         <outlet property="streakLabel" destination="d71-ge-Clh" id="ddq-oy-RXa"/>
                         <outlet property="topStripe" destination="Je9-4Q-GfF" id="gf4-rY-va5"/>
+                        <outlet property="tutHeaderTopConstraint" destination="Dbg-WM-vmC" id="7zD-kW-dkT"/>
+                        <outlet property="tutInstructions" destination="tf9-k7-fdI" id="gCM-pM-eJx"/>
+                        <outlet property="tutorialBackButton" destination="EUn-CV-0Nb" id="3gf-dL-uym"/>
+                        <outlet property="tutorialHeader" destination="Zee-yk-vjS" id="Jbq-PF-dwl"/>
                         <outlet property="tutorialNextButton" destination="S1F-bE-qaP" id="oSV-uL-WKy"/>
                         <outlet property="weekdayLabel" destination="Ljn-hE-dG9" id="IrB-dy-zER"/>
                     </connections>
