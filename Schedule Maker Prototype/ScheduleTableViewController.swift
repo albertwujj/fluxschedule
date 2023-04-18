@@ -460,7 +460,8 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
         duringKeyboardScroll = false
         let locationInView = sender.location(in: tableView)
         var indexPath = tableView.indexPathForRow(at: locationInView)
-        
+
+        // user attempts to start dragging item
         if sender.state == .began && indexPath != nil {
             veryVeryInitialIndexPath = indexPath
             if indexPath!.row >= scheduleItems.count {
@@ -483,16 +484,17 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
                     origLockedItems.append(scheduleItem.deepCopy())
                 }
             }
+            // start dragging item
             if !didDragLockedItem {
                 veryInitialIndexPath = indexPath!
                 initialIndexPath = indexPath!
                 let cell = tableView.cellForRow(at: indexPath!) as? ScheduleTableViewCell
-                UIView.animate(withDuration: 0.7, animations: { () -> Void in
+                /* UIView.animate(withDuration: 0.7, animations: { () -> Void in
                     //cell?.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
                     
                 }, completion: { (finished) -> Void in
                     
-                })
+                })*/
                 self.cellSnapshot = snapshotOfCell(inputView: cell!)
                 var center = cell?.center
                 cellSnapshot?.center = center!
@@ -511,7 +513,10 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
                     }
                 })
             }
-        } else if initialIndexPath != nil && !didDragLockedItem && sender.state == .changed {
+
+        }
+        // continue dragging item
+        else if initialIndexPath != nil && !didDragLockedItem && sender.state == .changed {
             var center = cellSnapshot!.center
             center.y = locationInView.y
             cellSnapshot?.center = center
@@ -519,8 +524,11 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
                 if !scheduleItems[indexPath!.row].locked {
                     adjustAndRecalc(indexPath: indexPath)
                     redraw(indexPath: indexPath, center: center)
+                    initialIndexPath = indexPath
                 }
 
+                /*
+                doesn't seem to make sense?
                 //allow move into locked task place if from one side to the other
                 //moving up
                 else if initialIndexPath! > indexPath! && (indexPath!.row == 0 || !scheduleItems[indexPath!.row - 1].locked) {
@@ -528,10 +536,12 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
                 //moving down
                 } else if initialIndexPath! < indexPath! && (indexPath!.row == scheduleItems.count - 1 || !scheduleItems[indexPath!.row + 1].locked) {
 
-                }
+                }*/
 
             }
-        } else if initialIndexPath != nil && !didDragLockedItem && sender.state == .ended {
+        }
+        // stop dragging item
+        else if initialIndexPath != nil && !didDragLockedItem && sender.state == .ended {
             var isUp = false
             var isDown = false
 
@@ -572,6 +582,7 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
                 cell?.alpha = 1.0
             }, completion: { (finished) -> Void in
                 if finished {
+
                     self.initialIndexPath = nil
                     self.cellSnapshot?.removeFromSuperview()
                     self.cellSnapshot = nil
@@ -656,10 +667,15 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
             self.cellSnapshot?.transform = (self.cellSnapshot?.transform.scaledBy(x: 1.05, y: 1.05))!
             self.cellSnapshot?.alpha = 0.99
             tableView.addSubview(cellSnapshot!)
-            initialIndexPath = indexPath
         }
     }
+
+
     func adjustScheduleItems(index: Int, lockStart: Bool = true) {
+        /*
+          calculate targetIndex
+          move initialIndex to index, index to targetIndex
+         */
         var initialIndex = initialIndexPath!.row
         var index = index
         
@@ -667,46 +683,19 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
         let movingUp = !movingDown
         
         let previousFirstStartTime = scheduleItems[0].startTime!
-        var initialDuration = scheduleItems[initialIndex].duration
-        
+
         if movingUp {
             scheduleItems.reverse()
             initialIndex = scheduleItems.count - 1 - initialIndex
             index = scheduleItems.count - 1 - index
         }
         
-        var hasLockedTaskTop = false
-        
-        for element in scheduleItems[0 ..< initialIndex] {
-            if element.locked {
-                hasLockedTaskTop = true
-            }
-        }
-        
-        var hasLockedTaskMiddle = false
-        
-        for element in scheduleItems[initialIndex + 1 ..< index] {
-            if element.locked {
-                hasLockedTaskMiddle = true
-            }
-        }
-        
-        var hasLockedTaskBottom = false
-        
-        for element in scheduleItems[(index + 1)...] {
-            if element.locked {
-                hasLockedTaskBottom = true
-            }
-        }
-        
-        var firstStartTimeDelta = !hasLockedTaskTop && hasLockedTaskMiddle && !hasLockedTaskBottom ?
-            scheduleItems[initialIndex].duration - scheduleItems[index].duration : 0
-        
         var targetIndex = initialIndex
-        
+
+        // to calculate the targetIndex, find the bottomost element that was displaced (if there are locked tasks, they would not be displaced, and targetIndex should be above them.
         for (i, element) in scheduleItems[0 ..< initialIndex].enumerated() {
-            if element.previousStartTime! != element.startTime! &&
-                (element.previousStartTime! > element.startTime!) == movingDown {
+            if (((element.previousStartTime! < element.startTime!) && movingUp) ||
+                ((element.previousStartTime! > element.startTime!) && movingDown)) {
                 targetIndex = i
             }
         }
@@ -724,7 +713,6 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
             targetIndex = scheduleItems.count - 1 - targetIndex
             initialIndex = scheduleItems.count - 1 - initialIndex
             index = scheduleItems.count - 1 - index
-            firstStartTimeDelta = -firstStartTimeDelta
         }
         
         tableView.beginUpdates()
