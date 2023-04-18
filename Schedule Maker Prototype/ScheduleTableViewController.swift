@@ -489,7 +489,9 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
                 veryInitialIndexPath = indexPath!
                 initialIndexPath = indexPath!
                 let cell = tableView.cellForRow(at: indexPath!) as? ScheduleTableViewCell
-                /* UIView.animate(withDuration: 0.7, animations: { () -> Void in
+                /*
+                REMOVED: highlight start time TF purple while dragging
+                UIView.animate(withDuration: 0.7, animations: { () -> Void in
                     //cell?.startTimeTF.backgroundColor = UIColor.purple.withAlphaComponent(0.3)
                     
                 }, completion: { (finished) -> Void in
