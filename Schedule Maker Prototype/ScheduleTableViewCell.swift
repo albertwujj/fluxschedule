@@ -10,6 +10,8 @@ import UIKit
 import Foundation
 import UserNotifications
 
+//iPhone UIKit Sizes: //https://developer.apple.com/library/archive/documentation/DeviceInformation/Reference/iOSDeviceCompatibility/Displays/Displays.html
+  //https://www.ios-resolution.com/
 
 class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UITextFieldDelegate {
     
@@ -74,19 +76,28 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
 
     }
     func fitToScreenSize() {
+        //fits TFs height to screen size by changing font size based on screen size
         let textFields = [startTimeTF, taskNameTF, durationTF]
         for i in textFields {
             let tf = i!
             //setStyle(textField: tf)
             fitToScreenSize(textField: tf)
         }
-        if !using12hClockFormat() {
-            startTimeWidthConstraint.constant = startTimeTF.getWidth(text: "44:44") + 10
-        } else {
-            startTimeWidthConstraint.constant = startTimeTF.getWidth(text: "10:44 AM") + 10
-        }
-        durationWidthConstraint.constant = durationTF.getWidth(text: "44:44") + 10
+        //adjust TFs to fit font size
+        adjustTimeTFs()
     }
+
+    //adjust TFs to fit font size
+    func adjustTimeTFs() {
+      if !using12hClockFormat() {
+            startTimeWidthConstraint.constant = startTimeTF.getMinWidthThatFits(text: "24:44")
+        } else {
+            startTimeWidthConstraint.constant = startTimeTF.getMinWidthThatFits(text: "24:44 AM")
+        }
+        durationWidthConstraint.constant = durationTF.getMinWidthThatFits(text: "24:44")
+    }
+
+
     func using12hClockFormat() -> Bool {
 
         let formatter = DateFormatter()
@@ -607,6 +618,8 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         return "\(hourString):\(minuteString)"
         
     }
+    //iPhone UIKit Sizes: //https://developer.apple.com/library/archive/documentation/DeviceInformation/Reference/iOSDeviceCompatibility/Displays/Displays.html
+      //https://www.ios-resolution.com/
     func fitToScreenSize(textField: UITextField) {
 
         let width = UIScreen.main.bounds.width
@@ -621,13 +634,13 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             }
         }
         //if is standard iphone 6/7/8 (width 375)
-        else if width < 380 && width > 360 {
+        else if width < 380 {
             size = 15
             if textField == startTimeTF || textField == durationTF {
                 size = 14
             }
         }
-        //iphone plus, x, landscape
+        //iphone plus, landscape
         else if width < 1000 {
             size = 16
             if textField == startTimeTF || textField == durationTF {
