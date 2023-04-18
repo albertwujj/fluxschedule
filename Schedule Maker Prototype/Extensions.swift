@@ -322,14 +322,15 @@ extension UITextField {
             textField.text = text.safelyLimitedTo(length: maxLength)
         }
     }
-    func getWidth(text: String) -> CGFloat
+    func getMinWidthThatFits(text: String) -> CGFloat
     {
         let txtField = UITextField(frame: .zero)
         txtField.font = self.font
         txtField.text = text
         txtField.sizeToFit()
-        return txtField.frame.size.width
+        return txtField.frame.size.width + 15
     }
+
 
 }
 
