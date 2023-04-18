@@ -12,18 +12,24 @@ import Foundation
 import os.log
 import UIKit
 
-public class ScheduleItem: NSObject, NSCoding {
-    
+public class ScheduleItem: NSObject, NSCoding, NSCopying {
+
     
     public var taskName: String = ""
     //duration represented in seconds
     public var duration: Int = 0
+    public var gapDuration: Int = 0
     //startTime represented in seconds since midnight
     public var startTime: Int?
     public var locked:Bool = false
     public var recurDays:Set<Int>? = Set<Int>()
     public var oldRow: Int?
-    
+
+
+    public var initialDuration: Int?
+    public var initialStartTime: Int?
+    public var previousStartTime: Int?
+
     public struct PropertyKey {
         static let taskName = "taskName"
         static let duration = "duration"
@@ -32,6 +38,7 @@ public class ScheduleItem: NSObject, NSCoding {
         static let recurDays = "recurDays"
         static let row = "row"
         static let pseudoLocked = "pseudoLocked"
+        static let gapDuration = "gapDuration"
     }
     
     public func encode(with aCoder: NSCoder) {
@@ -41,6 +48,7 @@ public class ScheduleItem: NSObject, NSCoding {
         aCoder.encode(locked, forKey: PropertyKey.locked)
         aCoder.encode(recurDays, forKey: PropertyKey.recurDays)
         aCoder.encode(oldRow, forKey: PropertyKey.row)
+        aCoder.encode(gapDuration, forKey: PropertyKey.gapDuration)
     }
     
     
@@ -55,6 +63,11 @@ public class ScheduleItem: NSObject, NSCoding {
     public convenience init(name: String, duration: Int, startTime: Int) {
         self.init(name: name, duration: duration)
         self.startTime = startTime
+    }
+    public convenience init(name: String, duration: Int, startTime: Int, locked: Bool) {
+        self.init(name: name, duration: duration)
+        self.startTime = startTime
+        self.locked = locked
     }
     
    
@@ -79,6 +92,10 @@ public class ScheduleItem: NSObject, NSCoding {
         let deepCopy = ScheduleItem(name: self.taskName, duration: self.duration, locked: self.locked)
         deepCopy.startTime = self.startTime
         deepCopy.recurDays = self.recurDays
+        deepCopy.initialStartTime = self.initialStartTime
         return deepCopy
+    }
+    public func copy(with zone: NSZone? = nil) -> Any {
+        return deepCopy()
     }
 }

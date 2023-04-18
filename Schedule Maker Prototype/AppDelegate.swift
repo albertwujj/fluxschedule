@@ -10,20 +10,41 @@ import UIKit
 import CoreData
 import os.log
 import UserNotifications
+import StoreKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    var tvcLoaded = false
     var window: UIWindow?
     var userSettings: Settings = Settings()
     static let DocumentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     var fullVersionPurchased = true
-    var scheduleViewController: ScheduleViewController!
+    var svc: ScheduleViewController!
     var notifPermitted = false
     var sharedDefaults: UserDefaults! = nil
     var recurringTasksTableViewController: RecurringTasksTableViewController?
+    var readyToSync = false
+    var kvsNotifRecieved = false
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")!
+        //print(UIDevice.current.modelName)
+        
+        print("\(UIScreen.main.bounds.width) \(UIScreen.main.bounds.height)")
+        
+        if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
+            sharedDefaults = loadedDefaults
+        } else {
+            print("UserDefaults BUG")
+        }
+        print("icloud status: \(isICloudContainerAvailable())")
+        sharedDefaults.register(defaults: [:])
+        Zephyr.shared = Zephyr()
+        Zephyr.sync(keys: [Paths.schedules, Paths.schedulesEdited, Paths.schedule, Paths.streakStats, Paths.tutorialStep, Paths.userSettings], userDefaults: sharedDefaults!)
+        Zephyr.addKeysToBeMonitored(keys: Paths.schedules, Paths.schedulesEdited, Paths.schedule, Paths.streakStats, Paths.tutorialStep, Paths.userSettings)
+        readyToSync = true
+        //syncKVS()
+
+
+
         // Override point for customization after application launch.
         /*
         if (launchOptions != nil)
@@ -36,31 +57,89 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         */
-        
         if let loadedSettings = loadUserSettings() {
             userSettings = loadedSettings
         }
-        
+        self.svc = self.window!.rootViewController as! ScheduleViewController
         registerForPushNotifications()
-        self.scheduleViewController = self.window!.rootViewController?.childViewControllers.first as! ScheduleViewController
-        UNUserNotificationCenter.current().delegate = scheduleViewController
+        UNUserNotificationCenter.current().delegate = svc
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         print("THIS IS THE SCREEN SIZE: \(UIScreen.main.bounds)")
+
+        if let loadedSessCount = loadBasic(key: Paths.sessCount) as? Int {
+            for i in [13, 40, 70, 120, 180, 250] {
+                if loadedSessCount + 1 == i {
+                    requestReview()
+                }
+            }
+            saveBasic(data: loadedSessCount + 1, key: Paths.sessCount)
+        } else {
+             saveBasic(data: 1, key: Paths.sessCount)
+        }
         return true
+    }
+
+    func syncKVS() {
+        /*
+        let okAction = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) {
+            UIAlertAction in
+            overwriteLocal()
+        }
+        let cancelAction = UIAlertAction(title: "Keep local", style: UIAlertActionStyle.destructive) {
+            UIAlertAction in
+
+        }
+        svc.presentAlert(title: "iCloud data found", message: "Schedules were found on your iCloud account. Do you want to overwrite your local schedules with the iCloud schedules?", actions: [cancelAction, okAction])
+        */
+
+        print("Ready: \(readyToSync), notif: \(kvsNotifRecieved)")
+        if readyToSync && kvsNotifRecieved {
+
+            print("synced Zephyr")
+
+            if tvcLoaded {
+                print("changed for Zephyr")
+                if let savedSchedules = svc.loadSchedules() {
+                    svc.schedules = savedSchedules
+                }
+                if let savedSchedulesEdited = svc.loadSchedulesEdited() {
+                    svc.schedulesEdited = savedSchedulesEdited
+                }
+                if let loadedSettings = loadUserSettings() {
+                    userSettings = loadedSettings
+                }
+                if let loadedTutorialStep = svc.loadTutorialStep() {
+                    svc.tutorialStep = loadedTutorialStep
+                }
+                if let loadedStreakStats = svc.tableViewController.loadStreakStats() {
+                    svc.tableViewController.streakStats = loadedStreakStats
+                }
+                svc.update()
+                if svc.tutorialStep == .done {
+                    svc.tutorialNextButton.isHidden = true
+                }
+            }
+        }
+
+    }
+    func isICloudContainerAvailable()->Bool {
+        if let currentToken = FileManager.default.ubiquityIdentityToken {
+            return true
+        }
+        else {
+            return false
+        }
     }
     func registerForPushNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in
             print("Permission granted: \(granted)")
-            guard granted else { return }
+            guard granted else { return}
             self.notifPermitted = granted
             //self.getNotificationSettings()
             // Create the custom actions for the TIMER_EXPIRED category.
-            
     
         }
-        
-        
     }
     func getNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { (settings) in
@@ -71,39 +150,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
-        scheduleViewController.saveSchedules()
+        svc.saveSchedules()
         if let rtvc = recurringTasksTableViewController {
             rtvc.saveRTasks()
         }
-        scheduleViewController.tableViewController.saveScrollPosition()
+        svc.tableViewController.saveScrollPosition()
+        
     }
-
+    
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        //scheduleTaskNotif()
-        if notifPermitted {
-            scheduleViewController.scheduleTaskNotifs(withAction: false)
-        }
         
+        //print("final \((NSUbiquitousKeyValueStore.default.dictionaryRepresentation[Paths.schedulesEdited] as! Set<Int>).count)")
+        saveUserSettings()
+        if notifPermitted {
+            svc.scheduleTaskNotifs(withAction: true)
+        }
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        if let newSchedule = scheduleViewController.loadSchedules() {
-            scheduleViewController.schedules = newSchedule
-            scheduleViewController.update()
+        if let newSchedule = svc.loadSchedules() {
+            svc.schedules = newSchedule
+            svc.update()
         }
+
+
+        svc.tableViewController.deFlashInstant(itemsToFlash: svc.tableViewController.scheduleItems)
+        self.svc.calendar.updateBoundingRect()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
-        
+
         saveUserSettings()
         self.saveContext()
     }
@@ -179,17 +265,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return nil
     }
     //MARK: global functions
-    static func changeStatusBarColor(color: UIColor) {
-        //Status bar style and visibility
-        UIApplication.shared.statusBarStyle = .lightContent
-        
-        //Change status bar color
-        /*
-        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        if statusBar.responds(to: #selector(setter: UIView.backgroundColor)) {
-            statusBar.backgroundColor = color
-        }*/
+
+    func saveBasic(data: Any, key: String) {
+        UserDefaults.shared.set(data, forKey: key)
     }
-    
+    func loadBasic(key: String) -> Any? {
+        return UserDefaults.shared.value(forKey: key)
+    }
+    @objc func requestReview() {
+        if #available(iOS 10.3, *) {
+            SKStoreReviewController.requestReview()
+        }
+    }
 }
+
 

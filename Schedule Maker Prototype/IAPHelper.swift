@@ -1,96 +1,118 @@
-/*
- * Copyright (c) 2016 Razeware LLC
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-/*
+
+
+import UIKit
 import StoreKit
-fileprivate let productIdentifiers = Set<ProductIdentifier>()
-fileprivate var purchasedProductIdentifiers = Set<ProductIdentifier>()
-fileprivate var productsRequest: SKProductsRequest?
-fileprivate var productsRequestCompletionHandler: ProductsRequestCompletionHandler?
 
-public typealias ProductIdentifier = String
-public typealias ProductsRequestCompletionHandler = (_ success: Bool, _ products: [SKProduct]?) -> ()
-
-open class IAPHelper : NSObject  {
+enum IAPHandlerAlertType{
+    case disabled
+    case restored
+    case purchased
     
-    static let IAPHelperPurchaseNotification = "IAPHelperPurchaseNotification"
-    
-    public init(productIds: Set<ProductIdentifier>) {
-        productIdentifiers = productIds
-        super.init()
-   
+    func message() -> String{
+        switch self {
+        case .disabled: return "Purchases are disabled in your device! The purchase did not go through."
+        case .restored: return "You've successfully restored your purchase!"
+        case .purchased: return "You've successfully bought this purchase!"
+        }
     }
 }
 
-// MARK: - StoreKit API
 
-extension IAPHelper {
+class IAPHandler: NSObject {
+    static let shared = IAPHandler()
     
-    public func requestProducts(completionHandler: @escaping ProductsRequestCompletionHandler) {
-        productsRequest?.cancel()
-        productsRequestCompletionHandler = completionHandler
+    let NON_CONSUMABLE_PURCHASE_PRODUCT_ID = "9P3FVEPY7V.fluxplus"
+    
+    fileprivate var productID = ""
+    fileprivate var productsRequest = SKProductsRequest()
+    fileprivate var iapProducts = [SKProduct]()
+    
+    var purchaseStatusBlock: ((IAPHandlerAlertType, SKPaymentTransaction?) -> Void)?
+    
+    // MARK: - MAKE PURCHASE OF A PRODUCT
+    func canMakePurchases() -> Bool {  return SKPaymentQueue.canMakePayments()  }
+    
+    func purchaseMyProduct(index: Int){
+        if iapProducts.count == 0 { return }
         
-        productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers)
-        productsRequest!.delegate = self
-        productsRequest!.start()
-    }
-    
-    public func buyProduct(_ product: SKProduct) {
-    }
-    
-    public func isProductPurchased(_ productIdentifier: ProductIdentifier) -> Bool {
-        return false
-    }
-    
-    public class func canMakePayments() -> Bool {
-        return true
-    }
-    
-    public func restorePurchases() {
-    }
-}
-extension IAPHelper: SKProductsRequestDelegate {
-    
-    public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        print("Loaded list of products...")
-        let products = response.products
-        productsRequestCompletionHandler?(true, products)
-        clearRequestAndHandler()
-        
-        for p in products {
-            print("Found product: \(p.productIdentifier) \(p.localizedTitle) \(p.price.floatValue)")
+        if self.canMakePurchases() {
+            let product = iapProducts[index]
+            let payment = SKPayment(product: product)
+            SKPaymentQueue.default().add(self)
+            SKPaymentQueue.default().add(payment)
+            
+            print("PRODUCT TO PURCHASE: \(product.productIdentifier)")
+            productID = product.productIdentifier
+        } else {
+            purchaseStatusBlock?(.disabled, nil)
         }
     }
     
-    public func request(_ request: SKRequest, didFailWithError error: Error) {
-        print("Failed to load list of products.")
-        print("Error: \(error.localizedDescription)")
-        productsRequestCompletionHandler?(false, nil)
-        clearRequestAndHandler()
+    // MARK: - RESTORE PURCHASE
+    func restorePurchase(){
+        SKPaymentQueue.default().add(self)
+        SKPaymentQueue.default().restoreCompletedTransactions()
     }
     
-    private func clearRequestAndHandler() {
-        productsRequest = nil
-        productsRequestCompletionHandler = nil
+    
+    // MARK: - FETCH AVAILABLE IAP PRODUCTS
+    func fetchAvailableProducts(){
+        
+        // Put here your IAP Products ID's
+        let productIdentifiers = NSSet(objects: NON_CONSUMABLE_PURCHASE_PRODUCT_ID)
+        
+        productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers as! Set<String>)
+        productsRequest.delegate = self
+        productsRequest.start()
     }
 }
-*/
- 
+
+extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver{
+    // MARK: - REQUEST IAP PRODUCTS
+    func productsRequest (_ request:SKProductsRequest, didReceive response:SKProductsResponse) {
+        
+        if (response.products.count > 0) {
+            iapProducts = response.products
+            for product in iapProducts{
+                let numberFormatter = NumberFormatter()
+                numberFormatter.formatterBehavior = .behavior10_4
+                numberFormatter.numberStyle = .currency
+                numberFormatter.locale = product.priceLocale
+                let price1Str = numberFormatter.string(from: product.price)
+                print(product.localizedDescription + "\nfor just \(price1Str!)")
+            }
+        }
+    }
+    
+    func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
+        for trans in queue.transactions {
+            purchaseStatusBlock?(.restored, trans)
+        }
+    }
+    
+    // MARK:- IAP PAYMENT QUEUE
+    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        for transaction:AnyObject in transactions {
+            if let trans = transaction as? SKPaymentTransaction {
+                switch trans.transactionState {
+                case .purchased:
+                    print("purchased")
+                    SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    purchaseStatusBlock?(.purchased, trans)
+                    break
+                    
+                case .failed:
+                    print("failed")
+                    SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    break
+                case .restored:
+                    print("restored")
+                    purchaseStatusBlock?(.restored, trans)
+                    SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    break
+                    
+                default: break
+                }}}
+    }
+}
+
