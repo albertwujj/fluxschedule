@@ -139,6 +139,14 @@
                                     <action selector="compactModeSwitched:" destination="wrP-i8-ouj" eventType="valueChanged" id="jsa-3f-o7a"/>
                                 </connections>
                             </switch>
+                            <button opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HsU-GC-Fkc">
+                                <rect key="frame" x="278" y="561" width="54" height="32"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <state key="normal" title="Tutorial"/>
+                                <connections>
+                                    <action selector="tutorialButtonPressed:" destination="wrP-i8-ouj" eventType="touchUpInside" id="Mau-sa-erC"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -152,11 +160,13 @@
                             <constraint firstItem="pNe-yF-mLY" firstAttribute="leading" secondItem="ClR-u3-Spj" secondAttribute="leading" id="GLp-mf-7L2"/>
                             <constraint firstItem="dVF-kw-qba" firstAttribute="leading" secondItem="ZCa-1X-QC4" secondAttribute="leading" id="HOD-Bf-OfX"/>
                             <constraint firstItem="dVF-kw-qba" firstAttribute="top" secondItem="ZCa-1X-QC4" secondAttribute="bottom" constant="57" id="Kr8-In-MZK"/>
+                            <constraint firstItem="ClR-u3-Spj" firstAttribute="bottom" secondItem="HsU-GC-Fkc" secondAttribute="bottom" constant="30" id="MAw-My-BRp"/>
                             <constraint firstItem="U7I-YE-JK3" firstAttribute="leading" secondItem="ClR-u3-Spj" secondAttribute="leading" constant="29" id="QrB-j6-y9D"/>
                             <constraint firstItem="DyB-5m-9Sp" firstAttribute="leading" secondItem="U7I-YE-JK3" secondAttribute="trailing" constant="40" id="Yee-61-14K"/>
                             <constraint firstItem="qvq-3e-xSR" firstAttribute="leading" secondItem="bU3-zs-53c" secondAttribute="trailing" constant="35.5" id="Ynr-7P-ecb"/>
                             <constraint firstItem="xOr-mq-AAY" firstAttribute="leading" secondItem="ClR-u3-Spj" secondAttribute="leading" constant="29" id="avV-tG-sq6"/>
                             <constraint firstItem="dKL-Y2-qjm" firstAttribute="trailing" secondItem="DyB-5m-9Sp" secondAttribute="trailing" id="dmu-Oq-i06"/>
+                            <constraint firstItem="ClR-u3-Spj" firstAttribute="trailing" secondItem="HsU-GC-Fkc" secondAttribute="trailing" constant="43" id="eFT-2B-AYE"/>
                             <constraint firstItem="dKL-Y2-qjm" firstAttribute="centerY" secondItem="ZCa-1X-QC4" secondAttribute="centerY" id="h2q-PO-HcT"/>
                             <constraint firstItem="iLU-B9-HXa" firstAttribute="centerY" secondItem="P6G-C6-k4p" secondAttribute="centerY" id="hQm-BF-ZL6"/>
                             <constraint firstItem="ClR-u3-Spj" firstAttribute="trailing" secondItem="pNe-yF-mLY" secondAttribute="trailing" id="iHy-pE-DAV"/>
@@ -177,12 +187,21 @@
                         <outlet property="notificationsSwitch" destination="iLU-B9-HXa" id="ctQ-qE-Kw8"/>
                         <outlet property="timeModeSwitch" destination="0Qd-45-SJq" id="qrR-Tg-EB1"/>
                         <outlet property="topStripe" destination="pNe-yF-mLY" id="idI-KA-XUu"/>
+                        <outlet property="tutorialButton" destination="HsU-GC-Fkc" id="VO8-PU-dyR"/>
                         <outlet property="viewStatsButton" destination="dVF-kw-qba" id="lBO-nB-tSG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ejc-2f-vFu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2428" y="1264"/>
+            <point key="canvasLocation" x="2428" y="1263.4182908545729"/>
+        </scene>
+        <!--svc-->
+        <scene sceneID="Zky-pg-DrS">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Main" referencedIdentifier="svc" id="HEa-Fz-EPf" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UlP-vb-fta" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2985" y="1258"/>
         </scene>
         <!--Streak Popover View Controller-->
         <scene sceneID="jnq-N5-iUH">
