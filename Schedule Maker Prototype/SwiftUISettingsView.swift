@@ -13,6 +13,7 @@ struct DurationPicker: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UIDatePicker {
         let datePicker = UIDatePicker()
+        datePicker.preferredDatePickerStyle = .wheels
         datePicker.datePickerMode = .countDownTimer
         datePicker.addTarget(context.coordinator, action: #selector(Coordinator.updateDuration), for: .valueChanged)
         return datePicker
@@ -54,10 +55,13 @@ struct SwiftUISettingsView: View {
         Section(header: Text("Default Times")) {
           DatePicker("Default Start Time", selection: $observable.defaultStartTime, displayedComponents: .hourAndMinute).onChange(of: observable.defaultStartTime) { (_) in
             observable.onChangeStartTime()
-          }.environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
-          DatePicker("Default Duration", selection: $observable.defaultDuration, displayedComponents: .hourAndMinute).onChange(of:observable.defaultDuration) { (_) in
-            observable.onChangeDuration()
-          }.environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+          }.environment(\.timeZone, TimeZone(secondsFromGMT: 0)!).datePickerStyle(.wheel)
+          HStack {
+            Text("Default Duration")
+            DurationPicker(duration: $observable.defaultDuration).onChange(of: observable.defaultDuration) { (_) in
+              observable.onChangeDuration()
+            }
+          }
         }
       }.navigationBarTitle(Text("Settings"), displayMode: .inline).navigationBarItems(leading: Button("Back", action: observable.dismiss))
     }

@@ -24,7 +24,7 @@ class SettingsViewObservable: ObservableObject {
   @Published var isCompactMode: Bool!
   @Published var is5MinIncrement: Bool!
   @Published var defaultStartTime: Date!
-  @Published var defaultDuration: Date!
+  @Published var defaultDuration: TimeInterval!
   var onToggleCompact: (()->Void)!
   var onToggle5MinIncrement: (()->Void)!
   var onChangeStartTime: (()->Void)!
@@ -52,9 +52,9 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
       observable.onChangeStartTime = { [self, observable] in
         self.appDelegate.userSettings.defaultStartTime = Int(observable.defaultStartTime.timeIntervalSinceReferenceDate)
       }
-      observable.defaultDuration = Date.init(timeIntervalSinceReferenceDate: TimeInterval(userSettings.defaultDuration))
+      observable.defaultDuration = TimeInterval(userSettings.defaultDuration)
       observable.onChangeDuration = { [self, observable] in
-        self.appDelegate.userSettings.defaultDuration = Int(observable.defaultDuration.timeIntervalSinceReferenceDate)
+        self.appDelegate.userSettings.defaultDuration = Int(observable.defaultDuration)
       }
 
       let ret = UIHostingController(coder: coder, rootView: SwiftUISettingsView(observable: observable))
