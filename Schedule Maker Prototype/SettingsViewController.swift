@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 
 class SettingsViewController: BaseViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UIPopoverPresentationControllerDelegate {
@@ -57,7 +58,8 @@ class SettingsViewController: BaseViewController, UITextFieldDelegate, Accessory
         Timer.scheduledTimer(timeInterval: 20, target: self, selector: #selector(updateStartOfToday), userInfo: nil, repeats: true)
 
     }
-    override func viewWillAppear(_ animated: Bool) {
+  
+  override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if svc.hasFinishedTutorial {
             //tutorialButton.isHidden = true

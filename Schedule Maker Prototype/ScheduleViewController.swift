@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 import StoreKit
 import os.log
 import Foundation
@@ -19,7 +20,34 @@ enum Tut:Int {
     }
 }
 
+class SettingsViewObservable: ObservableObject {
+  @Published var isCompactMode: Bool!
+  var onToggleCompact: (()->Void)!
+  var dismiss: (()->Void)!
+}
+
+
+
 class ScheduleViewController: BaseViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate, FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
+
+
+    @IBSegueAction func settingsButtonPressed(_ coder: NSCoder) -> UIViewController? {
+      var observable = SettingsViewObservable()
+      observable.isCompactMode = userSettings.compactMode
+      observable.onToggleCompact = { [self, observable] in
+        let tvc = self.tableViewController!
+        self.appDelegate.userSettings.compactMode = observable.isCompactMode
+        self.tableViewController.setSeparator()
+        self.tableViewController.changeRowHeight()
+        self.tableViewController.tableView.reloadData()
+      }
+
+      observable.isCompactMode = appDelegate.userSettings.compactMode
+      let ret = UIHostingController(coder: coder, rootView: SwiftUISettingsView(observable: observable))
+      observable.dismiss = {[ret] in ret!.dismiss(animated: true, completion: nil)}
+      return ret
+  }
+
     fileprivate let gregorian = Calendar.current
     fileprivate let formatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -181,7 +209,7 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         checkAddTutorial()
         // Do any additional setup after loading the view.
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if(userSettings.fluxPlus) {

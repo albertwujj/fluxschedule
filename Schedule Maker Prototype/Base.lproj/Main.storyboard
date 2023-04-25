@@ -281,7 +281,7 @@
                                 <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="33"/>
                                 <state key="normal" backgroundImage="Flux settings icon"/>
                                 <connections>
-                                    <segue destination="7dZ-8v-ABh" kind="presentation" identifier="toSettings" id="ZaP-Ae-bZz"/>
+                                    <segue destination="HkK-kk-Rnl" kind="presentation" destinationCreationSelector="settingsButtonPressed:" id="LUG-VJ-Xap"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WEDNESDAY, JAN 88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ljn-hE-dG9">
@@ -504,6 +504,16 @@ Try tapping any box to edit it.</string>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WjD-S6-dXb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1702" y="331"/>
+        </scene>
+        <!--Hosting Controller-->
+        <scene sceneID="2jo-vo-1ai">
+            <objects>
+                <hostingController id="HkK-kk-Rnl" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="IMT-4n-0R9"/>
+                </hostingController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XSc-Gm-1gh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-108" y="-560"/>
         </scene>
     </scenes>
     <resources>
