@@ -22,7 +22,13 @@ enum Tut:Int {
 
 class SettingsViewObservable: ObservableObject {
   @Published var isCompactMode: Bool!
+  @Published var is5MinIncrement: Bool!
+  @Published var defaultStartTime: Date!
+  @Published var defaultDuration: Date!
   var onToggleCompact: (()->Void)!
+  var onToggle5MinIncrement: (()->Void)!
+  var onChangeStartTime: (()->Void)!
+  var onChangeDuration: (()->Void)!
   var dismiss: (()->Void)!
 }
 
@@ -32,19 +38,33 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
 
 
     @IBSegueAction func settingsButtonPressed(_ coder: NSCoder) -> UIViewController? {
-      var observable = SettingsViewObservable()
+      let observable = SettingsViewObservable()
       observable.isCompactMode = userSettings.compactMode
       observable.onToggleCompact = { [self, observable] in
-        let tvc = self.tableViewController!
         self.appDelegate.userSettings.compactMode = observable.isCompactMode
+      }
+      observable.is5MinIncrement = userSettings.is5MinIncrement
+      observable.onToggle5MinIncrement = { [self, observable] in
+        self.appDelegate.userSettings.is5MinIncrement = observable.is5MinIncrement
+      }
+
+      observable.defaultStartTime = Date.init(timeIntervalSinceReferenceDate: TimeInterval(userSettings.defaultStartTime))
+      observable.onChangeStartTime = { [self, observable] in
+        self.appDelegate.userSettings.defaultStartTime = Int(observable.defaultStartTime.timeIntervalSinceReferenceDate)
+      }
+      observable.defaultDuration = Date.init(timeIntervalSinceReferenceDate: TimeInterval(userSettings.defaultDuration))
+      observable.onChangeDuration = { [self, observable] in
+        self.appDelegate.userSettings.defaultDuration = Int(observable.defaultDuration.timeIntervalSinceReferenceDate)
+      }
+
+      let ret = UIHostingController(coder: coder, rootView: SwiftUISettingsView(observable: observable))
+      observable.dismiss = { [ret] in
+        ret!.dismiss(animated: true, completion: nil)
         self.tableViewController.setSeparator()
         self.tableViewController.changeRowHeight()
         self.tableViewController.tableView.reloadData()
+        self.update()
       }
-
-      observable.isCompactMode = appDelegate.userSettings.compactMode
-      let ret = UIHostingController(coder: coder, rootView: SwiftUISettingsView(observable: observable))
-      observable.dismiss = {[ret] in ret!.dismiss(animated: true, completion: nil)}
       return ret
   }
 
