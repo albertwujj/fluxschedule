@@ -373,6 +373,8 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             startTimeTFCustomButton.setTitle(ScheduleTableViewCell.timeDescription(durationSinceMidnight: Int(date.timeIntervalSince(startOfToday))), for: .normal)
             startTimeTFCustomButton.sizeToFit()
             datePickerView.addTarget(self, action: #selector(ScheduleTableViewCell.datePickerValueChangedStartTime), for: UIControlEvents.valueChanged)
+            datePickerView.preferredDatePickerStyle = .wheels
+            datePickerView.sizeToFit()
         }
  
     }
