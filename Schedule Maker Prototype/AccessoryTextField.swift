@@ -25,6 +25,7 @@ class AccessoryTextField: UITextField {
     */
     var accessoryDelegate: AccessoryTextFieldDelegate?
     var doneButton: UIBarButtonItem!
+    var customButton: UIButton?
     
     
     init() {
@@ -37,8 +38,10 @@ class AccessoryTextField: UITextField {
     public func addButtons(customString: String?) {
         addButtons(customString: customString, customButton: nil)
     }
-    
+    // should be called setCustomButton, can only take one
     public func addButtons(customString: String?, customButton: UIButton?) {
+        self.customButton = customButton
+
         let doneToolbar: UIToolbar = UIToolbar(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
         doneToolbar.barStyle = .default
         
