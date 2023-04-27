@@ -114,7 +114,9 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
     var testingMode = false
     let dayToInt = ["MONDAY": 0, "TUESDAY": 1, "WEDNESDAY": 2, "THURSDAY": 3, "FRIDAY": 4, "SATURDAY": 5, "SUNDAY": 6]
     var schedules : [Int: [ScheduleItem]] = [:]
+    // keep track of which schedules are manually edited to not mess with them (default start task, recurring tasks)
     var schedulesEdited: Set<Int> = Set<Int>()
+    var scheduleLoadAttempted = false
     var tableViewController: ScheduleTableViewController!
     var currDateInt = 0
     var selectedDateInt: Int?
@@ -136,7 +138,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
     var lockedTasksEnabled = true
 
     var loadedTutorialStep = false
-    var loadedSchedules = false
 
     var hasFinishedTutorial = false
 
@@ -655,10 +656,13 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         if testingMode {
             schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: userSettings.defaultStartTime)]
         }
+        // if schedule is not manually edited, or schedule does not exist in dict, create first task
         else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil{
+            // if current day, set specified start task
             if selectedDateInt ?? currDateInt == currDateInt {
                 schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: tableViewController.getCurrentDurationFromMidnight())]
             }
+            // if not, set default start task
             else {
                 schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: userSettings.defaultName, duration: userSettings.defaultDuration, startTime: userSettings.defaultStartTime)]
             }
@@ -724,7 +728,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         //dateTextField.text = intDateDescription(int: selectedDateInt ?? currDateInt)
         //saveScheduleDates()
         saveSchedules()
-        //saveSchedulesData()
         updateStreakButton()
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1)) {
             self.calendar.updateBoundingRect()
@@ -768,17 +771,9 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
 
 
     func saveSchedules() {
-        if(!loadedSchedules) {
-            if let savedSchedules = loadSchedules() {
-                schedules = savedSchedules
-            }
-            if let savedSchedulesEdited = loadSchedulesEdited() {
-                schedulesEdited = savedSchedulesEdited
-            }
-            loadedSchedules = true
-            return
+        guard scheduleLoadAttempted else {
+          return
         }
-
         if sharedDefaults != nil {
             NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
             sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedules), forKey: Paths.schedules)
@@ -788,8 +783,7 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
     }
 
     func loadSchedules() -> [Int:[ScheduleItem]]? {
-
-
+        scheduleLoadAttempted = true
         if sharedDefaults != nil {
             if let data = sharedDefaults.object(forKey: Paths.schedules) as? Data {
                 NSKeyedUnarchiver.setClass(ScheduleItem.self, forClassName: "ScheduleItem")
@@ -800,7 +794,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         else {
             print("tried to access default EARLY")
         }
-        loadedSchedules = true
         return nil
     }
     func loadSchedulesEdited() -> Set<Int>? {
@@ -824,7 +817,7 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         }
     }
 
-
+/* unused funcs to save schedules to ios file system
     func loadSchedulesData() -> [Int: [ScheduleItem]]?{
         return (NSKeyedUnarchiver.unarchiveObject(withFile: AppDelegate.DocumentsDirectory.appendingPathComponent(Paths.schedules).path) as! Schedule).s
     }
@@ -838,7 +831,7 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
             os_log("Failed to save schedules...", log: OSLog.default, type: .debug)
         }
     }
-
+*/
     func registerCategories() {
         let view = UNNotificationAction(identifier: "view",
                                         title: "View",
@@ -859,23 +852,25 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
                                                     intentIdentifiers: [],
                                                     options: UNNotificationCategoryOptions(rawValue: 0))
         let center = UNUserNotificationCenter.current()
-
         center.setNotificationCategories([taskNoAction, taskWithAction])
     }
-    @objc func scheduleTaskNotifs(withAction: Bool) {
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    func scheduleInactiveNotif() {
+      let center = UNUserNotificationCenter.current()
+      let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (7*24*3600), repeats: false)
+      let content = UNMutableNotificationContent()
+      content.title = "You haven't used us for a week"
+      content.body = "Want to get back on a schedule?"
+      content.sound = UNNotificationSound.default()
+      //will remove existing notification with same identifier
+      let request = UNNotificationRequest(identifier: "inactive", content: content, trigger: trigger)
+      center.add(request)
+    }
+    func scheduleTaskNotifs(withAction: Bool) {
+        let center = UNUserNotificationCenter.current()
+        center.removeAllPendingNotificationRequests()
+        scheduleInactiveNotif()
         if(userSettings.notificationsOn) {
             registerCategories()
-            let center = UNUserNotificationCenter.current()
-            let inactiveTrigger = UNTimeIntervalNotificationTrigger(timeInterval: (48*60*60), repeats: false)
-            let inactiveContent = UNMutableNotificationContent()
-            inactiveContent.title = "You haven't used the app for 48 hours"
-            inactiveContent.body = "You've been gone for 48 hours. Wanna get back on a schedule?"
-            inactiveContent.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
-            inactiveContent.sound = UNNotificationSound.default()
-
-            let inactiveRequest = UNNotificationRequest(identifier: UUID().uuidString, content: inactiveContent, trigger: inactiveTrigger)
-            center.add(inactiveRequest)
             if(userSettings.fluxPlus) {
                 for i in schedules[currDateInt] ?? [] {
                     if let startDate = i.startTime, i.taskName != userSettings.defaultName {
@@ -886,11 +881,10 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
                             content.categoryIdentifier = withAction ? "taskWithAction": "taskNoAction"
                             content.userInfo = ["notifDate": startDate]
                             content.sound = UNNotificationSound.default()
-
                             var dateComponents = DateComponents()
                             dateComponents.hour = startDate / 3600
                             dateComponents.minute = (startDate % 3600) / 60
-                            var trigger: UNNotificationTrigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+                            let trigger: UNNotificationTrigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
                             //trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
                             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
                             center.add(request)
@@ -899,7 +893,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
                 }
             }
         }
-
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
@@ -949,9 +942,8 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
                         }
                     }
                 }
-                schedulesEdited.insert(selectedDateInt ?? currDateInt)
+                schedulesEdited.insert(currDateInt)
                 saveSchedules()
-
             default:
                 break
             }

@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let loadedSettings = loadUserSettings() {
             userSettings = loadedSettings
         }
-        self.svc = self.window!.rootViewController as! ScheduleViewController
+        self.svc = (self.window!.rootViewController as! ScheduleViewController)
         registerForPushNotifications()
         UNUserNotificationCenter.current().delegate = svc
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
@@ -133,12 +133,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func registerForPushNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in
-            print("Permission granted: \(granted)")
+            print("Notification permission granted: \(granted)")
             guard granted else { return}
-            self.notifPermitted = granted
+            self.notifPermitted = true
             //self.getNotificationSettings()
             // Create the custom actions for the TIMER_EXPIRED category.
-    
         }
     }
     func getNotificationSettings() {
@@ -176,14 +175,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        if let newSchedule = svc.loadSchedules() {
-            svc.schedules = newSchedule
-            svc.update()
+        if let savedSchedules = svc.loadSchedules() {
+            svc.schedules = savedSchedules
         }
-
-
+        if let savedSchedulesEdited = svc.loadSchedulesEdited() {
+            svc.schedulesEdited = savedSchedulesEdited
+        }
         svc.tableViewController.deFlashInstant(itemsToFlash: svc.tableViewController.scheduleItems)
         self.svc.calendar.updateBoundingRect()
+
+        svc.scheduleInactiveNotif()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
