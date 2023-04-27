@@ -61,9 +61,6 @@ class SettingsViewController: BaseViewController, UITextFieldDelegate, Accessory
   
   override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if svc.hasFinishedTutorial {
-            //tutorialButton.isHidden = true
-        }
     }
     @objc func updateStartOfToday() {
         startOfToday = Calendar.current.startOfDay(for: Date())

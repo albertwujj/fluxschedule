@@ -116,7 +116,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
     var schedules : [Int: [ScheduleItem]] = [:]
     // keep track of which schedules are manually edited to not mess with them (default start task, recurring tasks)
     var schedulesEdited: Set<Int> = Set<Int>()
-    var scheduleLoadAttempted = false
     var tableViewController: ScheduleTableViewController!
     var currDateInt = 0
     var selectedDateInt: Int?
@@ -139,9 +138,7 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
 
     var loadedTutorialStep = false
 
-    var hasFinishedTutorial = false
-
-    var tutorialStep: Tut = .done
+    var tutorialStep: Tut!
 
 
     @IBOutlet weak var streakLabel: UILabel!
@@ -155,12 +152,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
     @IBOutlet weak var calendarHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var calendarBottomSpaceConstraint: NSLayoutConstraint!
     override func viewDidLoad() {
-
-        if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
-            sharedDefaults = loadedDefaults
-        } else {
-            print("UserDefaults BUG")
-        }
         super.viewDidLoad()
 
         print(String(calculateDailyStreak(tableViewController.streakStats)))
@@ -187,22 +178,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         tutorialStepExample = [ScheduleItem(name: "Morning routine", duration: 45 * 60, startTime: 7 * 3600), ScheduleItem(name: "Inspect Instagram", duration: 15 * 60), ScheduleItem(name: "Go work", duration: 8 * 3600, locked: userSettings.fluxPlus), ScheduleItem(name: "Donuts with co-workers", duration: 30 * 60, locked: userSettings.fluxPlus), ScheduleItem(name: "Respond to emails", duration: 20 * 60), ScheduleItem(name: "Work on side-project", duration: 45 * 60), ScheduleItem(name: "Pick up Benjamin", duration: userSettings.defaultDuration)]
         */
 
-        if let savedTutorialStep = loadTutorialStep() {
-            tutorialStep = savedTutorialStep
-        }
-        else {
-            tutorialStep = Tut(1)
-        }
-
-        if let savedSchedules = loadSchedules() {
-            schedules = savedSchedules
-        }
-        if let savedSchedulesEdited = loadSchedulesEdited() {
-            schedulesEdited = savedSchedulesEdited
-        }
-        if let loadedTutFinished = loadBasic(key: Paths.hasFinishedTutorial) as? Bool {
-            hasFinishedTutorial = loadedTutFinished
-        }
         Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(checkChangeCurrDate), userInfo: nil, repeats: true)
 
         containerView.layer.borderColor = appDelegate.userSettings.themeColor.cgColor
@@ -238,6 +213,10 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         }
     }
 
+    func loadSavedData() {
+      tutorialStep = getSavedTutorialStep() ?? Tut(1)
+      loadSchedulesAndEdited()
+    }
 
     func checkAddTutorial() {
         if tutorialStep == Tut(1) {
@@ -313,16 +292,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         }
     }
 
-
-    /*
-     private func loadSavedData() {
-     if let savedScheduleDates = loadScheduleDates() {
-     for i in savedScheduleDates {
-     schedules[i] = loadSchedule(date: i)
-     }
-     }
-     }
-     */
     @objc func checkChangeCurrDate() {
         if dateToHashableInt(date: Date()) != currDateInt {
             changeCurrDate()
@@ -494,10 +463,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         saveTutorialStep()
         print(tutorialStep)
         setTutorial(step: tutorialStep)
-        if tutorialStep == .done {
-            hasFinishedTutorial = true
-            saveBasic(data: hasFinishedTutorial, key: Paths.hasFinishedTutorial)
-        }
         /*
         if tutorialStep == 1 {
             tutorialStep += 1
@@ -743,13 +708,25 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         print(String(calculateDailyStreak(tableViewController.streakStats)))
     }
 
+    /*
+    func saveStreakStats(streakStats:StreakStats) {
+        sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: streakStats), forKey: Paths.streakStats)
+    }
+    func getSavedStreakStats() -> StreakStats? {
+        if let data = sharedDefaults.object(forKey: Paths.streakStats) as? Data {
+            let unarcher = NSKeyedUnarchiver(forReadingWith: data)
+            return unarcher.decodeObject(forKey: "root") as? StreakStats
+        }
+        return nil
+    }*/
+
     func saveTutorialStep() {
         if sharedDefaults != nil {
             sharedDefaults.set(tutorialStep.rawValue + 1, forKey: Paths.tutorialStep)
         }
     }
 
-    func loadTutorialStep() -> Tut? {
+    func getSavedTutorialStep() -> Tut? {
 
         if sharedDefaults != nil {
             if let step = sharedDefaults.value(forKey: Paths.tutorialStep) as? Int
@@ -771,9 +748,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
 
 
     func saveSchedules() {
-        guard scheduleLoadAttempted else {
-          return
-        }
         if sharedDefaults != nil {
             NSKeyedArchiver.setClassName("ScheduleItem", for: ScheduleItem.self)
             sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: schedules), forKey: Paths.schedules)
@@ -782,8 +756,15 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         }
     }
 
-    func loadSchedules() -> [Int:[ScheduleItem]]? {
-        scheduleLoadAttempted = true
+    func loadSchedulesAndEdited() {
+      if let loadedSchedules = getSavedSchedules() {
+        schedules = loadedSchedules
+      }
+      if let loadedSchedulesEdited = getSavedSchedulesEdited() {
+        schedulesEdited = loadedSchedulesEdited
+      }
+    }
+    func getSavedSchedules() -> [Int:[ScheduleItem]]? {
         if sharedDefaults != nil {
             if let data = sharedDefaults.object(forKey: Paths.schedules) as? Data {
                 NSKeyedUnarchiver.setClass(ScheduleItem.self, forClassName: "ScheduleItem")
@@ -796,7 +777,7 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
         }
         return nil
     }
-    func loadSchedulesEdited() -> Set<Int>? {
+    func getSavedSchedulesEdited() -> Set<Int>? {
         if let data = sharedDefaults.object(forKey: Paths.schedulesEdited) as? Data {
             let unarcher = NSKeyedUnarchiver(forReadingWith: data)
             return unarcher.decodeObject(forKey: "root") as? Set<Int>
@@ -816,6 +797,7 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
             hideCalendar()
         }
     }
+
 
 /* unused funcs to save schedules to ios file system
     func loadSchedulesData() -> [Int: [ScheduleItem]]?{
@@ -897,12 +879,7 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        if let savedSchedules = loadSchedules() {
-            schedules = savedSchedules
-        }
-        if let savedSchedulesEdited = loadSchedulesEdited() {
-            schedulesEdited = savedSchedulesEdited
-        }
+        loadSchedulesAndEdited()
         self.currDateInt = dateToHashableInt(date: Date())
         let userInfo = response.notification.request.content.userInfo
 

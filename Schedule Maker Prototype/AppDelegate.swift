@@ -21,20 +21,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var fullVersionPurchased = true
     var svc: ScheduleViewController!
     var notifPermitted = false
-    var sharedDefaults: UserDefaults! = nil
+    var sharedDefaults: UserDefaults!
     var recurringTasksTableViewController: RecurringTasksTableViewController?
     var readyToSync = false
     var kvsNotifRecieved = false
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        //print(UIDevice.current.modelName)
-        
-        print("\(UIScreen.main.bounds.width) \(UIScreen.main.bounds.height)")
-        
-        if let loadedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype") {
-            sharedDefaults = loadedDefaults
-        } else {
-            print("UserDefaults BUG")
-        }
+        sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")
         print("icloud status: \(isICloudContainerAvailable())")
         sharedDefaults.register(defaults: [:])
         Zephyr.shared = Zephyr()
@@ -42,25 +34,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Zephyr.addKeysToBeMonitored(keys: Paths.schedules, Paths.schedulesEdited, Paths.schedule, Paths.streakStats, Paths.tutorialStep, Paths.userSettings)
         readyToSync = true
         //syncKVS()
+        
+        userSettings = getSavedUserSettings() ?? userSettings
 
-
-
-        // Override point for customization after application launch.
-        /*
-        if (launchOptions != nil)
-        {
-            // opened from a push notification when the app is closed
-            var userInfo = launchOptions[UIApplicationLaunchOptionsKey.localNotification]?
-            if (userInfo != nil)
-            {
-                scheduleViewController.
-            }
-        }
-        */
-        if let loadedSettings = loadUserSettings() {
-            userSettings = loadedSettings
-        }
         self.svc = (self.window!.rootViewController as! ScheduleViewController)
+        svc.sharedDefaults = sharedDefaults
+        svc.loadSavedData()
         registerForPushNotifications()
         UNUserNotificationCenter.current().delegate = svc
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
@@ -76,8 +55,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
              saveBasic(data: 1, key: Paths.sessCount)
         }
+
+        // Override point for customization after application launch.
+        /*
+        if (launchOptions != nil)
+        {
+            // opened from a push notification when the app is closed
+            var userInfo = launchOptions[UIApplicationLaunchOptionsKey.localNotification]?
+            if (userInfo != nil)
+            {
+                scheduleViewController.
+            }
+        }
+        */
+
         return true
     }
+
+
+
 
     func syncKVS() {
         /*
@@ -94,31 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         print("Ready: \(readyToSync), notif: \(kvsNotifRecieved)")
         if readyToSync && kvsNotifRecieved {
-
             print("synced Zephyr")
-
-            if tvcLoaded {
-                print("changed for Zephyr")
-                if let savedSchedules = svc.loadSchedules() {
-                    svc.schedules = savedSchedules
-                }
-                if let savedSchedulesEdited = svc.loadSchedulesEdited() {
-                    svc.schedulesEdited = savedSchedulesEdited
-                }
-                if let loadedSettings = loadUserSettings() {
-                    userSettings = loadedSettings
-                }
-                if let loadedTutorialStep = svc.loadTutorialStep() {
-                    svc.tutorialStep = loadedTutorialStep
-                }
-                if let loadedStreakStats = svc.tableViewController.loadStreakStats() {
-                    svc.tableViewController.streakStats = loadedStreakStats
-                }
-                svc.update()
-                if svc.tutorialStep == .done {
-                    svc.tutorialNextButton.isHidden = true
-                }
-            }
         }
 
     }
@@ -175,28 +147,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        if let savedSchedules = svc.loadSchedules() {
-            svc.schedules = savedSchedules
-        }
-        if let savedSchedulesEdited = svc.loadSchedulesEdited() {
-            svc.schedulesEdited = savedSchedulesEdited
-        }
+        svc.loadSchedulesAndEdited()
         svc.tableViewController.deFlashInstant(itemsToFlash: svc.tableViewController.scheduleItems)
-        self.svc.calendar.updateBoundingRect()
-
+        svc.calendar.updateBoundingRect()
         svc.scheduleInactiveNotif()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
-
         saveUserSettings()
-        self.saveContext()
+        saveContext()
     }
 
     // MARK: - Core Data stack
-
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -255,18 +219,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSKeyedArchiver.setClassName("Settings", for: Settings.self)
         sharedDefaults.set(NSKeyedArchiver.archivedData(withRootObject: userSettings), forKey: Paths.userSettings)
     }
-    
-    func loadUserSettings() -> Settings? {
-        if let data = sharedDefaults.object(forKey: Paths.userSettings) as? Data {
+    func getSavedUserSettings() -> Settings? {
+      if let data = sharedDefaults.object(forKey: Paths.userSettings) as? Data {
             NSKeyedUnarchiver.setClass(Settings.self, forClassName: "Settings")
             let unarcher = NSKeyedUnarchiver(forReadingWith: data)
-            
+
             return unarcher.decodeObject(forKey: "root") as? Settings
         }
         return nil
     }
-    //MARK: global functions
 
+    //MARK: global functions
     func saveBasic(data: Any, key: String) {
         UserDefaults.shared.set(data, forKey: key)
     }
