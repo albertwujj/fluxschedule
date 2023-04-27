@@ -21,15 +21,15 @@ enum Tut:Int {
 }
 
 class SettingsViewObservable: ObservableObject {
-  @Published var isCompactMode: Bool!
-  @Published var is5MinIncrement: Bool!
-  @Published var defaultStartTime: Date!
-  @Published var defaultDuration: TimeInterval!
-  var onToggleCompact: (()->Void)!
-  var onToggle5MinIncrement: (()->Void)!
-  var onChangeStartTime: (()->Void)!
-  var onChangeDuration: (()->Void)!
-  var dismiss: (()->Void)!
+  @Published var isCompactMode: Bool! = false
+  @Published var is5MinIncrement: Bool! = false
+  @Published var defaultStartTime: Date! = Date(timeIntervalSinceReferenceDate: 3600.0 * 6.0)
+  @Published var defaultDuration: TimeInterval! = 1800
+  var onToggleCompact: (()->Void)! = {}
+  var onToggle5MinIncrement: (()->Void)! = {}
+  var onChangeStartTime: (()->Void)! = {}
+  var onChangeDuration: (()->Void)! = {}
+  var dismiss: (()->Void)! = {}
 }
 
 
