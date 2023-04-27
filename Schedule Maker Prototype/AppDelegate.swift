@@ -55,20 +55,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
              saveBasic(data: 1, key: Paths.sessCount)
         }
-
-        // Override point for customization after application launch.
-        /*
-        if (launchOptions != nil)
-        {
-            // opened from a push notification when the app is closed
-            var userInfo = launchOptions[UIApplicationLaunchOptionsKey.localNotification]?
-            if (userInfo != nil)
-            {
-                scheduleViewController.
-            }
-        }
-        */
-
         return true
     }
 
