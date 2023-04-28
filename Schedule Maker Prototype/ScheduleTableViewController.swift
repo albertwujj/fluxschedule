@@ -95,7 +95,7 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
         appDelegate.tvcLoaded = true
     }
     func setSeparator() {
-        tableView.separatorStyle = userSettings.compactMode ? .none : .singleLineEtched
+        tableView.separatorStyle = userSettings.compactMode ? .none : .singleLine
         tableView.reloadData()
     }
 
