@@ -29,6 +29,7 @@ class SettingsViewObservable: ObservableObject {
   var onToggle5MinIncrement: (()->Void)! = {}
   var onChangeStartTime: (()->Void)! = {}
   var onChangeDuration: (()->Void)! = {}
+  var onTutorialButtonPressed: (()->Void)! = {}
   var dismiss: (()->Void)! = {}
 }
 
@@ -37,6 +38,12 @@ class SettingsViewObservable: ObservableObject {
 class ScheduleViewController: BaseViewController, UITextFieldDelegate, AccessoryTextFieldDelegate, UNUserNotificationCenterDelegate, FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
 
 
+  func transitionFromSettingsUpdates() {
+    self.tableViewController.setSeparator()
+    self.tableViewController.changeRowHeight()
+    self.tableViewController.tableView.reloadData()
+    self.update()
+  }
   @IBSegueAction func settingsButtonPressed(_ coder: NSCoder) -> UIViewController? {
     let observable = SettingsViewObservable()
     observable.isCompactMode = userSettings.compactMode
@@ -56,14 +63,17 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
     observable.onChangeDuration = { [self, observable] in
       self.appDelegate.userSettings.defaultDuration = Int(observable.defaultDuration)
     }
-
+    
     let ret = UIHostingController(coder: coder, rootView: SwiftUISettingsView(observable: observable))
     observable.dismiss = { [ret] in
       ret!.dismiss(animated: true, completion: nil)
-      self.tableViewController.setSeparator()
-      self.tableViewController.changeRowHeight()
-      self.tableViewController.tableView.reloadData()
-      self.update()
+      self.transitionFromSettingsUpdates()
+    }
+    observable.onTutorialButtonPressed = { [self, ret] in
+      ret!.dismiss(animated: true, completion: nil)
+      self.tutorialStep = .welcome
+      self.addTutorial()
+      self.transitionFromSettingsUpdates()
     }
     return ret
   }
@@ -526,7 +536,7 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
       })
       let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil
       )
-      presentAlert(title: "Are you sure?", message: "Skip the tutorial? It will always be available in Settings later." , actions: cancelAction, okAction)
+      presentAlert(title: "Are you sure?", message: "Skip the tutorial? It will always be available from the Settings page later." , actions: cancelAction, okAction)
       return
     }
     tutorialStep = Tut(tutorialStep.rawValue - 1)

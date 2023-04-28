@@ -61,7 +61,8 @@ struct SwiftUISettingsView: View {
             DurationPicker(duration: $observable.defaultDuration)
           }
         }
-      }.navigationBarTitle(Text("Settings"), displayMode: .inline).navigationBarItems(leading: Button("Back", action: observable.dismiss))
+      }.navigationBarTitle(Text("Settings"), displayMode: .inline).navigationBarItems(leading: Button("Back", action: observable.dismiss), trailing: Button("Tutorial", action:observable.onTutorialButtonPressed))
+      
     }
   }
 }
@@ -69,6 +70,6 @@ struct SwiftUISettingsView: View {
 @available(iOS 15.0, *)
 struct SettingsPreview: PreviewProvider {
   static var previews: some View {
-    return SwiftUISettingsView(observable: SettingsViewObservable()).previewInterfaceOrientation(.landscapeLeft)
+    return SwiftUISettingsView(observable: SettingsViewObservable())
   }
 }
