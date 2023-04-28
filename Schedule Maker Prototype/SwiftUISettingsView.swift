@@ -9,34 +9,34 @@
 import SwiftUI
 
 struct DurationPicker: UIViewRepresentable {
-    @Binding var duration: TimeInterval
+  @Binding var duration: TimeInterval
 
-    func makeUIView(context: Context) -> UIDatePicker {
-        let datePicker = UIDatePicker()
-        datePicker.datePickerMode = .countDownTimer
-        datePicker.addTarget(context.coordinator, action: #selector(Coordinator.updateDuration), for: .valueChanged)
-        return datePicker
+  func makeUIView(context: Context) -> UIDatePicker {
+    let datePicker = UIDatePicker()
+    datePicker.datePickerMode = .countDownTimer
+    datePicker.addTarget(context.coordinator, action: #selector(Coordinator.updateDuration), for: .valueChanged)
+    return datePicker
+  }
+
+  func updateUIView(_ datePicker: UIDatePicker, context: Context) {
+    datePicker.countDownDuration = duration
+  }
+  
+  func makeCoordinator() -> Coordinator {
+    Coordinator(self)
+  }
+
+  class Coordinator: NSObject {
+    let parent: DurationPicker
+
+    init(_ parent: DurationPicker) {
+      self.parent = parent
     }
 
-    func updateUIView(_ datePicker: UIDatePicker, context: Context) {
-        datePicker.countDownDuration = duration
+    @objc func updateDuration(datePicker: UIDatePicker) {
+      parent.duration = datePicker.countDownDuration
     }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-
-    class Coordinator: NSObject {
-        let parent: DurationPicker
-
-        init(_ parent: DurationPicker) {
-            self.parent = parent
-        }
-
-        @objc func updateDuration(datePicker: UIDatePicker) {
-            parent.duration = datePicker.countDownDuration
-        }
-    }
+  }
 }
 struct SwiftUISettingsView: View {
   @ObservedObject var observable: SettingsViewObservable
@@ -54,8 +54,8 @@ struct SwiftUISettingsView: View {
         Section(header: Text("Default Times")) {
           VStack {
             DatePicker("Start Time", selection: $observable.defaultStartTime, displayedComponents: .hourAndMinute).onChange(of: observable.defaultStartTime) { (_) in
-                  observable.onChangeStartTime()
-              }.environment(\.timeZone, TimeZone(secondsFromGMT: 0)!).datePickerStyle(.compact).padding(.leading, 5)
+              observable.onChangeStartTime()
+            }.environment(\.timeZone, TimeZone(secondsFromGMT: 0)!).datePickerStyle(.compact).padding(.leading, 5)
             Divider()
             Label("Default Task Duration", systemImage: "bolt.fill").labelStyle(.titleOnly).frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 5)
             DurationPicker(duration: $observable.defaultDuration)

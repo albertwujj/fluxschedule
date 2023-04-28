@@ -10,20 +10,20 @@ import UIKit
 
 
 class Schedule: NSObject, NSCoding {
-    var s: [Int: [ScheduleItem]]?
-   
-    init(s: [Int: [ScheduleItem]]) {
-        self.s = s
-    }
-    func encode(with aCoder: NSCoder) {
-     
-        aCoder.encode(s, forKey: "scheduleItems")
-        
-        
-    }
+  var s: [Int: [ScheduleItem]]?
+  
+  init(s: [Int: [ScheduleItem]]) {
+    self.s = s
+  }
+  func encode(with aCoder: NSCoder) {
     
-    required convenience init?(coder aDecoder: NSCoder) {
-        
-        self.init(s: aDecoder.decodeObject(forKey: "scheduleItems") as! [Int: [ScheduleItem]])
-    }
+    aCoder.encode(s, forKey: "scheduleItems")
+    
+    
+  }
+  
+  required convenience init?(coder aDecoder: NSCoder) {
+    
+    self.init(s: aDecoder.decodeObject(forKey: "scheduleItems") as! [Int: [ScheduleItem]])
+  }
 }
