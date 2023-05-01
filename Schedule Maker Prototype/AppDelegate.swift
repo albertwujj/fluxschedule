@@ -45,16 +45,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     print("THIS IS THE SCREEN SIZE: \(UIScreen.main.bounds)")
 
-    if let loadedSessCount = loadBasic(key: Paths.sessCount) as? Int {
-      for i in [13, 40, 70, 120, 180, 250] {
-        if loadedSessCount + 1 == i {
-          requestReview()
-        }
-      }
-      saveBasic(data: loadedSessCount + 1, key: Paths.sessCount)
-    } else {
-      saveBasic(data: 1, key: Paths.sessCount)
-    }
     return true
   }
 
@@ -221,11 +211,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   func loadBasic(key: String) -> Any? {
     return UserDefaults.shared.value(forKey: key)
-  }
-  @objc func requestReview() {
-    if #available(iOS 10.3, *) {
-      SKStoreReviewController.requestReview()
-    }
   }
 }
 

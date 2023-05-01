@@ -30,7 +30,6 @@ class StreakViewController: BaseViewController {
   }
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    Timer.scheduledTimer(timeInterval: 3 * 60, target: self, selector: #selector(requestReview), userInfo: nil, repeats: false)
   }
   
   override func didReceiveMemoryWarning() {

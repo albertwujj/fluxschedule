@@ -107,15 +107,7 @@ extension UIScrollView {
   
 }
 extension UIViewController {
-  
-  
-  @objc func requestReview() {
-    if #available(iOS 10.3, *) {
-      SKStoreReviewController.requestReview()
-    }
-  }
-  
-  
+
   func presentAlert(title: String, message: String, actions: UIAlertAction...){
     let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
     if actions.count == 0 {
