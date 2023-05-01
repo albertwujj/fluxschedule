@@ -161,15 +161,12 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
 
       if row == 0 {
         scheduleItem.startTime = intDate
-        tvc.update()
         return
       }
       //shrinks prev task
       if row > 0 && intDate > tvc.scheduleItems[row - 1].startTime! && intDate < scheduleItem.startTime! {
         tvc.scheduleItems[row-1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
         tvc.itemsToRed.append(tvc.scheduleItems[row-1])
-        tvc.update()
-
         return
       }
       //increases prev task
@@ -181,7 +178,6 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         else {
           scheduleItem.startTime = intDate
         }
-        tvc.update()
         return
       }
       //let scheduleItem = self.scheduleItem!
@@ -197,7 +193,6 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
             alertController.addAction(okAction)
             tvc.present(alertController, animated: true, completion: nil)
             return
-
           }
         }
       }
@@ -220,15 +215,10 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
 
       var origLockedItems = tvc.getLockedItems()
 
-      if true || origLockedItems.count > 0 {
-        tvc.scheduleItems.remove(at: self.row)
-        origLockedItems.append(scheduleItem.deepCopy())
-        tvc.recalculateTimes(with: origLockedItems)
-        tvc.update()
-      }
-      else {
-        ScheduleTableViewCell.moveItem(tvc: tvc, origRow: row, newStartTime: scheduleItem.startTime!, insertOption: appDelegate.userSettings.insertOption)
-      }
+      tvc.scheduleItems.remove(at: self.row)
+      origLockedItems.append(scheduleItem.deepCopy())
+      tvc.recalculateTimes(with: origLockedItems)
+      tvc.updateNoRecalculate()
 
       tvc.flashScheduleItem(intDate, for: 0, color: UIColor.purple)
     }
@@ -315,6 +305,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
       if textField.text?.range(of: "\(userSettings.defaultName) *\\d*", options: .regularExpression, range: nil, locale: nil) == nil {
         tvc.scheduleViewController.schedulesEdited.insert(tvc.dateInt)
       }
+      tvc.update()
     }
     else if textField == durationTF {
 
@@ -349,9 +340,6 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
       self.taskNameTF.resignFirstResponder()
       self.taskNameTF.performSelector(onMainThread: #selector(becomeFirstResponder), with: nil, waitUntilDone: false)
     }
-    tvc.update()
-
-
   }
 
   //MARK: Input handling
@@ -408,79 +396,6 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     durationTFCustomButton.sizeToFit()
   }
 
-
-  static func moveItem(tvc: ScheduleTableViewController, origRow: Int, newStartTime: Int, insertOption: InsertOption) -> IndexPath?{
-
-    let tableView = tvc.tableView!
-    var finalRow = 0
-    var scheduleItems = tvc.scheduleItems
-    let scheduleItem = scheduleItems[origRow]
-    scheduleItem.startTime = newStartTime
-    var prevRow = origRow
-
-    //find correct previous item
-  swapLoop: while(prevRow >= 0) {
-    prevRow -= 1
-    if prevRow == -1 || (scheduleItem.startTime! > scheduleItems[prevRow].startTime! || (scheduleItem.startTime! == scheduleItems[prevRow].startTime! && insertOption == .extend)) {
-      break swapLoop
-    }
-  }
-    //if extending duration, must take "prev prev" item
-
-
-    let prev = origRow > 0 ? scheduleItems[origRow - 1] : nil
-    var isExtension = false
-    if origRow > 0 && scheduleItem.startTime! >= prev!.startTime! + prev!.duration  {
-      isExtension = true
-    }
-
-    var splitItem: ScheduleItem!
-    //let curr = scheduleItems[i+1]
-    var diff = 0
-    var newPrev: ScheduleItem!
-    if (prevRow >= 0) {
-      newPrev = scheduleItems[prevRow]
-      if newPrev.locked == true {
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
-        {
-          (result : UIAlertAction) -> Void in
-        }
-        tvc.presentAlert(title: "Locked item conflict", message: "New start time would cause item \"\(scheduleItem.taskName)\" to conflict with locked item \"\(newPrev.taskName)\".", actions: cancelAction)
-        return nil
-      }
-      diff = newPrev.startTime! + newPrev.duration - scheduleItem.startTime!
-      newPrev.duration -= diff
-
-
-      //cell.startTimeTF.text = "\(cell.timeDescription(durationSinceMidnight: newStartTime))"
-
-
-
-
-
-    }
-    finalRow = prevRow + 1
-    var finalRowWOffset = finalRow
-
-    if (origRow < finalRow) {
-      finalRowWOffset -= 1
-
-    }
-    if origRow != finalRow {
-      scheduleItems.insert(scheduleItems.remove(at: origRow), at: finalRowWOffset)
-    }
-
-    if(finalRow != origRow && prevRow >= 0 && insertOption == .split && diff > 0) {
-      splitItem = ScheduleItem(name: newPrev.taskName, duration: diff, startTime: scheduleItem.startTime! + scheduleItem.duration)
-      scheduleItems.insert(splitItem, at: finalRowWOffset+1)
-    }
-
-
-    tvc.scheduleItems = scheduleItems
-
-    tvc.update()
-    return IndexPath(finalRow)
-  }
   /*
    static func insertItem(tvc: ScheduleTableViewController, item: ScheduleItem, newStartTime: Int, insertOption: InsertOption) {
    var scheduleItems = tvc.scheduleItems
