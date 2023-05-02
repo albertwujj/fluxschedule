@@ -138,51 +138,45 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     })
     sender.resignFirstResponder()
   }
+
   func textFieldDoneButtonPressed(_ sender: AccessoryTextField) {
     //if !sender.inputView!.isScrolling() {
     sender.resignFirstResponder()
 
-    let scheduleItem = self.origScheduleItem ?? self.scheduleItem!
-    let origScheduleItem = scheduleItem
-    let row = origRow ?? self.row!
-
     if sender === startTimeTF{
+      handleStartTimeChanged()
+    }
+    else if sender === durationTF {
+      handleDurationChanged()
+    }
+    tvc.scheduleViewController.schedulesEdited.insert(tvc.dateInt)
+  }
 
+  func handleStartTimeChanged() {
       let intDate = Int((startTimeTF.inputView as! UIDatePicker).date.timeIntervalSince(startOfToday))
       if intDate == scheduleItem.startTime ?? 0 {
         UIView.animate(withDuration: 0.4, animations: { () -> Void in
-          sender.backgroundColor = .white
+          self.startTimeTF.backgroundColor = .white
 
         }, completion: { (finished) -> Void in
 
         })
         return
       }
+      if scheduleItem.locked {
+        let alertController = UIAlertController(title: "Item is locked!", message: "Cannot change the start time of a locked tasks.", preferredStyle: UIAlertControllerStyle.alert)
 
-      if row == 0 {
-        scheduleItem.startTime = intDate
-        return
-      }
-      //shrinks prev task
-      if row > 0 && intDate > tvc.scheduleItems[row - 1].startTime! && intDate < scheduleItem.startTime! {
-        tvc.scheduleItems[row-1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
-        tvc.itemsToRed.append(tvc.scheduleItems[row-1])
-        return
-      }
-      //increases prev task
-      if row < tvc.scheduleItems.count - 1 && intDate < tvc.scheduleItems[row + 1].startTime! && intDate > scheduleItem.startTime! {
-        if(row > 0) {
-          tvc.scheduleItems[row - 1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
-          tvc.itemsToGreen.append(tvc.scheduleItems[row-1])
+        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+        {
+          (result : UIAlertAction) -> Void in
         }
-        else {
-          scheduleItem.startTime = intDate
-        }
+        alertController.addAction(okAction)
+        tvc.present(alertController, animated: true, completion: nil)
         return
       }
       //let scheduleItem = self.scheduleItem!
       for compared in tvc.scheduleItems {
-        if compared.startTime != nil && compared.locked && compared !== scheduleItem {
+        if compared.startTime != nil && compared.locked {
           if intDate > compared.startTime! && intDate < compared.startTime! + compared.duration {
             let alertController = UIAlertController(title: "Locked item conflict", message: "New start time would cause conflict with locked item \"\(compared.taskName)\".", preferredStyle: UIAlertControllerStyle.alert)
 
@@ -196,54 +190,57 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
           }
         }
       }
-      if scheduleItem.locked {
-        let alertController = UIAlertController(title: "Item is locked!", message: "Cannot change the start time of a locked tasks.", preferredStyle: UIAlertControllerStyle.alert)
-
-        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
-        {
-          (result : UIAlertAction) -> Void in
-        }
-        alertController.addAction(okAction)
-        tvc.present(alertController, animated: true, completion: nil)
-        return
+      // bump up or down the entire schedule (besides locked items)
+      if row == 0 {
+        scheduleItem.startTime = intDate
       }
-
-      //update startTime and endTime based on chosen date
+      /* The following two conditionals avoid tasks being split, either to after or before, to make way for the new start time.
+      Ultimately, there is no objective answer for the desired user behavior, but generally splitting would be more confusing.
+      If user is moving the start time back, but not before the previous task, shrink the previous task */
+      else if intDate > tvc.scheduleItems[row - 1].startTime! && intDate < scheduleItem.startTime! {
+        tvc.scheduleItems[row-1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
+        tvc.itemsToRed.append(tvc.scheduleItems[row-1])
+      }
+      /* If user is moving the start time forward, but not after the next task, increase the duration of the previous task
+      TODO: increase duration even past next task? */
+      else if (row == tvc.scheduleItems.count - 1 || intDate < tvc.scheduleItems[row + 1].startTime!) && intDate > scheduleItem.startTime! {
+        tvc.scheduleItems[row - 1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
+        tvc.itemsToGreen.append(tvc.scheduleItems[row-1])
+      }
       scheduleItem.startTime = intDate
-
       startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
 
       var origLockedItems = tvc.getLockedItems()
-
       tvc.scheduleItems.remove(at: self.row)
       origLockedItems.append(scheduleItem.deepCopy())
       tvc.recalculateTimes(with: origLockedItems)
       tvc.updateNoRecalculate()
-
       tvc.flashScheduleItem(intDate, for: 0, color: UIColor.purple)
-    }
-    else if sender === durationTF {
-      let intDate = origScheduleItem.startTime ?? 0
-      let duration = (durationTF.inputView as! GSTimeIntervalPicker).timeInterval
-      if Int(duration) == scheduleItem.duration {
-        UIView.animate(withDuration: 0.4, animations: { () -> Void in
-          sender.backgroundColor = .white
-
-        }, completion: { (finished) -> Void in
-        })
-        return
-      }
-
-      scheduleItem.duration = Int(duration)
-      tvc.scheduleItems.remove(at: self.row)
-      var origLockedItems = tvc.getLockedItems()
-      origLockedItems.append(scheduleItem.deepCopy())
-      tvc.recalculateTimes(with: origLockedItems)
-      tvc.update()
-      tvc.flashScheduleItem(intDate, for: 1, color: UIColor.purple)
-    }
-    tvc.scheduleViewController.schedulesEdited.insert(tvc.dateInt)
   }
+  func handleDurationChanged() {
+    let scheduleItem = self.origScheduleItem ?? self.scheduleItem!
+    let origScheduleItem = scheduleItem
+    let row = origRow ?? self.row!
+    let intDate = origScheduleItem.startTime ?? 0
+    let duration = (durationTF.inputView as! GSTimeIntervalPicker).timeInterval
+    if Int(duration) == scheduleItem.duration {
+      UIView.animate(withDuration: 0.4, animations: { () -> Void in
+        self.durationTF.backgroundColor = .white
+
+      }, completion: { (finished) -> Void in
+      })
+      return
+    }
+
+    scheduleItem.duration = Int(duration)
+    tvc.scheduleItems.remove(at: self.row)
+    var origLockedItems = tvc.getLockedItems()
+    origLockedItems.append(scheduleItem.deepCopy())
+    tvc.recalculateTimes(with: origLockedItems)
+    tvc.updateNoRecalculate()
+    tvc.flashScheduleItem(intDate, for: 1, color: UIColor.purple)
+  }
+
   //MARK: UITextFieldDelegateFunctions
   func textFieldDidBeginEditing(_ textField: UITextField) {
     setupTFForEdit(textField)
