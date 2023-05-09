@@ -816,10 +816,9 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
     return lockedItems
   }
   func recalculateTimes(with lockedTasksP: [ScheduleItem]?) {
+    let deletedLockedItems = deletedLockedItemsAndOrdered()
     recalculateTimesBasic()
-    var lockedTasks = lockedTasksP ?? getLockedItems()
-    deletedLockedItemsAndOrdered()
-    lockedTasks = lockedTasks.sorted(by: { $0.startTime! < $1.startTime! })
+    let lockedTasks = lockedTasksP?.sorted(by: { $0.startTime! < $1.startTime! }) ?? deletedLockedItems
     for i in lockedTasks {
       insertItem(item: i, newStartTime: i.startTime!)
       recalculateTimesBasic()

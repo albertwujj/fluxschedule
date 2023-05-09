@@ -193,7 +193,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
       scheduleItem.startTime = intDate
       // bump up or down the entire schedule (besides locked items)
       if row == 0 {
-        tvc.recalculateTimesBasic()
+        tvc.recalculateTimes()
       }
       /* The following two conditionals avoid tasks being split, either to after or before, to make way for the new start time.
       Ultimately, there is no objective answer for the desired user behavior, but generally splitting would be more confusing.
