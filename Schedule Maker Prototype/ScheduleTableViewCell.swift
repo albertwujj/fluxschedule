@@ -193,27 +193,30 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
       scheduleItem.startTime = intDate
       // bump up or down the entire schedule (besides locked items)
       if row == 0 {
-        tvc.recalculateTimes()
+        tvc.recalculateTimes(with: nil)
       }
-      /* The following two conditionals avoid tasks being split, either to after or before, to make way for the new start time.
-      Ultimately, there is no objective answer for the desired user behavior, but generally splitting would be more confusing.
-      If user is moving the start time back, but not before the previous task, shrink the previous task */
-      else if intDate > tvc.scheduleItems[row - 1].startTime! && intDate < scheduleItem.startTime! {
+      else {
+        /* The following line, for the cases of both of moving the start time forward and moving it back, avoid tasks being split, either to after or before, to make way for the new start time.
+        Ultimately, there is no objective answer for the desired user behavior, but generally splitting would be more confusing.
+        If user is moving the start time back, but not before the previous task, shrink the previous task
+        If user is moving the start time forward, but not after the next task, increase the duration of the previous task
+        TODO: increase duration even past next task? */
         tvc.scheduleItems[row-1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
-        tvc.itemsToRed.append(tvc.scheduleItems[row-1])
+
+        var origLockedItems = tvc.getLockedItems()
+        tvc.scheduleItems.remove(at: self.row)
+        origLockedItems.append(scheduleItem.deepCopy())
+        tvc.recalculateTimes(with: origLockedItems)
+
+        if intDate > tvc.scheduleItems[row - 1].startTime! && intDate < scheduleItem.startTime! {
+          tvc.itemsToRed.append(tvc.scheduleItems[row-1])
+        }
+        else if (row == tvc.scheduleItems.count - 1 || intDate < tvc.scheduleItems[row + 1].startTime!) && intDate > scheduleItem.startTime! {
+          tvc.itemsToGreen.append(tvc.scheduleItems[row-1])
+        }
       }
-      /* If user is moving the start time forward, but not after the next task, increase the duration of the previous task
-      TODO: increase duration even past next task? */
-      else if (row == tvc.scheduleItems.count - 1 || intDate < tvc.scheduleItems[row + 1].startTime!) && intDate > scheduleItem.startTime! {
-        tvc.scheduleItems[row - 1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
-        tvc.itemsToGreen.append(tvc.scheduleItems[row-1])
-      }
-      startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
-      var origLockedItems = tvc.getLockedItems()
-      tvc.scheduleItems.remove(at: self.row)
-      origLockedItems.append(scheduleItem.deepCopy())
-      tvc.recalculateTimes(with: origLockedItems)
       tvc.updateNoRecalculate()
+      startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
       tvc.flashScheduleItem(intDate, for: 0, color: UIColor.purple)
   }
   func handleDurationChanged() {
