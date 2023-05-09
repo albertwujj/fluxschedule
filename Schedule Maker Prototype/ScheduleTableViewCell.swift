@@ -190,9 +190,10 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
           }
         }
       }
+      scheduleItem.startTime = intDate
       // bump up or down the entire schedule (besides locked items)
       if row == 0 {
-        scheduleItem.startTime = intDate
+        tvc.recalculateTimesBasic()
       }
       /* The following two conditionals avoid tasks being split, either to after or before, to make way for the new start time.
       Ultimately, there is no objective answer for the desired user behavior, but generally splitting would be more confusing.
@@ -207,9 +208,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         tvc.scheduleItems[row - 1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
         tvc.itemsToGreen.append(tvc.scheduleItems[row-1])
       }
-      scheduleItem.startTime = intDate
       startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
-
       var origLockedItems = tvc.getLockedItems()
       tvc.scheduleItems.remove(at: self.row)
       origLockedItems.append(scheduleItem.deepCopy())
