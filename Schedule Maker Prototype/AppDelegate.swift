@@ -36,11 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //syncKVS()
 
     userSettings = getSavedUserSettings() ?? userSettings
-
     self.svc = (self.window!.rootViewController as! ScheduleViewController)
     svc.sharedDefaults = sharedDefaults
     svc.loadSavedData()
-    registerForPushNotifications()
     UNUserNotificationCenter.current().delegate = svc
     UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     print("THIS IS THE SCREEN SIZE: \(UIScreen.main.bounds)")

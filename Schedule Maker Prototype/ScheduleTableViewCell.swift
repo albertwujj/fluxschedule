@@ -145,6 +145,7 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
 
     if sender === startTimeTF{
       handleStartTimeChanged()
+      appDelegate.registerForPushNotifications()
     }
     else if sender === durationTF {
       handleDurationChanged()
