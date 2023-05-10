@@ -4,3 +4,4 @@ DerivedData/
 *.xcodeproj/
 *~.storyboard
 *zh-Hans*
+*.xcdatamodeld/
