@@ -275,15 +275,6 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         taskNameTF.selectAll(nil)
       }
     }
-    if textField === startTimeTF || textField === durationTF {
-      var desiredPosition: UITextPosition = textField.endOfDocument
-      if(textField.text?.last != nil && textField.text!.last! == " ") {
-        desiredPosition = textField.position(from: desiredPosition, offset: -1) ?? desiredPosition
-      }
-      //textField.selectedTextRange = textField.textRange(from: desiredPosition, to: desiredPosition)
-      textField.selectedTextRange = nil
-      textField.isHighlighted = true
-    }
   }
   func editingAnimation(_ textField: UITextField) {
     let bgColorView = UIView()
