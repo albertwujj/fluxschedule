@@ -1269,10 +1269,6 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
         cell.backgroundColor = UIColor.white
 
         cell.taskNameTF.becomeFirstResponder()
-        /*
-         cell.startTimeTF.becomeFirstResponder()
-         cell.setupTFForEdit(cell.startTimeTF)
-         editItemStep = 1 */
 
       } else {
 
