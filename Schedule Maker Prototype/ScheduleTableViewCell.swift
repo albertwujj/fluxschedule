@@ -271,8 +271,10 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
       editingAnimation(textField)
     }
     if textField === taskNameTF {
-      if taskNameTF.text?.range(of: "\(userSettings.defaultName) *\\d*", options: .regularExpression, range: nil, locale: nil) != nil {
-        taskNameTF.selectAll(nil)
+      if textField.text?.range(of: "\(userSettings.defaultName) *\\d*", options: .regularExpression, range: nil, locale: nil) != nil {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .microseconds(1)) {
+          textField.selectAll(nil)
+        }
       }
     }
   }
