@@ -197,24 +197,27 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         tvc.recalculateTimes(with: nil)
       }
       else {
-        /* The following line, for the cases of both of moving the start time forward and moving it back, avoid tasks being split, either to after or before, to make way for the new start time.
-        Ultimately, there is no objective answer for the desired user behavior, but generally splitting would be more confusing.
-        If user is moving the start time back, but not before the previous task, shrink the previous task
-        If user is moving the start time forward, but not after the next task, increase the duration of the previous task
-        TODO: increase duration even past next task? */
-        tvc.scheduleItems[row-1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
-
+        // start time moved back or forward but not past prev/next task
+        let movedBackMarginal = intDate > tvc.scheduleItems[row - 1].startTime! && intDate < scheduleItem.startTime!
+        let movedForwardMarginal = (row == tvc.scheduleItems.count - 1 || intDate < tvc.scheduleItems[row + 1].startTime!) && intDate > scheduleItem.startTime!
+        if movedBackMarginal || movedForwardMarginal {
+           /* The following line, for the cases of both of moving the start time forward and moving it back, avoid tasks being split, either to after or before, to make way for the new start time.
+          Ultimately, there is no objective answer for the desired user behavior, but generally splitting would be more confusing.
+          If user is moving the start time back, but not before the previous task, shrink the previous task
+          If user is moving the start time forward, but not after the next task, increase the duration of the previous task
+          TODO: increase duration even past next task? */
+          tvc.scheduleItems[row-1].duration = intDate - tvc.scheduleItems[row - 1].startTime!
+          if movedBackMarginal {
+            tvc.itemsToRed.append(tvc.scheduleItems[row-1])
+          }
+          else {
+            tvc.itemsToGreen.append(tvc.scheduleItems[row-1])
+          }
+        }
         var origLockedItems = tvc.getLockedItems()
         tvc.scheduleItems.remove(at: self.row)
         origLockedItems.append(scheduleItem.deepCopy())
         tvc.recalculateTimes(with: origLockedItems)
-
-        if intDate > tvc.scheduleItems[row - 1].startTime! && intDate < scheduleItem.startTime! {
-          tvc.itemsToRed.append(tvc.scheduleItems[row-1])
-        }
-        else if (row == tvc.scheduleItems.count - 1 || intDate < tvc.scheduleItems[row + 1].startTime!) && intDate > scheduleItem.startTime! {
-          tvc.itemsToGreen.append(tvc.scheduleItems[row-1])
-        }
       }
       tvc.updateNoRecalculate()
       startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
