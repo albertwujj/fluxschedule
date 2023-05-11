@@ -1338,6 +1338,7 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
    contentView.backgroundColor = orig.withAlphaComponent(0.10)
    } */
   @objc func highlightCurrCell() {
+    /*
     unhighlightAllCells()
     if scheduleViewController.tutorialStep == .done {
       if scheduleViewController.selectedDateInt ?? scheduleViewController.currDateInt == scheduleViewController.dateToHashableInt(date: Date()) {
@@ -1385,7 +1386,7 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
           }
         }
       }
-    }
+    } */
   }
   func unhighlightAllCells() {
     for cell in tableView.visibleCells where cell is ScheduleTableViewCell {
