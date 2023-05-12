@@ -71,7 +71,6 @@
                                         </textField>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="37v-Co-Zac">
                                             <rect key="frame" x="99" y="10" width="30" height="30"/>
-                                            <state key="normal" title="🌀"/>
                                             <connections>
                                                 <action selector="doubleTap:forEvent:" destination="evD-WS-gY8" eventType="touchDownRepeat" id="Vvm-we-LZ7"/>
                                                 <action selector="lockButtonPressed:" destination="evD-WS-gY8" eventType="touchUpInside" id="1bn-WM-G78"/>
