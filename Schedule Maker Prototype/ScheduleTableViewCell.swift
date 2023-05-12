@@ -605,6 +605,9 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     svc.stepLockedComplete()
   }
 
+  func updateLockIcon() {
+    lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+  }
   func lockButtonUpdated() {
     if scheduleItem.locked {
       startTimeTF.isUserInteractionEnabled = false
@@ -615,7 +618,6 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
     } else {
       startTimeTF.isUserInteractionEnabled = true
     }
-    fitToScreenSize()
-    lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+    updateLockIcon()
   }
 }

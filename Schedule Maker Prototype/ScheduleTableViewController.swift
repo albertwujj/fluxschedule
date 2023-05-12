@@ -442,7 +442,7 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
         if let cell = tableView.cellForRow(at: path) as? ScheduleTableViewCell {
           cell.startTimeTF.text = ScheduleTableViewCell.timeDescription(durationSinceMidnight: scheduleItem.startTime!)
           cell.durationTF.text = ScheduleTableViewCell.durationDescription(duration: scheduleItem.duration)
-          cell.lockButton.setTitle(scheduleItem.locked ? "🔒" : "🌀",for: .normal)
+          cell.updateLockIcon()
           cell.taskNameTF.text = scheduleItem.taskName
           cell.row = row
           if(!duringKeyboardScroll){
