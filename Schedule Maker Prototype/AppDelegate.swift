@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   var recurringTasksTableViewController: RecurringTasksTableViewController?
   var readyToSync = false
   var kvsNotifRecieved = false
+  var notifTimesRequested = 0
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")
     print("icloud status: \(isICloudContainerAvailable())")
@@ -43,6 +44,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     print("THIS IS THE SCREEN SIZE: \(UIScreen.main.bounds)")
 
+    if let loadedSessCount = loadBasic(key: Paths.sessCount) as? Int {
+        saveBasic(data: loadedSessCount + 1, key: Paths.sessCount)
+      } else {
+        saveBasic(data: 1, key: Paths.sessCount)
+      }
     return true
   }
 
@@ -77,15 +83,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
   }
   func registerForPushNotifications() {
-    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-      (granted, error) in
-      print("Notification permission granted: \(granted)")
-      guard granted else { return}
-      self.notifPermitted = true
-      //self.getNotificationSettings()
-      // Create the custom actions for the TIMER_EXPIRED category.
-    }
+    notifTimesRequested += 1
+    let alert = UIAlertController(title: "Allow Flux to send you notifications?", message: "Flux will notify you when a new task starts, including an action to delay the task without opening the app.", preferredStyle: .alert)
+    alert.addAction(UIAlertAction(title: "Not Now", style: .cancel))
+    let allowAction = UIAlertAction(title: "Allow", style: .default, handler: { _ in
+      UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+        (granted, error) in
+        guard granted else { return}
+        self.notifPermitted = true
+        //self.getNotificationSettings()
+        // Create the custom actions for the TIMER_EXPIRED category.
+      }
+    })
+    alert.addAction(allowAction)
+    alert.preferredAction = allowAction
+    self.svc.present(alert, animated: true, completion: nil)
   }
+
   func getNotificationSettings() {
     UNUserNotificationCenter.current().getNotificationSettings { (settings) in
       print("Notification settings: \(settings)")
