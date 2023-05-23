@@ -33,6 +33,7 @@ class Settings: NSObject, NSCoding {
   var notificationsOn = true
   var fluxPlus = true
   var subs = true
+  static var defaultStartName = "Plan out day"
   
   func encode(with aCoder: NSCoder) {
     aCoder.encode(is24Mode, forKey: PropertyKey.is24Mode)
