@@ -89,7 +89,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let allowAction = UIAlertAction(title: "Allow", style: .default, handler: { _ in
       UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
         (granted, error) in
-        guard granted else { return}
+        guard granted else {
+          DispatchQueue.main.async {
+            let alert = UIAlertController(title:"Open Settings to allow notifications", message: "Notifications for Flux are disabled. You must go to your device's Settings to enable them.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Not Now", style: .cancel))
+            let goToSettingsAction = UIAlertAction(title:"Go to Settings", style: .default, handler: { _ in
+              if let url = URL(string: UIApplicationOpenSettingsURLString) {
+                if UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+              }
+            })
+            alert.addAction(goToSettingsAction)
+            alert.preferredAction = goToSettingsAction
+            self.svc.present(alert, animated: true, completion: nil)
+          }
+          return
+        }
         self.notifPermitted = true
         //self.getNotificationSettings()
         // Create the custom actions for the TIMER_EXPIRED category.

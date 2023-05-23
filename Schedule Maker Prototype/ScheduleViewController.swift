@@ -629,13 +629,13 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
      */
 
     if testingMode {
-      schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: userSettings.defaultStartTime)]
+      schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: Settings.defaultStartName, duration: 60 * 10, startTime: userSettings.defaultStartTime)]
     }
     // if schedule is not manually edited, or schedule does not exist in dict, create first task
     else if !schedulesEdited.contains(selectedDateInt ?? currDateInt) || schedules[selectedDateInt ?? currDateInt] == nil{
       // if current day, set specified start task
       if selectedDateInt ?? currDateInt == currDateInt {
-        schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: "Plan out day", duration: 60 * 10, startTime: tableViewController.getCurrentDurationFromMidnight())]
+        schedules[selectedDateInt ?? currDateInt] = [ScheduleItem(name: Settings.defaultStartName, duration: 60 * 10, startTime: tableViewController.getCurrentDurationFromMidnight())]
       }
       // if not, set default start task
       else {
@@ -848,9 +848,9 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
   }
   func scheduleInactiveNotif() {
     let center = UNUserNotificationCenter.current()
-    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (7*24*3600), repeats: false)
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: (2*7*24*3600), repeats: false)
     let content = UNMutableNotificationContent()
-    content.title = "You haven't used us for a week"
+    content.title = "You haven't used us for two weeks"
     content.body = "Want to get back on a schedule?"
     content.sound = UNNotificationSound.default()
     //will remove existing notification with same identifier

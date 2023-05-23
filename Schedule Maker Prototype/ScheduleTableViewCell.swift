@@ -299,12 +299,14 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
       scheduleItem.taskName = textField.text ?? ""
       if textField.text?.range(of: "\(userSettings.defaultName) *\\d*", options: .regularExpression, range: nil, locale: nil) == nil {
         tvc.scheduleViewController.schedulesEdited.insert(tvc.dateInt)
-        // ask for Notif permission only once in a session and if we are at certain session counts
-        if appDelegate.notifTimesRequested == 0 {
-          if let loadedSessCount = appDelegate.loadBasic(key: Paths.sessCount) as? Int {
-            if [1, 100, 250].contains(loadedSessCount) {
-              DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(350)) {
-                self.appDelegate.registerForPushNotifications()
+        if textField.text?.range(of: "\(Settings.defaultStartName)") == nil {
+          // ask for Notif permission only once in a session and if we are at certain session counts
+          if appDelegate.notifTimesRequested == 0 || true {
+            if let loadedSessCount = appDelegate.loadBasic(key: Paths.sessCount) as? Int {
+              if [1, 20, 50, 100, 200].contains(loadedSessCount) || true {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(350)) {
+                  self.appDelegate.registerForPushNotifications()
+                }
               }
             }
           }
