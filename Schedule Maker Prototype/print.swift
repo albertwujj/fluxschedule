@@ -1,3 +1,5 @@
 public func print(_ items: Any) {
-  //Swift.print(items)
+  #if DEBUG
+    Swift.print(items)
+  #endif
 }
