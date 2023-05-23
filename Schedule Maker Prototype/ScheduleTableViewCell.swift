@@ -301,9 +301,9 @@ class ScheduleTableViewCell: UITableViewCell, AccessoryTextFieldDelegate, UIText
         tvc.scheduleViewController.schedulesEdited.insert(tvc.dateInt)
         if textField.text?.range(of: "\(Settings.defaultStartName)") == nil {
           // ask for Notif permission only once in a session and if we are at certain session counts
-          if appDelegate.notifTimesRequested == 0 || true {
+          if appDelegate.notifTimesRequested == 0 {
             if let loadedSessCount = appDelegate.loadBasic(key: Paths.sessCount) as? Int {
-              if [1, 20, 50, 100, 200].contains(loadedSessCount) || true {
+              if [1, 20, 50, 100, 200].contains(loadedSessCount) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(350)) {
                   self.appDelegate.registerForPushNotifications()
                 }
