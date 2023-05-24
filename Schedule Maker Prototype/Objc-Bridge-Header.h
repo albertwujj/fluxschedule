@@ -9,7 +9,7 @@
 #ifndef Objc_Bridge_Header_h
 #define Objc_Bridge_Header_h
 
-#import "FSCalendar.h"
+#import "../FSCalendar/FSCalendar.h"
 #import "GSTimeIntervalPicker.h"
 
 #endif /* Objc_Bridge_Header_h */
