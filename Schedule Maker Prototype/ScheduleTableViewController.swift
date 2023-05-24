@@ -95,7 +95,8 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
     appDelegate.tvcLoaded = true
   }
   func setSeparator() {
-    tableView.separatorStyle = userSettings.compactMode ? .none : .singleLine
+    let orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
+    tableView.separatorStyle = (orientation == .portrait || orientation == .portraitUpsideDown) ? (userSettings.compactMode ? .none : .singleLine) : .none
     tableView.reloadData()
   }
 
@@ -118,6 +119,7 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
   override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
     changeRowHeight()
     tableView.reloadData()
+    setSeparator()
   }
   func changeRowHeight() {
     DispatchQueue.main.async {
