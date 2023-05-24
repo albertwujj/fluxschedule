@@ -704,9 +704,6 @@ class ScheduleViewController: BaseViewController, UITextFieldDelegate, Accessory
     //saveScheduleDates()
     saveSchedules()
     updateStreakButton()
-    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1)) {
-      self.calendar.updateBoundingRect()
-    }
   }
 
   func tvcUpdated() {
@@ -992,9 +989,16 @@ func styleTutButton(button: UIButton) {
   button.layer.borderColor = UIColor.blue.cgColor
   button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
 }
-func showCalendar() {
-  calendar.updateBoundingRect()
+override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+    super.willTransition(to: newCollection, with: coordinator)
 
+    coordinator.animate(alongsideTransition: { _ in
+        self.hideCalendar()
+    })
+}
+
+
+func showCalendar() {
   calendar.select(intToDate(int: selectedDateInt ?? currDateInt))
   calendar.isHidden = false
 
@@ -1010,7 +1014,6 @@ func showCalendar() {
   }, completion: { (finished) -> Void in
 
   })
-  calendar.updateBoundingRect()
 }
 func hideCalendar() {
   calendarBottomSpaceConstraint.constant = 0
@@ -1033,7 +1036,7 @@ func hideCalendar() {
 
 func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
   if self.gregorian.isDateInToday(date) {
-    return "T"
+    return "Now"
   }
   return nil
 }
@@ -1045,8 +1048,8 @@ func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
 // MARK:- FSCalendarDelegate
 
 func calendar(_ calendar: FSCalendar, boundingRectWillChange bounds: CGRect, animated: Bool) {
-  self.calendar.frame.size.height = bounds.height
-  //self.eventLabel.frame.origin.y = calendar.frame.maxY + 10
+    self.calendarHeightConstraint.constant = bounds.height
+    self.view.layoutIfNeeded()
 }
 /*
  func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition)   -> Bool {
