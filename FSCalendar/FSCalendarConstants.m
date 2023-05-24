@@ -1,5 +1,5 @@
 //
-//  FSCalendarConstane.m
+//  FSCalendarConstants.m
 //  FSCalendar
 //
 //  Created by dingwenchao on 8/28/15.
@@ -9,8 +9,6 @@
 //
 
 #import "FSCalendarConstants.h"
-
-
 
 CGFloat const FSCalendarStandardHeaderHeight = 40;
 CGFloat const FSCalendarStandardWeekdayHeight = 25;
@@ -26,9 +24,9 @@ CGFloat const FSCalendarStandardSubtitleTextSize = 10;
 CGFloat const FSCalendarStandardWeekdayTextSize = 14;
 CGFloat const FSCalendarStandardHeaderTextSize = 16.5;
 CGFloat const FSCalendarMaximumEventDotDiameter = 4.8;
-CGFloat const FSCalendarStandardScopeHandleHeight = 26;
 
 NSInteger const FSCalendarDefaultHourComponent = 0;
+NSInteger const FSCalendarMaximumNumberOfEvents = 3;
 
 NSString * const FSCalendarDefaultCellReuseIdentifier = @"_FSCalendarDefaultCellReuseIdentifier";
 NSString * const FSCalendarBlankCellReuseIdentifier = @"_FSCalendarBlankCellReuseIdentifier";
