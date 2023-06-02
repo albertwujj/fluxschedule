@@ -30,7 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     sharedDefaults = UserDefaults(suiteName: "group.9P3FVEPY7V.group.AlbertWu.ScheduleMakerPrototype")
     print("icloud status: \(isICloudContainerAvailable())")
     sharedDefaults.register(defaults: [:])
-    Zephyr.shared = Zephyr()
     Zephyr.sync(keys: [Paths.schedules, Paths.schedulesEdited, Paths.schedule, Paths.streakStats, Paths.tutorialStep, Paths.userSettings], userDefaults: sharedDefaults!)
     Zephyr.addKeysToBeMonitored(keys: Paths.schedules, Paths.schedulesEdited, Paths.schedule, Paths.streakStats, Paths.tutorialStep, Paths.userSettings)
     readyToSync = true
