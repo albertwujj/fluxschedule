@@ -117,6 +117,7 @@ class ScheduleTableViewController: BaseViewController, UITableViewDelegate, UITa
 
 
   override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    super.viewWillTransition(to: size, with: coordinator)
     changeRowHeight()
     tableView.reloadData()
     setSeparator()
